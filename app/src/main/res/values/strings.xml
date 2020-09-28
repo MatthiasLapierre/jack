@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Jack O\'Lantern</string>
+
+    <string name="loading_game">LOADING GAME&#8230;</string>
+</resources>
