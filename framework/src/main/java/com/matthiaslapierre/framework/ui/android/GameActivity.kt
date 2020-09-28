@@ -72,6 +72,10 @@ abstract class GameActivity : AppCompatActivity(), Game {
         super.onDestroy()
     }
 
+    override fun onBackPressed() {
+        getCurrentScreen().onBackPressed()
+    }
+
     override fun getAudio(): Audio = mAudio
 
     override fun getGameResources(): GameResources = mGameResources
