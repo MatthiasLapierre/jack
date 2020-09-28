@@ -9,7 +9,7 @@ import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.jack.core.ResourceManager
 
-class MenuScene(
+class MenuScreen(
     game: Game
 ): Screen(game) {
 

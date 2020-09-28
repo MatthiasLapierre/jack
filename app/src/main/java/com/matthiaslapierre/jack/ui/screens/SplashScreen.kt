@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.jack.R
-import com.matthiaslapierre.jack.ui.screens.jumper.MenuScene
+import com.matthiaslapierre.jack.ui.screens.jumper.MenuScreen
 
 class SplashScreen(
     game: Game
@@ -22,7 +22,7 @@ class SplashScreen(
         game.getAudio().load()
         game.getTypefaces().load()
         game.getGameResources().load()
-        game.setScreen(MenuScene(game))
+        game.setScreen(MenuScreen(game))
     }
 
     override fun paint(canvas: Canvas, globalPaint: Paint) {
