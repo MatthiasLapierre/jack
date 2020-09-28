@@ -9,8 +9,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.matthiaslapierre.framework.files.FileIO
 import com.matthiaslapierre.framework.files.android.AndroidFileIO
-import com.matthiaslapierre.framework.input.Input
-import com.matthiaslapierre.framework.input.android.AndroidInput
 import com.matthiaslapierre.framework.resources.GameResources
 import com.matthiaslapierre.framework.resources.Typefaces
 import com.matthiaslapierre.framework.resources.impl.AndroidGameResources
@@ -26,7 +24,6 @@ abstract class GameActivity : AppCompatActivity(), Game {
     private lateinit var mAudio: Audio
     private lateinit var mGameResources: GameResources
     private lateinit var mTypefaces: Typefaces
-    private lateinit var mInput: Input
     private lateinit var mFileIO: FileIO
     private lateinit var mScreen: Screen
 
@@ -51,7 +48,6 @@ abstract class GameActivity : AppCompatActivity(), Game {
         mAudio = AndroidAudio(this)
         mGameResources = AndroidGameResources()
         mTypefaces = AndroidTypefaces()
-        mInput = AndroidInput(mGameView)
         setContentView(mGameView)
     }
 
@@ -81,8 +77,6 @@ abstract class GameActivity : AppCompatActivity(), Game {
     override fun getGameResources(): GameResources = mGameResources
 
     override fun getTypefaces(): Typefaces = mTypefaces
-
-    override fun getInput(): Input = mInput
 
     override fun getFileIO(): FileIO = mFileIO
 

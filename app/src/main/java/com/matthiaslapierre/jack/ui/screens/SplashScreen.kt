@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
@@ -40,6 +41,10 @@ class SplashScreen(
     }
 
     override fun dispose() {
+
+    }
+
+    override fun onTouch(event: MotionEvent) {
 
     }
 

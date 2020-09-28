@@ -3,15 +3,17 @@ package com.matthiaslapierre.framework.ui.android
 import android.content.Context
 import android.graphics.*
 import android.util.Log
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.View
 import com.matthiaslapierre.framework.FrameworkConstants
 import com.matthiaslapierre.framework.ui.Game
 
 class GameView(
     context: Context,
     private var game: Game
-) : SurfaceView(context), Runnable, SurfaceHolder.Callback {
+) : SurfaceView(context), Runnable, SurfaceHolder.Callback, View.OnTouchListener {
 
     companion object {
         private const val TAG = "GameView"
@@ -29,6 +31,7 @@ class GameView(
         setZOrderOnTop(true)
         holder.addCallback(this)
         holder.setFormat(PixelFormat.TRANSLUCENT)
+        setOnTouchListener(this)
         isFocusable = true // make sure we get key events
     }
 
@@ -80,6 +83,13 @@ class GameView(
 
     override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
        mIsRunning = hasWindowFocus
+    }
+
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        event?.let {
+            game.getCurrentScreen().onTouch(event)
+        }
+        return true
     }
 
     fun resume() {

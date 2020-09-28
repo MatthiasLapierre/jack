@@ -3,6 +3,7 @@ package com.matthiaslapierre.jack.ui.screens.jumper
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.view.MotionEvent
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
@@ -39,18 +40,32 @@ class MenuScene(
     private var moreGamesBtnImage: Image? = null
     private var scoreBtnImage: Image? = null
 
+    private var soundBtnIsPressed: Boolean = false
+    private var musicBtnIsPressed: Boolean = false
+    private var facebookBtnIsPressed: Boolean = false
+    private var twitterBtnIsPressed: Boolean = false
+    private var playBtnIsPressed: Boolean = false
+    private var moreGamesBtnIsPressed: Boolean = false
+    private var scoreGamesBtnIsPressed: Boolean = false
+
     override fun update() {
         val resourceManager = (game.getGameResources() as ResourceManager)
-
-        soundBtnImage = resourceManager.btnSound
-        musicBtnImage = resourceManager.btnMusic
-        facebookBtnImage = resourceManager.btnFacebook
-        twitterBtnImage = resourceManager.btnTwitter
         bgImage = resourceManager.bgJump
         logoImage = resourceManager.logoJumperJack
-        playBtnImage = resourceManager.btnPlay
-        moreGamesBtnImage = resourceManager.btnMoreGames
-        scoreBtnImage = resourceManager.btnScores
+        soundBtnImage = if(soundBtnIsPressed) resourceManager.btnSoundPressed else
+            resourceManager.btnSound
+        musicBtnImage = if(musicBtnIsPressed) resourceManager.btnMusicPressed else
+            resourceManager.btnMusic
+        facebookBtnImage = if(facebookBtnIsPressed) resourceManager.btnFacebookPressed else
+            resourceManager.btnFacebook
+        twitterBtnImage = if(twitterBtnIsPressed) resourceManager.btnTwitterPressed else
+            resourceManager.btnTwitter
+        playBtnImage = if(playBtnIsPressed) resourceManager.btnPlayPressed else
+            resourceManager.btnPlay
+        moreGamesBtnImage = if(moreGamesBtnIsPressed) resourceManager.btnMoreGamesPressed else
+            resourceManager.btnMoreGames
+        scoreBtnImage = if(scoreGamesBtnIsPressed) resourceManager.btnScoresPressed else
+            resourceManager.btnScores
     }
 
     override fun paint(canvas: Canvas, globalPaint: Paint) {
@@ -71,6 +86,31 @@ class MenuScene(
 
     override fun dispose() {
 
+    }
+
+    override fun onTouch(event: MotionEvent) {
+        val touchX = event.x.toInt()
+        val touchY = event.y.toInt()
+        when(event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                soundBtnIsPressed = btnIsPressed(soundBtnDstRect, touchX, touchY)
+                musicBtnIsPressed = btnIsPressed(musicBtnDstRect, touchX, touchY)
+                facebookBtnIsPressed = btnIsPressed(facebookBtnDstRect, touchX, touchY)
+                twitterBtnIsPressed = btnIsPressed(twitterBtnDstRect, touchX, touchY)
+                playBtnIsPressed = btnIsPressed(playBtnDstRect, touchX, touchY)
+                moreGamesBtnIsPressed = btnIsPressed(moreGamesBtnDstRect, touchX, touchY)
+                scoreGamesBtnIsPressed = btnIsPressed(scoreBtnDstRect, touchX, touchY)
+            }
+            MotionEvent.ACTION_UP -> {
+                soundBtnIsPressed = false
+                musicBtnIsPressed = false
+                facebookBtnIsPressed = false
+                twitterBtnIsPressed = false
+                playBtnIsPressed = false
+                moreGamesBtnIsPressed = false
+                scoreGamesBtnIsPressed = false
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -266,5 +306,8 @@ class MenuScene(
             globalPaint
         )
     }
+
+    private fun btnIsPressed(rect: Rect?, touchX: Int, touchY: Int): Boolean =
+            rect != null && rect.contains(touchX, touchY)
 
 }

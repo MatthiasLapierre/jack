@@ -2,6 +2,7 @@ package com.matthiaslapierre.framework.ui
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.view.MotionEvent
 
 abstract class Screen(
     protected val game: Game
@@ -11,5 +12,6 @@ abstract class Screen(
     abstract fun pause()
     abstract fun resume()
     abstract fun dispose()
+    abstract fun onTouch(event: MotionEvent)
     abstract fun onBackPressed()
 }
