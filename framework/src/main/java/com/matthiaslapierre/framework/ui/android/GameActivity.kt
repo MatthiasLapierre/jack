@@ -1,8 +1,5 @@
 package com.matthiaslapierre.framework.ui.android
 
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -21,13 +18,11 @@ import com.matthiaslapierre.framework.resources.impl.AndroidTypefaces
 import com.matthiaslapierre.framework.sounds.Audio
 import com.matthiaslapierre.framework.sounds.android.AndroidAudio
 import com.matthiaslapierre.framework.ui.Game
-import com.matthiaslapierre.framework.ui.Graphics
 import com.matthiaslapierre.framework.ui.Screen
 
 abstract class GameActivity : AppCompatActivity(), Game {
 
     private lateinit var mGameView: GameView
-    private lateinit var mGraphics: Graphics
     private lateinit var mAudio: Audio
     private lateinit var mGameResources: GameResources
     private lateinit var mTypefaces: Typefaces
@@ -50,16 +45,8 @@ abstract class GameActivity : AppCompatActivity(), Game {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        val frameBufferWidth = Resources.getSystem().displayMetrics.widthPixels
-        val frameBufferHeight = Resources.getSystem().displayMetrics.heightPixels
-        val frameBuffer = Bitmap.createBitmap(
-            frameBufferWidth,
-            frameBufferHeight, Bitmap.Config.RGB_565
-        )
-
         mScreen = getInitScreen()
-        mGameView = GameView(applicationContext, this, frameBuffer)
-        mGraphics = AndroidGraphics(assets, frameBuffer)
+        mGameView = GameView(applicationContext, this)
         mFileIO = AndroidFileIO(this)
         mAudio = AndroidAudio(this)
         mGameResources = AndroidGameResources()
@@ -95,8 +82,6 @@ abstract class GameActivity : AppCompatActivity(), Game {
 
     override fun getFileIO(): FileIO = mFileIO
 
-    override fun getGraphics(): Graphics = mGraphics
-
     override fun getCurrentScreen(): Screen = mScreen
 
     override fun getInitScreen(): Screen = mScreen
@@ -104,7 +89,6 @@ abstract class GameActivity : AppCompatActivity(), Game {
     override fun setScreen(screen: Screen) {
         this.mScreen.pause()
         this.mScreen.dispose()
-        mGraphics.clearScreen(Color.BLACK)
         screen.resume()
         screen.update()
         this.mScreen = screen

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.BitmapFactory
 import com.matthiaslapierre.framework.resources.Image
-import com.matthiaslapierre.framework.ui.Graphics
 import com.matthiaslapierre.framework.ui.android.AndroidImage
 import com.matthiaslapierre.jack.core.ResourceManager
 
@@ -48,7 +47,7 @@ class JackResourceManager(
                 BitmapFactory.Options()
             )
         }
-        return AndroidImage(bitmap!!, Graphics.ImageFormat.ARGB8888)
+        return AndroidImage(bitmap!!)
     }
 
 }

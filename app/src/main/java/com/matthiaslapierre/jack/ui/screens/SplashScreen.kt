@@ -1,31 +1,20 @@
 package com.matthiaslapierre.jack.ui.screens
 
 import android.content.Context
-import android.graphics.Color
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import androidx.core.content.ContextCompat
 import com.matthiaslapierre.framework.ui.Game
-import com.matthiaslapierre.framework.ui.Graphics
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.jack.R
-import com.matthiaslapierre.jack.core.ResourceManager
 import com.matthiaslapierre.jack.ui.screens.jumper.MenuScene
-import com.matthiaslapierre.jack.utils.Utils
 
 class SplashScreen(
     game: Game
 ) : Screen(game) {
 
     private var mDrawnOnce = false
-
-    private val loadingTextPaint: Paint by lazy {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.textAlign = Paint.Align.CENTER
-        paint.textSize = Utils.getDimenInPx(game as Context, R.dimen.loadingTextSize)
-        paint.color = Color.WHITE
-        paint
-    }
 
     override fun update() {
         if(!mDrawnOnce) return
@@ -35,10 +24,9 @@ class SplashScreen(
         game.setScreen(MenuScene(game))
     }
 
-    override fun paint() {
-        val graphics = game.getGraphics()
+    override fun paint(canvas: Canvas, globalPaint: Paint) {
         val context = game as Context
-        drawBackground(context, graphics)
+        drawBackground(context, canvas)
         //drawLoadingText(context, graphics)
         mDrawnOnce = true
     }
@@ -59,24 +47,20 @@ class SplashScreen(
 
     }
 
-    private fun drawBackground(context: Context, graphics: Graphics) {
+    private fun drawBackground(context: Context, canvas: Canvas) {
         val bgLoadingDrawable = ContextCompat.getDrawable(context, R.drawable.bg_jump)!!
-        val screenWidth = graphics.getWidth()
-        val screenHeight = graphics.getHeight()
+        val screenWidth = canvas.width
+        val screenHeight = canvas.height
         val originalHeight = bgLoadingDrawable.intrinsicHeight
         val scale = screenWidth / bgLoadingDrawable.intrinsicWidth.toFloat()
         val finalHeight = (originalHeight * scale).toInt()
-        bgLoadingDrawable.bounds = Rect(0, screenHeight - finalHeight, graphics.getWidth(), graphics.getHeight())
-        bgLoadingDrawable.draw(graphics.getCanvas())
-    }
-
-    private fun drawLoadingText(context: Context, graphics: Graphics) {
-        val strLoadingText = context.resources.getString(R.string.loading_game)
-        val textBounds = Rect()
-        loadingTextPaint.getTextBounds(strLoadingText, 0, strLoadingText.length, textBounds)
-        val x = (graphics.getWidth() / 2f).toInt()
-        val y = (graphics.getHeight() / 2f - textBounds.height() / 2f).toInt()
-        graphics.drawString(strLoadingText, x, y, loadingTextPaint)
+        bgLoadingDrawable.bounds = Rect(
+            0,
+            screenHeight - finalHeight,
+            screenWidth,
+            screenHeight
+        )
+        bgLoadingDrawable.draw(canvas)
     }
 
 }

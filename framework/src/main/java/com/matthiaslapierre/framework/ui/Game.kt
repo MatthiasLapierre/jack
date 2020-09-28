@@ -12,7 +12,6 @@ interface Game {
     fun getTypefaces(): Typefaces
     fun getInput(): Input
     fun getFileIO(): FileIO
-    fun getGraphics(): Graphics
     fun getCurrentScreen(): Screen
     fun getInitScreen(): Screen
     fun setScreen(screen: Screen)

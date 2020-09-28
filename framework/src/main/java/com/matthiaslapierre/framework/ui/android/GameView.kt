@@ -1,9 +1,7 @@
 package com.matthiaslapierre.framework.ui.android
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.PixelFormat
-import android.graphics.Rect
+import android.graphics.*
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -12,14 +10,17 @@ import com.matthiaslapierre.framework.ui.Game
 
 class GameView(
     context: Context,
-    private var game: Game,
-    private var frameBuffer: Bitmap
+    private var game: Game
 ) : SurfaceView(context), Runnable, SurfaceHolder.Callback {
 
     companion object {
         private const val TAG = "GameView"
     }
 
+    private val mGlobalPaint: Paint by lazy {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint
+    }
     private var mRenderThread: Thread? = null
     private var mIsRunning: Boolean = true
 
@@ -38,13 +39,12 @@ class GameView(
             val startTime = System.currentTimeMillis()
 
             game.getCurrentScreen().update()
-            game.getCurrentScreen().paint()
 
             val canvas = holder.lockCanvas()
             try {
-                val dstRect = Rect()
-                canvas.getClipBounds(dstRect)
-                canvas.drawBitmap(frameBuffer, null, dstRect, null)
+                cleanCanvas(canvas)
+
+                game.getCurrentScreen().paint(canvas, mGlobalPaint)
             } finally {
                 holder.unlockCanvasAndPost(canvas)
             }
@@ -104,6 +104,13 @@ class GameView(
             Log.e(TAG, "Failed to interrupt the drawing thread")
         }
         mRenderThread = null
+    }
+
+    /**
+     * Cleans the canvas. Pixels are cleared to 0.
+     */
+    private fun cleanCanvas(canvas: Canvas) {
+        canvas.drawColor(0x00000000, PorterDuff.Mode.CLEAR)
     }
 
 }

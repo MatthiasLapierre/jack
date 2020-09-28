@@ -1,5 +1,6 @@
 package com.matthiaslapierre.jack.ui.screens.jumper
 
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import com.matthiaslapierre.framework.ui.Game
@@ -14,14 +15,33 @@ class MenuScene(
 
     }
 
-    override fun paint() {
-        val resourceManager = (game.getGameResources() as ResourceManager)
-        val graphics = game.getGraphics()
-        val bgImage = resourceManager.bgJump!!
-        val canvas = game.getGraphics().getCanvas()
+    override fun paint(canvas: Canvas, globalPaint: Paint) {
+        drawBackground(canvas)
 
-        val screenWidth = graphics.getWidth()
-        val screenHeight = graphics.getHeight()
+    }
+
+    override fun pause() {
+
+    }
+
+    override fun resume() {
+
+    }
+
+    override fun dispose() {
+
+    }
+
+    override fun onBackPressed() {
+
+    }
+
+    private fun drawBackground(canvas: Canvas) {
+        val resourceManager = (game.getGameResources() as ResourceManager)
+        val bgImage = resourceManager.bgJump!!
+
+        val screenWidth = canvas.width
+        val screenHeight = canvas.height
         val originalWidth = bgImage.width
         val originalHeight = bgImage.height
         val scale = screenWidth / bgImage.width.toFloat()
@@ -44,22 +64,6 @@ class MenuScene(
             ),
             Paint()
         )
-    }
-
-    override fun pause() {
-
-    }
-
-    override fun resume() {
-
-    }
-
-    override fun dispose() {
-
-    }
-
-    override fun onBackPressed() {
-
     }
 
 }
