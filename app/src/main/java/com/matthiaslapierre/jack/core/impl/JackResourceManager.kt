@@ -15,8 +15,8 @@ class JackResourceManager(
 
     override var logoJumperJack: Image? = null
     override var bgJump: Image? = null
-    override var btnSoundEnabled: Image? = null
-    override var btnMusicEnabled: Image? = null
+    override var btnSound: Image? = null
+    override var btnMusic: Image? = null
     override var btnFacebook: Image? = null
     override var btnTwitter: Image? = null
     override var btnPlay: Image? = null
@@ -28,8 +28,8 @@ class JackResourceManager(
     override fun load() {
         logoJumperJack = loadImage("images/ui/logos/jumper_jack.png")
         bgJump = loadImage("images/bg/jump/bg.png")
-        btnSoundEnabled = loadImage("images/ui/buttons/btn_sound_normal.png")
-        btnMusicEnabled = loadImage("images/ui/buttons/btn_music_normal.png")
+        btnSound = loadImage("images/ui/buttons/btn_sound_normal.png")
+        btnMusic = loadImage("images/ui/buttons/btn_music_normal.png")
         btnFacebook = loadImage("images/ui/buttons/btn_facebook_normal.png")
         btnTwitter = loadImage("images/ui/buttons/btn_twitter_normal.png")
         btnPlay = loadImage("images/ui/buttons/btn_play_normal.png")

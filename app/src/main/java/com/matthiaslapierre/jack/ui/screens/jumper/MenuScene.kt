@@ -20,11 +20,19 @@ class MenuScene(
     }
 
     private var topDstRect: Rect? = null
+    private var soundBtnDstRect: Rect? = null
+    private var musicBtnDstRect: Rect? = null
+    private var facebookBtnDstRect: Rect? = null
+    private var twitterBtnDstRect: Rect? = null
     private var logoDstRect: Rect? = null
     private var playBtnDstRect: Rect? = null
     private var moreGamesBtnDstRect: Rect? = null
     private var scoreBtnDstRect: Rect? = null
 
+    private var soundBtnImage: Image? = null
+    private var musicBtnImage: Image? = null
+    private var facebookBtnImage: Image? = null
+    private var twitterBtnImage: Image? = null
     private var bgImage: Image? = null
     private var logoImage: Image? = null
     private var playBtnImage: Image? = null
@@ -34,6 +42,10 @@ class MenuScene(
     override fun update() {
         val resourceManager = (game.getGameResources() as ResourceManager)
 
+        soundBtnImage = resourceManager.btnSound
+        musicBtnImage = resourceManager.btnMusic
+        facebookBtnImage = resourceManager.btnFacebook
+        twitterBtnImage = resourceManager.btnTwitter
         bgImage = resourceManager.bgJump
         logoImage = resourceManager.logoJumperJack
         playBtnImage = resourceManager.btnPlay
@@ -45,6 +57,7 @@ class MenuScene(
         computeDrawingRects(canvas.width, canvas.height)
         drawBackground(canvas, globalPaint)
         drawLogo(canvas, globalPaint)
+        drawTopBar(canvas, globalPaint)
         drawBtns(canvas, globalPaint)
     }
 
@@ -65,17 +78,54 @@ class MenuScene(
     }
 
     private fun computeDrawingRects(screenWidth: Int, screenHeight: Int) {
-        var x: Int
-        var y: Int = (screenWidth * TERNARY_BTN_RATIO).toInt()
+        var x = 0
+        var y = 0
 
         val titleWidth = (screenWidth * LOGO_RATIO).toInt()
         val titleHeight = (titleWidth * logoImage!!.height / logoImage!!.width.toFloat()).toInt()
 
-        val primaryBtnSize = (screenWidth * PRIMARY_BTN_RATIO).toInt()
-        val secondaryBtnSize = (screenWidth * SECONDARY_BTN_RATIO).toInt()
-        val btnContainerHeight = primaryBtnSize + secondaryBtnSize
+        val primaryBtnWidth = (screenWidth * PRIMARY_BTN_RATIO).toInt()
+        val primaryBtnHeight = (primaryBtnWidth * playBtnImage!!.height / playBtnImage!!.width.toFloat()).toInt()
+        val secondaryBtnWidth = (screenWidth * SECONDARY_BTN_RATIO).toInt()
+        val secondaryBtnHeight = (screenWidth * SECONDARY_BTN_RATIO * scoreBtnImage!!.height / scoreBtnImage!!.width.toFloat()).toInt()
+        val ternaryBtnWidth = (screenWidth * TERNARY_BTN_RATIO).toInt()
+        val ternaryBtnHeight = ternaryBtnWidth * soundBtnImage!!.height / soundBtnImage!!.width
+        val ternaryBtnSpace = (ternaryBtnWidth * .1f).toInt()
+        val btnContainerHeight = primaryBtnHeight + secondaryBtnHeight
+        val space = ((screenHeight - ternaryBtnHeight - titleHeight - btnContainerHeight) / 3f).toInt()
 
-        val space = ((screenHeight - y - titleHeight - btnContainerHeight) / 2f).toInt()
+        soundBtnDstRect = Rect(
+            x + ternaryBtnSpace,
+            y + ternaryBtnSpace,
+            x + ternaryBtnWidth - ternaryBtnSpace,
+            ternaryBtnHeight - ternaryBtnSpace
+        )
+
+        x += ternaryBtnWidth
+        musicBtnDstRect = Rect(
+            x + ternaryBtnSpace,
+            y + ternaryBtnSpace,
+            x + ternaryBtnWidth - ternaryBtnSpace,
+            ternaryBtnHeight - ternaryBtnSpace
+        )
+
+        x = screenWidth - (ternaryBtnWidth * 2)
+        facebookBtnDstRect = Rect(
+            x + ternaryBtnSpace,
+            y + ternaryBtnSpace,
+            x + ternaryBtnWidth - ternaryBtnSpace,
+            ternaryBtnHeight - ternaryBtnSpace
+        )
+
+        x += ternaryBtnWidth
+        twitterBtnDstRect = Rect(
+            x + ternaryBtnSpace,
+            y + ternaryBtnSpace,
+            x + ternaryBtnWidth - ternaryBtnSpace,
+            ternaryBtnHeight - ternaryBtnSpace
+        )
+
+        y = ternaryBtnHeight + space
 
         topDstRect = Rect(0, 0, screenWidth, y)
 
@@ -87,31 +137,31 @@ class MenuScene(
             y + titleHeight
         )
 
-        x = ((screenWidth - primaryBtnSize) / 2f).toInt()
+        x = ((screenWidth - primaryBtnWidth) / 2f).toInt()
         y += titleHeight + space
         playBtnDstRect = Rect(
             x,
             y,
-            x + primaryBtnSize,
-            y + primaryBtnSize
+            x + primaryBtnWidth,
+            y + primaryBtnHeight
         )
 
-        y += primaryBtnSize
+        y += primaryBtnHeight
 
-        x = ((screenWidth - ( 3 * secondaryBtnSize)) / 2f).toInt()
+        x = ((screenWidth - ( 3 * secondaryBtnWidth)) / 2f).toInt()
         moreGamesBtnDstRect = Rect(
             x,
             y,
-            x + secondaryBtnSize,
-            y + secondaryBtnSize
+            x + secondaryBtnWidth,
+            y + secondaryBtnHeight
         )
 
-        x = ((screenWidth + (secondaryBtnSize)) / 2f).toInt()
+        x = ((screenWidth + (secondaryBtnWidth)) / 2f).toInt()
         scoreBtnDstRect = Rect(
             x,
             y,
-            x + secondaryBtnSize,
-            y + secondaryBtnSize
+            x + secondaryBtnWidth,
+            y + secondaryBtnHeight
         )
     }
 
@@ -141,10 +191,31 @@ class MenuScene(
         )
     }
 
-    private fun drawTopBar(
-        canvas: Canvas,
-        globalPaint: Paint) {
-
+    private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {
+        drawImage(
+            canvas,
+            globalPaint,
+            soundBtnImage!!,
+            soundBtnDstRect!!
+        )
+        drawImage(
+            canvas,
+            globalPaint,
+            musicBtnImage!!,
+            musicBtnDstRect!!
+        )
+        drawImage(
+            canvas,
+            globalPaint,
+            facebookBtnImage!!,
+            facebookBtnDstRect!!
+        )
+        drawImage(
+            canvas,
+            globalPaint,
+            twitterBtnImage!!,
+            twitterBtnDstRect!!
+        )
     }
 
     private fun drawLogo(canvas: Canvas, globalPaint: Paint) {

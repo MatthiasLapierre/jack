@@ -7,8 +7,8 @@ interface ResourceManager: GameResources {
 
     var logoJumperJack: Image?
     var bgJump: Image?
-    var btnSoundEnabled: Image?
-    var btnMusicEnabled: Image?
+    var btnSound: Image?
+    var btnMusic: Image?
     var btnFacebook: Image?
     var btnTwitter: Image?
     var btnPlay: Image?
