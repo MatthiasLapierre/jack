@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jack.ui.screens.jumper
+package com.matthiaslapierre.jack.ui.screens.jumper.game
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -7,7 +7,9 @@ import android.view.MotionEvent
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
+import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.core.ResourceManager
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.*
 import com.matthiaslapierre.jack.utils.Utils
 
 class GameScreen(
@@ -25,12 +27,15 @@ class GameScreen(
     private var candyIndicatorImage: Image? = null
     private var pauseBtnImage: Image? = null
 
+    private var workSprites: MutableList<Sprite> = mutableListOf()
+
+    private var score: Int = 0
+    private var currentStatus: Sprite.Status = Sprite.Status.STATUS_NOT_STARTED
+
     private var screenWidth: Int = 0
     private var screenHeight: Int = 0
 
     private var pauseBtnIsPressed: Boolean = false
-
-    private var score: Int = 0
 
     override fun update() {
         val resourceManager = getResourceManager()
@@ -38,11 +43,13 @@ class GameScreen(
         candyIndicatorImage = resourceManager.candyIndicator
         pauseBtnImage = if(pauseBtnIsPressed) resourceManager.btnPausePressed else
             resourceManager.btnPause
+        updateSprites()
     }
 
     override fun paint(canvas: Canvas, globalPaint: Paint) {
         screenWidth = canvas.width
         screenHeight = canvas.height
+        drawSprites(canvas, globalPaint)
         drawTopBar(canvas, globalPaint)
     }
 
@@ -75,10 +82,42 @@ class GameScreen(
 
     }
 
+    private fun updateSprites() {
+        if(workSprites.size == 0) {
+            setBackground()
+        }
+    }
+
+    private fun setBackground() {
+        val resourceManager = getResourceManager()
+        workSprites.add(Hills5BgSprite(resourceManager))
+        workSprites.add(Hills4BgSprite(resourceManager))
+        workSprites.add(Hills3BgSprite(resourceManager))
+        workSprites.add(Hills2BgSprite(resourceManager))
+        workSprites.add(Hills1BgSprite(resourceManager))
+        workSprites.add(GraveyardFarBgSprite(resourceManager))
+        workSprites.add(GraveyardTopBgSprite(resourceManager))
+        workSprites.add(GraveyardBottomBgSprite(resourceManager))
+        workSprites.add(GateBgSprite(resourceManager))
+    }
+
     private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {
         drawTopBarBackground(canvas, globalPaint)
         drawCandyIndicator(canvas, globalPaint)
         drawPauseBtn(canvas, globalPaint)
+    }
+
+    private fun drawSprites(canvas: Canvas, globalPaint: Paint) {
+        val iterator: MutableListIterator<Sprite> = workSprites.listIterator()
+        while (iterator.hasNext()) {
+            val sprite = iterator.next()
+            if (sprite.isAlive()) {
+                sprite.onDraw(canvas, globalPaint, currentStatus)
+            } else {
+                iterator.remove()
+                sprite.onDispose()
+            }
+        }
     }
 
     private fun drawTopBarBackground(canvas: Canvas, globalPaint: Paint) {

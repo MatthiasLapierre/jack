@@ -27,5 +27,13 @@ interface ResourceManager: GameResources {
     var bgTop: Image?
     var candyIndicator: Image?
     var digits: Array<Image>?
-
+    var bgGate: Image?
+    var bgGraveyardBottom: Image?
+    var bgGraveyardTop: Image?
+    var bgGraveyardFar: Image?
+    var bgHills1: Image?
+    var bgHills2: Image?
+    var bgHills3: Image?
+    var bgHills4: Image?
+    var bgHills5: Image?
 }

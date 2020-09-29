@@ -8,6 +8,7 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.jack.core.ResourceManager
+import com.matthiaslapierre.jack.ui.screens.jumper.game.GameScreen
 
 class MenuScreen(
     game: Game
@@ -103,7 +104,11 @@ class MenuScreen(
             }
             MotionEvent.ACTION_UP -> {
                 when {
-                    playBtnIsPressed -> game.setScreen(GameScreen(game))
+                    playBtnIsPressed -> game.setScreen(
+                        GameScreen(
+                            game
+                        )
+                    )
                 }
                 soundBtnIsPressed = false
                 musicBtnIsPressed = false
