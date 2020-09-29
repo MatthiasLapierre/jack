@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites
+package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

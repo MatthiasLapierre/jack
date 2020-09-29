@@ -9,7 +9,7 @@ import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.core.ResourceManager
-import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.*
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.*
 import com.matthiaslapierre.jack.utils.Utils
 
 class GameScreen(
@@ -90,15 +90,56 @@ class GameScreen(
 
     private fun setBackground() {
         val resourceManager = getResourceManager()
-        workSprites.add(Hills5BgSprite(resourceManager))
-        workSprites.add(Hills4BgSprite(resourceManager))
-        workSprites.add(Hills3BgSprite(resourceManager))
-        workSprites.add(Hills2BgSprite(resourceManager))
-        workSprites.add(Hills1BgSprite(resourceManager))
-        workSprites.add(GraveyardFarBgSprite(resourceManager))
-        workSprites.add(GraveyardTopBgSprite(resourceManager))
-        workSprites.add(GraveyardBottomBgSprite(resourceManager))
-        workSprites.add(GateBgSprite(resourceManager))
+        workSprites.add(
+            MoonBgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            Hills5BgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            Hills4BgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            Hills3BgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            Hills2BgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            Hills1BgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            GraveyardFarBgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            GraveyardTopBgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            GraveyardBottomBgSprite(
+                resourceManager
+            )
+        )
+        workSprites.add(
+            GateBgSprite(
+                resourceManager
+            )
+        )
     }
 
     private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {

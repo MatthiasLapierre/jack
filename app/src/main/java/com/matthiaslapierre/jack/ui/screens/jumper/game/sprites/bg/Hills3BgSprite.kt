@@ -1,7 +1,8 @@
-package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites
+package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg
 
 import android.graphics.Bitmap
 import com.matthiaslapierre.jack.core.ResourceManager
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.BgSprite
 
 class Hills3BgSprite(
     private val resourceManager: ResourceManager

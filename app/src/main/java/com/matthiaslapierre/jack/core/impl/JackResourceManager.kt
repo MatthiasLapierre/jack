@@ -44,6 +44,7 @@ class JackResourceManager(
     override var bgHills3: Image? = null
     override var bgHills4: Image? = null
     override var bgHills5: Image? = null
+    override var bgMoon: Image? = null
 
     override fun load() {
         logoJumperJack = loadImage("images/ui/logos/jumper_jack.png")
@@ -79,6 +80,7 @@ class JackResourceManager(
         bgHills3 = loadImage("images/bg/jump/layers/7.png")
         bgHills4 = loadImage("images/bg/jump/layers/8.png")
         bgHills5 = loadImage("images/bg/jump/layers/9.png")
+        bgMoon = loadImage("images/bg/jump/layers/10.png")
     }
 
     private fun loadImage(path: String): Image {

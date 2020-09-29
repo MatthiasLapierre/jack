@@ -6,7 +6,7 @@ import com.matthiaslapierre.framework.resources.Image
 interface ResourceManager: GameResources {
 
     var logoJumperJack: Image?
-    var bgJump: Image?
+
     var btnSound: Image?
     var btnSoundPressed: Image?
     var btnMusic: Image?
@@ -24,9 +24,12 @@ interface ResourceManager: GameResources {
     var btnShop: Image?
     var btnScores: Image?
     var btnScoresPressed: Image?
+
     var bgTop: Image?
     var candyIndicator: Image?
     var digits: Array<Image>?
+
+    var bgJump: Image?
     var bgGate: Image?
     var bgGraveyardBottom: Image?
     var bgGraveyardTop: Image?
@@ -36,4 +39,5 @@ interface ResourceManager: GameResources {
     var bgHills3: Image?
     var bgHills4: Image?
     var bgHills5: Image?
+    var bgMoon: Image?
 }
