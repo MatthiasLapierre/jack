@@ -102,6 +102,9 @@ class MenuScreen(
                 scoreGamesBtnIsPressed = btnIsPressed(scoreBtnDstRect, touchX, touchY)
             }
             MotionEvent.ACTION_UP -> {
+                when {
+                    playBtnIsPressed -> game.setScreen(GameScreen(game))
+                }
                 soundBtnIsPressed = false
                 musicBtnIsPressed = false
                 facebookBtnIsPressed = false

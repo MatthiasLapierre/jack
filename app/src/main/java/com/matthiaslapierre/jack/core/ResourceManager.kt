@@ -18,10 +18,14 @@ interface ResourceManager: GameResources {
     var btnPlay: Image?
     var btnPlayPressed: Image?
     var btnPause: Image?
+    var btnPausePressed: Image?
     var btnMoreGames: Image?
     var btnMoreGamesPressed: Image?
     var btnShop: Image?
     var btnScores: Image?
     var btnScoresPressed: Image?
-    
+    var bgTop: Image?
+    var candyIndicator: Image?
+    var digits: Array<Image>?
+
 }

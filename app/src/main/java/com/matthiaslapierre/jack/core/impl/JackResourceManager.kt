@@ -26,11 +26,15 @@ class JackResourceManager(
     override var btnPlay: Image? = null
     override var btnPlayPressed: Image? = null
     override var btnPause: Image? = null
+    override var btnPausePressed: Image? = null
     override var btnMoreGames: Image? = null
     override var btnMoreGamesPressed: Image? = null
     override var btnShop: Image? = null
     override var btnScores: Image? = null
     override var btnScoresPressed: Image? = null
+    override var bgTop: Image? = null
+    override var candyIndicator: Image? = null
+    override var digits: Array<Image>? = null
 
     override fun load() {
         logoJumperJack = loadImage("images/ui/logos/jumper_jack.png")
@@ -46,11 +50,17 @@ class JackResourceManager(
         btnPlay = loadImage("images/ui/buttons/btn_play_normal.png")
         btnPlayPressed = loadImage("images/ui/buttons/btn_play_pressed.png")
         btnPause = loadImage("images/ui/buttons/btn_pause_normal.png")
+        btnPausePressed = loadImage("images/ui/buttons/btn_pause_pressed.png")
         btnMoreGames = loadImage("images/ui/buttons/btn_more_games_normal.png")
         btnMoreGamesPressed = loadImage("images/ui/buttons/btn_more_games_pressed.png")
         btnShop = loadImage("images/ui/buttons/btn_shop_normal.png")
         btnScores = loadImage("images/ui/buttons/btn_scores_normal.png")
         btnScoresPressed = loadImage("images/ui/buttons/btn_scores_pressed.png")
+        bgTop = loadImage("images/ui/scores/bg_top.png")
+        candyIndicator = loadImage("images/ui/scores/indicator_candy.png")
+        digits = (0..9).map { digit ->
+            loadImage("images/ui/numbers/$digit.png")
+        }.toTypedArray()
     }
 
     private fun loadImage(path: String): Image {
