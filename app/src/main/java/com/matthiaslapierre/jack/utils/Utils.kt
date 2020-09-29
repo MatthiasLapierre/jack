@@ -36,7 +36,7 @@ object Utils {
         var width = 0
         var height = 0
         val digitBitmaps = digits.reversedArray().map { digit ->
-            val bitmap = resourceManager.digits!![digit].bitmap
+            val bitmap = resourceManager.digits!![digit]!!.bitmap
             width += bitmap.width
             if(bitmap.height > height) {
                 height = bitmap.height

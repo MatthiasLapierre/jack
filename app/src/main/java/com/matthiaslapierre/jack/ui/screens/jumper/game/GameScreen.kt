@@ -9,7 +9,9 @@ import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.core.ResourceManager
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.player.CannonSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.*
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.text.TapToLaunchSprite
 import com.matthiaslapierre.jack.utils.Utils
 
 class GameScreen(
@@ -85,7 +87,27 @@ class GameScreen(
     private fun updateSprites() {
         if(workSprites.size == 0) {
             setBackground()
+            setPlayer()
+            setTapToLaunch()
         }
+    }
+
+    private fun setPlayer() {
+        val resourceManager = getResourceManager()
+        workSprites.add(
+            CannonSprite(
+                resourceManager
+            )
+        )
+    }
+
+    private fun setTapToLaunch() {
+        val resourceManager = getResourceManager()
+        workSprites.add(
+            TapToLaunchSprite(
+                resourceManager
+            )
+        )
     }
 
     private fun setBackground() {
@@ -195,7 +217,7 @@ class GameScreen(
         val originalScoreHeight = scoreBitmap.height
         val targetScoreHeight = (candyIndicatorRect.height() * .4f).toInt()
         val targetScoreWidth = (targetScoreHeight * originalScoreWidth / originalScoreHeight.toFloat()).toInt()
-        val scoreX = (candyIndicatorRect.right - targetScoreWidth - (candyIndicatorRect.width() * .08f)).toInt()
+        val scoreX = (candyIndicatorRect.left + (candyIndicatorRect.width() * .5f)).toInt()
         val scoreY = (candyIndicatorRect.top + ((candyIndicatorRect.height() - targetScoreHeight) / 2f)
                 + (candyIndicatorRect.height() * .05f)).toInt()
         canvas.drawBitmap(
