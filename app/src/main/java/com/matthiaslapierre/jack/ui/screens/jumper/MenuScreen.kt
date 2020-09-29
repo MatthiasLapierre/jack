@@ -93,7 +93,7 @@ class MenuScreen(
         val touchX = event.x.toInt()
         val touchY = event.y.toInt()
         when(event.action) {
-            MotionEvent.ACTION_DOWN -> {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                 soundBtnIsPressed = btnIsPressed(soundBtnDstRect, touchX, touchY)
                 musicBtnIsPressed = btnIsPressed(musicBtnDstRect, touchX, touchY)
                 facebookBtnIsPressed = btnIsPressed(facebookBtnDstRect, touchX, touchY)

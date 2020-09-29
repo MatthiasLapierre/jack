@@ -69,7 +69,7 @@ class GameScreen(
         val touchX = event.x.toInt()
         val touchY = event.y.toInt()
         when(event.action) {
-            MotionEvent.ACTION_DOWN -> {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                 pauseBtnIsPressed = btnIsPressed(getPauseBtnRect(), touchX, touchY)
             }
             MotionEvent.ACTION_UP -> {
