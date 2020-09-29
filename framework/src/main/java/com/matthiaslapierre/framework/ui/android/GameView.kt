@@ -58,9 +58,11 @@ class GameView(
            phase of the Game Loop be too fast.
             */
             val frameDuration = System.currentTimeMillis() - startTime
+            Log.d(">>>>>>>> ", ">>>>>>>>> frameDuration : $frameDuration")
             val gap = FrameworkConstants.MS_PER_FRAME - frameDuration
             if (gap > 0) {
                 try {
+                    Log.d(">>>>>>>> ", ">>>>>>>>> gap : $gap")
                     Thread.sleep(gap)
                 } catch (e: Exception) {
                     break

@@ -17,6 +17,8 @@ class CannonSprite(
     companion object {
         private const val WIDTH_RATIO = .5f
         private const val BOTTOM_RATIO = .30f
+        private const val IDLE_FRAME_PER_MS = 150
+        private const val LAUNCH_FRAME_PER_MS = 20
     }
 
     private var state: PlayerState = IDLE
@@ -25,9 +27,11 @@ class CannonSprite(
     private var y: Int = UNDEFINED
     private var width: Int = UNDEFINED
     private var height: Int = UNDEFINED
+    private var lastFrameTimestamp: Long = 0L
     private var isAlive = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
+
         val image = resourceManager.player!![state]!![frame]!!
 
         val screenWidth = canvas.width
@@ -56,11 +60,20 @@ class CannonSprite(
             globalPaint
         )
 
-        frame++
-        if (state == IDLE && frame > 3) {
-            frame = 0
-        } else if (state == LAUNCH && frame > 8) {
-            frame = 9
+        val frameDuration = if (state == IDLE) {
+            IDLE_FRAME_PER_MS
+        } else {
+            LAUNCH_FRAME_PER_MS
+        }
+
+        if(System.currentTimeMillis() - lastFrameTimestamp > frameDuration) {
+            frame++
+            if (state == IDLE && frame > 3) {
+                frame = 0
+            } else if (state == LAUNCH && frame > 8) {
+                frame = 9
+            }
+            lastFrameTimestamp = System.currentTimeMillis()
         }
     }
 
