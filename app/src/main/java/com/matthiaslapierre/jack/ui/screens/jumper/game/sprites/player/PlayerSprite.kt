@@ -8,60 +8,51 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.Constants.UNDEFINED
 import com.matthiaslapierre.jack.core.ResourceManager
 import com.matthiaslapierre.jack.core.ResourceManager.PlayerState
-import com.matthiaslapierre.jack.core.ResourceManager.PlayerState.IDLE
-import com.matthiaslapierre.jack.core.ResourceManager.PlayerState.LAUNCH
 import com.matthiaslapierre.jack.ui.screens.jumper.game.GameStates
 
-class CannonSprite(
+class PlayerSprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates,
-    private var cannonInterface: CannonInterface?
+    private val gameStates: GameStates
 ): Sprite {
 
     companion object {
-        private const val WIDTH_RATIO = .5f
-        private const val BOTTOM_RATIO = .30f
-        private const val IDLE_FRAME_PER_MS = 120
-        private const val LAUNCH_FRAME_PER_MS = 20
+        private const val WIDTH_RATIO = .27f
+        private const val BOTTOM_RATIO = .35f
+        private const val HIGHEST_Y_RATIO = 0.6f
+        private const val LOWEST_Y_RATIO = 0.9f
+        private const val FRAME_PER_MS = 120
     }
 
-    private var mState: PlayerState = IDLE
+    private var mState: PlayerState = PlayerState.JUMP
     private var mFrame: Int = 0
     private var mX: Float = UNDEFINED
     private var mY: Float = UNDEFINED
     private var mHighestY: Float = UNDEFINED
+    private var mLowestY: Float = UNDEFINED
     private var mWidth: Float = UNDEFINED
     private var mHeight: Float = UNDEFINED
+    private var mScreenHeight: Float = UNDEFINED
     private var mLastFrameTimestamp: Long = 0L
-    private var mIsAlive: Boolean = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
-        val newState = if(status == Sprite.Status.STATUS_NOT_STARTED) {
-            IDLE
-        } else {
-            LAUNCH
-        }
-        if(mState != newState) {
-            mState = newState
-            mFrame = 0
-        }
         val images = resourceManager.player!![mState]!!
         val image = images[mFrame]!!
 
-        val screenWidth = canvas.width
-        val screenHeight = canvas.height
+        val screenWidth = canvas.width.toFloat()
+        mScreenHeight = canvas.height.toFloat()
         if (mX == UNDEFINED) {
             mWidth = screenWidth * WIDTH_RATIO
-            mHeight = mWidth * image.height / image.width
+            mHeight = mWidth * image.height / image.width.toFloat()
             mX = (screenWidth - mWidth) / 2f
-            mY = screenHeight - (screenHeight * BOTTOM_RATIO) - (mHeight / 2f)
-            mHighestY = mY
+            mY = mScreenHeight - (mScreenHeight * BOTTOM_RATIO) - (mHeight / 2f)
+            mHighestY = (mScreenHeight - mHeight) * HIGHEST_Y_RATIO
+            mLowestY = (mScreenHeight - mHeight) * LOWEST_Y_RATIO
         }
 
-        mIsAlive = mY < screenHeight
-
-        if (status == Sprite.Status.STATUS_PLAY) {
-            mY += gameStates.speed
+        if ((status == Sprite.Status.STATUS_PLAY
+                    && gameStates.playerState == GameStates.PlayerState.LAUNCHED)
+            || status == Sprite.Status.STATUS_GAME_OVER && mY > 0) {
+            mY -= gameStates.speed
             if (mY < mHighestY) {
                 mY = mHighestY
             }
@@ -82,48 +73,36 @@ class CannonSprite(
             globalPaint
         )
 
-        if (mState == LAUNCH && mFrame == 4) {
-            cannonInterface?.onFire()
-        }
-
-        val frameDuration = if (mState == IDLE) {
-            IDLE_FRAME_PER_MS
-        } else {
-            LAUNCH_FRAME_PER_MS
-        }
-
-        if(System.currentTimeMillis() - mLastFrameTimestamp > frameDuration) {
+        if(System.currentTimeMillis() - mLastFrameTimestamp > FRAME_PER_MS) {
             mFrame++
             if (mFrame >= images.size) {
-                mFrame = if(mState == LAUNCH) {
-                    images.size - 1
-                } else {
-                    0
-                }
+                mFrame = 0
             }
             mLastFrameTimestamp = System.currentTimeMillis()
         }
     }
 
-    override fun isAlive(): Boolean = mIsAlive
+    override fun isAlive(): Boolean = true
 
     override fun isHit(sprite: Sprite): Boolean = false
 
     override fun getScore(): Int = 0
 
-    override fun getRectF(): RectF = RectF(
-        mX,
-        mY,
-        mX + mWidth,
-        mY + mHeight
-    )
+    override fun getRectF(): RectF = if (gameStates.playerState == GameStates.PlayerState.READY_TO_LAUNCH) {
+        RectF(0f,0f,0f,0f)
+    } else {
+        RectF(
+            mX,
+            mY,
+            mX + mWidth,
+            mY + mHeight
+        )
+    }
 
     override fun onDispose() {
-        cannonInterface = null
+
     }
 
-    interface CannonInterface {
-        fun onFire()
-    }
+    fun isDead() = mY > mScreenHeight
 
 }

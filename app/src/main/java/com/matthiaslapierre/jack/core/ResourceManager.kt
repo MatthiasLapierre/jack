@@ -58,16 +58,6 @@ interface ResourceManager: GameResources {
     var digits: Array<Image?>?
 
     var bgJump: Image?
-    var bgGate: Image?
-    var bgGraveyardBottom: Image?
-    var bgGraveyardTop: Image?
-    var bgGraveyardFar: Image?
-    var bgHills1: Image?
-    var bgHills2: Image?
-    var bgHills3: Image?
-    var bgHills4: Image?
-    var bgHills5: Image?
-    var bgMoon: Image?
 
     var player: Hashtable<PlayerState, Array<Image?>>?
     var playerMagnet: Hashtable<PlayerState, Array<Image?>>?

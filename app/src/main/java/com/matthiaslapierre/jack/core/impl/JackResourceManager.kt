@@ -41,16 +41,6 @@ class JackResourceManager(
     override var digits: Array<Image?>? = null
 
     override var bgJump: Image? = null
-    override var bgGate: Image? = null
-    override var bgGraveyardBottom: Image? = null
-    override var bgGraveyardTop: Image? = null
-    override var bgGraveyardFar: Image? = null
-    override var bgHills1: Image? = null
-    override var bgHills2: Image? = null
-    override var bgHills3: Image? = null
-    override var bgHills4: Image? = null
-    override var bgHills5: Image? = null
-    override var bgMoon: Image? = null
 
     override var player: Hashtable<PlayerState, Array<Image?>>? = null
     override var playerMagnet: Hashtable<PlayerState, Array<Image?>>? = null
@@ -86,16 +76,6 @@ class JackResourceManager(
         }.toTypedArray()
 
         bgJump = loadImage("images/bg/jump/bg.png")
-        bgGate = loadImage("images/bg/jump/layers/1.png")
-        bgGraveyardBottom = loadImage("images/bg/jump/layers/2.png")
-        bgGraveyardTop = loadImage("images/bg/jump/layers/3.png")
-        bgGraveyardFar = loadImage("images/bg/jump/layers/4.png")
-        bgHills1 = loadImage("images/bg/jump/layers/5.png")
-        bgHills2 = loadImage("images/bg/jump/layers/6.png")
-        bgHills3 = loadImage("images/bg/jump/layers/7.png")
-        bgHills4 = loadImage("images/bg/jump/layers/8.png")
-        bgHills5 = loadImage("images/bg/jump/layers/9.png")
-        bgMoon = loadImage("images/bg/jump/layers/10.png")
 
         player = loadPlayer(Character.JACK, PlayerPowerUp.NORMAL)
         playerArmored = loadPlayer(Character.JACK, PlayerPowerUp.ARMORED)

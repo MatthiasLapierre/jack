@@ -9,14 +9,16 @@ import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.core.ResourceManager
+import com.matthiaslapierre.jack.ui.screens.jumper.MenuScreen
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.player.CannonSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.*
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.player.PlayerSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.text.TapToLaunchSprite
 import com.matthiaslapierre.jack.utils.Utils
 
 class GameScreen(
     game: Game
-): Screen(game) {
+): Screen(game), CannonSprite.CannonInterface {
 
     companion object {
         private const val INDICATOR_RATIO = 0.40f
@@ -25,32 +27,37 @@ class GameScreen(
         private const val TOP_BAR_INSET_Y = .18f
     }
 
-    private var topBgImage: Image? = null
-    private var candyIndicatorImage: Image? = null
-    private var pauseBtnImage: Image? = null
+    private var mTopBgImage: Image? = null
+    private var mCandyIndicatorImage: Image? = null
+    private var mPauseBtnImage: Image? = null
 
-    private var workSprites: MutableList<Sprite> = mutableListOf()
+    private var mWorkSprites: MutableList<Sprite> = mutableListOf()
+    private var mPlayerSprite: PlayerSprite? = null
 
-    private var score: Int = 0
-    private var currentStatus: Sprite.Status = Sprite.Status.STATUS_NOT_STARTED
+    private var mScreenWidth: Float = 0f
+    private var mScreenHeight: Float = 0f
 
-    private var screenWidth: Int = 0
-    private var screenHeight: Int = 0
+    private val mGameState: GameStates = GameStates()
 
-    private var pauseBtnIsPressed: Boolean = false
+    private var mPauseBtnIsPressed: Boolean = false
 
     override fun update() {
         val resourceManager = getResourceManager()
-        topBgImage = resourceManager.bgTop
-        candyIndicatorImage = resourceManager.candyIndicator
-        pauseBtnImage = if(pauseBtnIsPressed) resourceManager.btnPausePressed else
+        mTopBgImage = resourceManager.bgTop
+        mCandyIndicatorImage = resourceManager.candyIndicator
+        mPauseBtnImage = if(mPauseBtnIsPressed) resourceManager.btnPausePressed else
             resourceManager.btnPause
         updateSprites()
+        if(mGameState.currentStatus != Sprite.Status.STATUS_GAME_OVER) {
+            checkCollisions()
+        }
+        mGameState.update()
     }
 
     override fun paint(canvas: Canvas, globalPaint: Paint) {
-        screenWidth = canvas.width
-        screenHeight = canvas.height
+        mScreenWidth = canvas.width.toFloat()
+        mScreenHeight = canvas.height.toFloat()
+        mGameState.setScreenSize(mScreenWidth, mScreenHeight)
         drawSprites(canvas, globalPaint)
         drawTopBar(canvas, globalPaint)
     }
@@ -72,96 +79,59 @@ class GameScreen(
         val touchY = event.y.toInt()
         when(event.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                pauseBtnIsPressed = btnIsPressed(getPauseBtnRect(), touchX, touchY)
+                mPauseBtnIsPressed = btnIsPressed(getPauseBtnRect(), touchX, touchY)
             }
             MotionEvent.ACTION_UP -> {
-                pauseBtnIsPressed = false
+                mPauseBtnIsPressed = false
+                if (touchY > getPauseBtnRect().bottom
+                    && mGameState.currentStatus == Sprite.Status.STATUS_NOT_STARTED) {
+                    startGame()
+                }
             }
         }
     }
 
     override fun onBackPressed() {
+        if(mGameState.currentStatus != Sprite.Status.STATUS_PLAY) {
+            game.setScreen(MenuScreen(game))
+        }
+    }
 
+    override fun onFire() {
+        mGameState.launch()
+    }
+
+    private fun startGame() {
+        mGameState.currentStatus = Sprite.Status.STATUS_PLAY
+    }
+
+    private fun setGameOver() {
+        mGameState.currentStatus = Sprite.Status.STATUS_GAME_OVER
     }
 
     private fun updateSprites() {
-        if(workSprites.size == 0) {
+        if(mWorkSprites.size == 0) {
+            val resourceManager = getResourceManager()
+            mPlayerSprite = PlayerSprite(resourceManager, mGameState)
             setBackground()
-            setPlayer()
+            mWorkSprites.add(mPlayerSprite!!)
+            mWorkSprites.add(CannonSprite(resourceManager, mGameState, this@GameScreen))
             setTapToLaunch()
         }
     }
 
-    private fun setPlayer() {
-        val resourceManager = getResourceManager()
-        workSprites.add(
-            CannonSprite(
-                resourceManager
-            )
-        )
+    private fun checkCollisions() {
+        if (mPlayerSprite!!.isDead()) {
+            setGameOver()
+        }
     }
 
     private fun setTapToLaunch() {
-        val resourceManager = getResourceManager()
-        workSprites.add(
-            TapToLaunchSprite(
-                resourceManager
-            )
-        )
+        mWorkSprites.add(TapToLaunchSprite(getResourceManager()))
     }
 
     private fun setBackground() {
-        val resourceManager = getResourceManager()
-        workSprites.add(
-            MoonBgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            Hills5BgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            Hills4BgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            Hills3BgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            Hills2BgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            Hills1BgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            GraveyardFarBgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            GraveyardTopBgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            GraveyardBottomBgSprite(
-                resourceManager
-            )
-        )
-        workSprites.add(
-            GateBgSprite(
-                resourceManager
-            )
-        )
+        mWorkSprites.add(BgSprite(getResourceManager(), mGameState))
     }
 
     private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {
@@ -171,11 +141,11 @@ class GameScreen(
     }
 
     private fun drawSprites(canvas: Canvas, globalPaint: Paint) {
-        val iterator: MutableListIterator<Sprite> = workSprites.listIterator()
+        val iterator: MutableListIterator<Sprite> = mWorkSprites.listIterator()
         while (iterator.hasNext()) {
             val sprite = iterator.next()
             if (sprite.isAlive()) {
-                sprite.onDraw(canvas, globalPaint, currentStatus)
+                sprite.onDraw(canvas, globalPaint, mGameState.currentStatus)
             } else {
                 iterator.remove()
                 sprite.onDispose()
@@ -185,12 +155,12 @@ class GameScreen(
 
     private fun drawTopBarBackground(canvas: Canvas, globalPaint: Paint) {
         canvas.drawBitmap(
-            topBgImage!!.bitmap,
+            mTopBgImage!!.bitmap,
             Rect(
                 0,
                 0,
-                topBgImage!!.width,
-                topBgImage!!.height
+                mTopBgImage!!.width,
+                mTopBgImage!!.height
             ),
             getTopBarBackgroundRect(),
             globalPaint
@@ -201,18 +171,18 @@ class GameScreen(
         val candyIndicatorRect = getCandyIndicatorRect()
 
         canvas.drawBitmap(
-            candyIndicatorImage!!.bitmap,
+            mCandyIndicatorImage!!.bitmap,
             Rect(
                 0,
                 0,
-                candyIndicatorImage!!.width,
-                candyIndicatorImage!!.height
+                mCandyIndicatorImage!!.width,
+                mCandyIndicatorImage!!.height
             ),
             candyIndicatorRect,
             globalPaint
         )
 
-        val scoreBitmap = Utils.generateScoreBitmap(score, getResourceManager())
+        val scoreBitmap = Utils.generateScoreBitmap(mGameState.candiesCollected, getResourceManager())
         val originalScoreWidth = scoreBitmap.width
         val originalScoreHeight = scoreBitmap.height
         val targetScoreHeight = (candyIndicatorRect.height() * .4f).toInt()
@@ -231,12 +201,12 @@ class GameScreen(
 
     private fun drawPauseBtn(canvas: Canvas, globalPaint: Paint) {
         canvas.drawBitmap(
-            pauseBtnImage!!.bitmap,
+            mPauseBtnImage!!.bitmap,
             Rect(
                 0,
                 0,
-                pauseBtnImage!!.width,
-                pauseBtnImage!!.height
+                mPauseBtnImage!!.width,
+                mPauseBtnImage!!.height
             ),
             getPauseBtnRect(),
             globalPaint
@@ -244,21 +214,21 @@ class GameScreen(
     }
 
     private fun getTopBarBackgroundRect(): Rect {
-        val originalWidth = topBgImage!!.width
-        val originalHeight = topBgImage!!.height
-        val barHeight = screenWidth * originalHeight / originalWidth
+        val originalWidth = mTopBgImage!!.width
+        val originalHeight = mTopBgImage!!.height
+        val barHeight = mScreenWidth * originalHeight / originalWidth
         return Rect(
             0,
             0,
-            screenWidth,
-            barHeight
+            mScreenWidth.toInt(),
+            barHeight.toInt()
         )
     }
 
     private fun getCandyIndicatorRect(): Rect {
-        val fromWidth = candyIndicatorImage!!.width
-        val fromHeight = candyIndicatorImage!!.height
-        val toWidth = (screenWidth * INDICATOR_RATIO).toInt()
+        val fromWidth = mCandyIndicatorImage!!.width
+        val fromHeight = mCandyIndicatorImage!!.height
+        val toWidth = (mScreenWidth * INDICATOR_RATIO).toInt()
         val toHeight = (toWidth * fromHeight / fromWidth.toFloat()).toInt()
         val xOutset = (toHeight * TOP_BAR_INSET_X).toInt()
         val yOutset = (toHeight * TOP_BAR_INSET_Y).toInt()
@@ -271,16 +241,16 @@ class GameScreen(
     }
 
     private fun getPauseBtnRect(): Rect {
-        val fromWidth = pauseBtnImage!!.width
-        val fromHeight = pauseBtnImage!!.height
-        val toWidth =  (screenWidth * TERNARY_BTN_RATIO).toInt()
+        val fromWidth = mPauseBtnImage!!.width
+        val fromHeight = mPauseBtnImage!!.height
+        val toWidth =  (mScreenWidth * TERNARY_BTN_RATIO).toInt()
         val toHeight = (toWidth * fromHeight / fromWidth.toFloat()).toInt()
         val xOutset = (toHeight * TOP_BAR_INSET_X).toInt()
         val yOutset = (toHeight * TOP_BAR_INSET_Y).toInt()
         return Rect(
-            screenWidth - toWidth - xOutset,
+            (mScreenWidth - toWidth - xOutset).toInt(),
             yOutset,
-            screenWidth - xOutset,
+            (mScreenWidth - xOutset).toInt(),
             toHeight + yOutset
         )
     }

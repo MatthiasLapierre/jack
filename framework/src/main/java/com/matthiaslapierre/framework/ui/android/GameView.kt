@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import com.matthiaslapierre.framework.BuildConfig
 import com.matthiaslapierre.framework.FrameworkConstants
 import com.matthiaslapierre.framework.ui.Game
 
@@ -58,11 +59,12 @@ class GameView(
            phase of the Game Loop be too fast.
             */
             val frameDuration = System.currentTimeMillis() - startTime
-            Log.d(">>>>>>>> ", ">>>>>>>>> frameDuration : $frameDuration")
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "frame duration: $frameDuration")
+            }
             val gap = FrameworkConstants.MS_PER_FRAME - frameDuration
             if (gap > 0) {
                 try {
-                    Log.d(">>>>>>>> ", ">>>>>>>>> gap : $gap")
                     Thread.sleep(gap)
                 } catch (e: Exception) {
                     break
