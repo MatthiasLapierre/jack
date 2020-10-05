@@ -41,7 +41,8 @@ class JackResourceManager(
     override var digits: Array<Image?>? = null
 
     override var bgJump: Image? = null
-    override var clouds: Array<Image?>? = null
+    override var clouds: Array<Image>? = null
+    override var jumpingPlatforms: Array<Hashtable<JumpPlatformState, Array<Image>>>? = null
 
     override var player: Hashtable<PlayerState, Array<Image?>>? = null
     override var playerMagnet: Hashtable<PlayerState, Array<Image?>>? = null
@@ -77,14 +78,38 @@ class JackResourceManager(
         }.toTypedArray()
 
         bgJump = loadImage("images/bg/jump/bg.png")
-        clouds = (0..5).map {
-            loadImage("images/bg/jump/layers/cloud$it.png")
-        }.toTypedArray()
+        clouds = loadClouds()
+        jumpingPlatforms = loadJumpingPlatforms()
 
         player = loadPlayer(Character.JACK, PlayerPowerUp.NORMAL)
         playerArmored = loadPlayer(Character.JACK, PlayerPowerUp.ARMORED)
         playerCopter = loadPlayer(Character.JACK, PlayerPowerUp.COPTER)
         playerMagnet = loadPlayer(Character.JACK, PlayerPowerUp.MAGNET)
+    }
+
+    private fun loadClouds(): Array<Image> {
+        return (1..4).map {
+            loadImage("images/bg/jump/layers/cloud$it.png")!!
+        }.toTypedArray()
+    }
+
+    private fun loadJumpingPlatforms(): Array<Hashtable<JumpPlatformState, Array<Image>>> {
+        return (1..3).map { index ->
+            val cache: Hashtable<JumpPlatformState, Array<Image>> = Hashtable()
+            cache.run {
+                put(
+                    JumpPlatformState.IDLE,
+                    arrayOf(loadImage("images/objects/jumping_platform/$index/Idle.png")!!)
+                )
+                put(
+                    JumpPlatformState.BOUNCE,
+                    (1..5).map { frame ->
+                        loadImage("images/objects/jumping_platform/$index/Bounce ($frame).png")!!
+                    }.toTypedArray()
+                )
+            }
+            cache
+        }.toTypedArray()
     }
 
     private fun loadPlayer(character: Character, playerPowerUp: PlayerPowerUp): Hashtable<PlayerState, Array<Image?>> {

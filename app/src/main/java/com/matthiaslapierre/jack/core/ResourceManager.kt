@@ -17,6 +17,11 @@ interface ResourceManager: GameResources {
         ROCKET
     }
 
+    enum class JumpPlatformState {
+        IDLE,
+        BOUNCE
+    }
+
     enum class Character(private val string: String) {
         JACK("jack");
 
@@ -58,7 +63,8 @@ interface ResourceManager: GameResources {
     var digits: Array<Image?>?
 
     var bgJump: Image?
-    var clouds: Array<Image?>?
+    var clouds: Array<Image>?
+    var jumpingPlatforms: Array<Hashtable<JumpPlatformState, Array<Image>>>?
 
     var player: Hashtable<PlayerState, Array<Image?>>?
     var playerMagnet: Hashtable<PlayerState, Array<Image?>>?

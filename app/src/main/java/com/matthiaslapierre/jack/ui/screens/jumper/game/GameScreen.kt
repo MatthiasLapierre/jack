@@ -11,6 +11,7 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.Constants.UNDEFINED
 import com.matthiaslapierre.jack.core.ResourceManager
 import com.matthiaslapierre.jack.ui.screens.jumper.MenuScreen
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.JumpingPlatformSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.BgSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.CloudSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.player.CannonSprite
@@ -29,7 +30,10 @@ class GameScreen(
         private const val TOP_BAR_INSET_Y = .18f
 
         private const val MIN_CLOUDS = 20
+        private const val MIN_JUMPING_PLATFORMS = 60
         private const val CLOUD_INTERVAL_RATIO = 0.6f
+        private const val JUMPING_PLATFORM_INTERVAL_RATIO_MIN = 0.1f
+        private const val JUMPING_PLATFORM_INTERVAL_RATIO_MAX = 0.5f
     }
 
     private var topBgImage: Image? = null
@@ -39,8 +43,12 @@ class GameScreen(
     private var workSprites: MutableList<Sprite> = mutableListOf()
     private var playerSprite: PlayerSprite? = null
     private var lastCloudSprite: CloudSprite? = null
+    private var lastJumpPlatformSprite: JumpingPlatformSprite? = null
     private var cloudInterval: Float = UNDEFINED
+    private var jumpingPlatformIntervalMin: Float = UNDEFINED
+    private var jumpingPlatformIntervalMax: Float = UNDEFINED
     private var countClouds: Int = 0
+    private var countJumpingPlatforms: Int = 0
 
     private var screenWidth: Float = 0f
     private var screenHeight: Float = 0f
@@ -67,6 +75,8 @@ class GameScreen(
         screenHeight = canvas.height.toFloat()
         gameState.setScreenSize(screenWidth, screenHeight)
         cloudInterval = screenWidth * CLOUD_INTERVAL_RATIO
+        jumpingPlatformIntervalMin = screenWidth * JUMPING_PLATFORM_INTERVAL_RATIO_MIN
+        jumpingPlatformIntervalMax = screenWidth * JUMPING_PLATFORM_INTERVAL_RATIO_MAX
         drawSprites(canvas, globalPaint)
         drawTopBar(canvas, globalPaint)
     }
@@ -123,11 +133,11 @@ class GameScreen(
             val resourceManager = getResourceManager()
             playerSprite = PlayerSprite(resourceManager, gameState)
             setBackground()
-            workSprites.add(playerSprite!!)
             workSprites.add(CannonSprite(resourceManager, gameState, this@GameScreen))
             setTapToLaunch()
         }
         addClouds()
+        addJumpingPlatforms()
     }
 
     private fun addClouds() {
@@ -144,6 +154,24 @@ class GameScreen(
             workSprites.add(1, lastCloudSprite!!)
             nextCloudY -= cloudInterval
             countClouds++
+        }
+    }
+
+    private fun addJumpingPlatforms() {
+        if (jumpingPlatformIntervalMin == UNDEFINED) {
+            return
+        }
+
+        var nextJumpPlatformY = -(screenHeight * 0.2f)
+        if(lastJumpPlatformSprite != null) {
+            val jumpingPlatformInterval = Utils.getRandomFloat(jumpingPlatformIntervalMin, jumpingPlatformIntervalMax)
+            nextJumpPlatformY = lastJumpPlatformSprite!!.y - jumpingPlatformInterval
+        }
+        while(countJumpingPlatforms < MIN_JUMPING_PLATFORMS) {
+            lastJumpPlatformSprite = JumpingPlatformSprite(getResourceManager(), gameState, nextJumpPlatformY)
+            workSprites.add(workSprites.size - 1, lastJumpPlatformSprite!!)
+            nextJumpPlatformY -= Utils.getRandomFloat(jumpingPlatformIntervalMin, jumpingPlatformIntervalMax)
+            countJumpingPlatforms++
         }
     }
 
@@ -174,13 +202,15 @@ class GameScreen(
             if (sprite.isAlive()) {
                 sprite.onDraw(canvas, globalPaint, gameState.currentStatus)
             } else {
-                if (sprite is CloudSprite) {
-                    countClouds--
+                when (sprite) {
+                    is CloudSprite -> countClouds--
+                    is JumpingPlatformSprite -> countJumpingPlatforms--
                 }
                 iterator.remove()
                 sprite.onDispose()
             }
         }
+        playerSprite?.onDraw(canvas, globalPaint, gameState.currentStatus)
     }
 
     private fun drawTopBarBackground(canvas: Canvas, globalPaint: Paint) {

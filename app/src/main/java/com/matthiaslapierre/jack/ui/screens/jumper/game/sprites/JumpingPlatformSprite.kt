@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg
+package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -8,10 +8,12 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.Constants.UNDEFINED
 import com.matthiaslapierre.jack.core.ResourceManager
+import com.matthiaslapierre.jack.core.ResourceManager.JumpPlatformState
 import com.matthiaslapierre.jack.ui.screens.jumper.game.GameStates
 import com.matthiaslapierre.jack.utils.Utils
+import java.util.*
 
-class CloudSprite(
+class JumpingPlatformSprite(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates,
     var y: Float
@@ -19,11 +21,11 @@ class CloudSprite(
 
     companion object {
         private const val OUTSET: Float = 0.05f
-        private const val ACCELERATION: Float = 0.5f
     }
-
-    private var cloudImage: Image? = null
-    private var x: Float = UNDEFINED
+    private var platformImages: Hashtable<JumpPlatformState, Array<Image>>? = null
+    private var state: JumpPlatformState = JumpPlatformState.IDLE
+    private var frame: Int = 0
+    private var x:Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
     private var isAlive: Boolean = true
@@ -31,56 +33,64 @@ class CloudSprite(
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val screenWidth = canvas.width.toFloat()
         val screenHeight = canvas.height.toFloat()
-        if (cloudImage == null) {
-            cloudImage = getRandomCloud()
-            width = (screenWidth / 960f) * cloudImage!!.width
-            height = width * cloudImage!!.height / cloudImage!!.width
-            val outset = (screenWidth * OUTSET) + (width / 2f)
-            x = Utils.getRandomFloat(outset, screenWidth - outset)
+
+        if (platformImages == null) {
+            platformImages = getRandomJumpingPlatform()
+            val firstFrame = platformImages!![JumpPlatformState.IDLE]!![0]
+            width = (screenWidth / 960f) * firstFrame.width
+            height = width * firstFrame.height / firstFrame.width
+            val outset = screenWidth * OUTSET
+            x = Utils.getRandomFloat(outset, screenWidth - outset - width)
         }
 
         isAlive = y <= (screenHeight * 2f)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speed * ACCELERATION
+            y += gameStates.speed
         }
 
+        val firstFrame = platformImages!![state]!![frame]
         val srcRect = Rect(
             0,
             0,
-            cloudImage!!.width,
-            cloudImage!!.height
+            firstFrame.width,
+            firstFrame.height
         )
         val dstRect = getRectF()
 
         canvas.drawBitmap(
-            cloudImage!!.bitmap,
+            firstFrame.bitmap,
             srcRect,
             dstRect,
             globalPaint
         )
+
+        if (state == JumpPlatformState.BOUNCE && frame == 4) {
+            state = JumpPlatformState.IDLE
+            frame = 0
+        }
     }
 
-    override fun isAlive(): Boolean  = isAlive
+    override fun isAlive(): Boolean = isAlive
 
     override fun isHit(sprite: Sprite): Boolean = false
 
     override fun getScore(): Int = 0
 
     override fun getRectF(): RectF = RectF(
-        x - (width / 2f),
-        y - (height / 2f),
-        x + (width / 2f),
-        y + (height / 2f)
+        x,
+        y,
+        x + width,
+        y + height
     )
 
     override fun onDispose() {
 
     }
 
-    private fun getRandomCloud(): Image {
-        val randomInt = Utils.getRandomInt(0,4)
-        return resourceManager.clouds!![randomInt]
+    private fun getRandomJumpingPlatform(): Hashtable<JumpPlatformState, Array<Image>> {
+        val randomInt = Utils.getRandomInt(0,3)
+        return resourceManager.jumpingPlatforms!![randomInt]
     }
 
 }
