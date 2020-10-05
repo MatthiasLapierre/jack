@@ -41,6 +41,7 @@ class JackResourceManager(
     override var digits: Array<Image?>? = null
 
     override var bgJump: Image? = null
+    override var clouds: Array<Image?>? = null
 
     override var player: Hashtable<PlayerState, Array<Image?>>? = null
     override var playerMagnet: Hashtable<PlayerState, Array<Image?>>? = null
@@ -76,6 +77,9 @@ class JackResourceManager(
         }.toTypedArray()
 
         bgJump = loadImage("images/bg/jump/bg.png")
+        clouds = (0..5).map {
+            loadImage("images/bg/jump/layers/cloud$it.png")
+        }.toTypedArray()
 
         player = loadPlayer(Character.JACK, PlayerPowerUp.NORMAL)
         playerArmored = loadPlayer(Character.JACK, PlayerPowerUp.ARMORED)

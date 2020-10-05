@@ -15,10 +15,10 @@ class SplashScreen(
     game: Game
 ) : Screen(game) {
 
-    private var mDrawnOnce = false
+    private var drawnOnce = false
 
     override fun update() {
-        if(!mDrawnOnce) return
+        if(!drawnOnce) return
         game.getAudio().load()
         game.getTypefaces().load()
         game.getGameResources().load()
@@ -29,7 +29,7 @@ class SplashScreen(
         val context = game as Context
         drawBackground(context, canvas)
         //drawLoadingText(context, graphics)
-        mDrawnOnce = true
+        drawnOnce = true
     }
 
     override fun pause() {

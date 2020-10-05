@@ -14,41 +14,39 @@ class BgSprite(
     private val gameStates: GameStates
 ) : Sprite {
 
-    private var mMaxY: Float = 0f
-    private var mX: Float = UNDEFINED
-    private var mY: Float = UNDEFINED
-    private var mMinY: Float = UNDEFINED
-    private var mWidth: Float = UNDEFINED
-    private var mHeight: Float = UNDEFINED
-    private var mScreenHeight: Float = UNDEFINED
-    private var mDistanceTravelled: Float = UNDEFINED
-    private val mSpeed: Float
+    private var maxY: Float = 0f
+    private var x: Float = UNDEFINED
+    private var y: Float = UNDEFINED
+    private var minY: Float = UNDEFINED
+    private var width: Float = UNDEFINED
+    private var height: Float = UNDEFINED
+    private var screenHeight: Float = UNDEFINED
+    private val speed: Float
         get() = gameStates.speed * getAcceleration()
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val bitmap = resourceManager.bgJump!!.bitmap
 
-        if(mY == UNDEFINED) {
+        if(y == UNDEFINED) {
             val screenWidth = canvas.width.toFloat()
-            mScreenHeight = canvas.height.toFloat()
+            screenHeight = canvas.height.toFloat()
 
             val originalWidth = bitmap.width
             val originalHeight = bitmap.height
-            mWidth = screenWidth
-            mHeight = mWidth * originalHeight / originalWidth
-            mX = (screenWidth - mWidth) / 2f
-            mY = mScreenHeight - mHeight
-            mMinY = mY
+            width = screenWidth
+            height = width * originalHeight / originalWidth
+            x = (screenWidth - width) / 2f
+            y = screenHeight - height
+            minY = y
         }
 
         if (status == Sprite.Status.STATUS_PLAY) {
-            mDistanceTravelled += mSpeed
-            if (mDistanceTravelled <= mHeight) {
-                mY += mSpeed
-                if (mY < mMinY) {
-                    mY = mMinY
-                } else if (mY > mMaxY) {
-                    mY = mMaxY
+            y += speed
+            if (gameStates.elevation <= height) {
+                if (y < minY) {
+                    y = minY
+                } else if (y > maxY) {
+                    y = maxY
                 }
             }
         }
@@ -76,10 +74,10 @@ class BgSprite(
     override fun getScore(): Int = 0
 
     override fun getRectF(): RectF = RectF(
-        mX,
-        mY,
-        mX + mWidth,
-        mY + mHeight
+        x,
+        y,
+        x + width,
+        y + height
     )
 
     override fun onDispose() {
@@ -87,7 +85,7 @@ class BgSprite(
     }
 
     private fun getAcceleration(): Float {
-        val multiplier = 1f - ((1f / (mHeight + mScreenHeight)) * gameStates.elevation)
+        val multiplier = 1f - ((1f / (height + screenHeight)) * gameStates.elevation)
         return when {
             multiplier > 1f -> {
                 1f

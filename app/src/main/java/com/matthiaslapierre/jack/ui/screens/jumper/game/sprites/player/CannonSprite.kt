@@ -25,15 +25,15 @@ class CannonSprite(
         private const val LAUNCH_FRAME_PER_MS = 20
     }
 
-    private var mState: PlayerState = IDLE
-    private var mFrame: Int = 0
-    private var mX: Float = UNDEFINED
-    private var mY: Float = UNDEFINED
-    private var mHighestY: Float = UNDEFINED
-    private var mWidth: Float = UNDEFINED
-    private var mHeight: Float = UNDEFINED
-    private var mLastFrameTimestamp: Long = 0L
-    private var mIsAlive: Boolean = true
+    private var state: PlayerState = IDLE
+    private var frame: Int = 0
+    private var x: Float = UNDEFINED
+    private var y: Float = UNDEFINED
+    private var highestY: Float = UNDEFINED
+    private var width: Float = UNDEFINED
+    private var height: Float = UNDEFINED
+    private var lastFrameTimestamp: Long = 0L
+    private var isAlive: Boolean = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val newState = if(status == Sprite.Status.STATUS_NOT_STARTED) {
@@ -41,29 +41,29 @@ class CannonSprite(
         } else {
             LAUNCH
         }
-        if(mState != newState) {
-            mState = newState
-            mFrame = 0
+        if(state != newState) {
+            state = newState
+            frame = 0
         }
-        val images = resourceManager.player!![mState]!!
-        val image = images[mFrame]!!
+        val images = resourceManager.player!![state]!!
+        val image = images[frame]!!
 
         val screenWidth = canvas.width
         val screenHeight = canvas.height
-        if (mX == UNDEFINED) {
-            mWidth = screenWidth * WIDTH_RATIO
-            mHeight = mWidth * image.height / image.width
-            mX = (screenWidth - mWidth) / 2f
-            mY = screenHeight - (screenHeight * BOTTOM_RATIO) - (mHeight / 2f)
-            mHighestY = mY
+        if (x == UNDEFINED) {
+            width = screenWidth * WIDTH_RATIO
+            height = width * image.height / image.width
+            x = (screenWidth - width) / 2f
+            y = screenHeight - (screenHeight * BOTTOM_RATIO) - (height / 2f)
+            highestY = y
         }
 
-        mIsAlive = mY < screenHeight
+        isAlive = y < screenHeight
 
         if (status == Sprite.Status.STATUS_PLAY) {
-            mY += gameStates.speed
-            if (mY < mHighestY) {
-                mY = mHighestY
+            y += gameStates.speed
+            if (y < highestY) {
+                y = highestY
             }
         }
 
@@ -82,40 +82,40 @@ class CannonSprite(
             globalPaint
         )
 
-        if (mState == LAUNCH && mFrame == 4) {
+        if (state == LAUNCH && frame == 4) {
             cannonInterface?.onFire()
         }
 
-        val frameDuration = if (mState == IDLE) {
+        val frameDuration = if (state == IDLE) {
             IDLE_FRAME_PER_MS
         } else {
             LAUNCH_FRAME_PER_MS
         }
 
-        if(System.currentTimeMillis() - mLastFrameTimestamp > frameDuration) {
-            mFrame++
-            if (mFrame >= images.size) {
-                mFrame = if(mState == LAUNCH) {
+        if(System.currentTimeMillis() - lastFrameTimestamp > frameDuration) {
+            frame++
+            if (frame >= images.size) {
+                frame = if(state == LAUNCH) {
                     images.size - 1
                 } else {
                     0
                 }
             }
-            mLastFrameTimestamp = System.currentTimeMillis()
+            lastFrameTimestamp = System.currentTimeMillis()
         }
     }
 
-    override fun isAlive(): Boolean = mIsAlive
+    override fun isAlive(): Boolean = isAlive
 
     override fun isHit(sprite: Sprite): Boolean = false
 
     override fun getScore(): Int = 0
 
     override fun getRectF(): RectF = RectF(
-        mX,
-        mY,
-        mX + mWidth,
-        mY + mHeight
+        x,
+        y,
+        x + width,
+        y + height
     )
 
     override fun onDispose() {

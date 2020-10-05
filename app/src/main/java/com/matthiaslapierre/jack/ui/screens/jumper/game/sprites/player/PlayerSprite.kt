@@ -19,42 +19,39 @@ class PlayerSprite(
         private const val WIDTH_RATIO = .27f
         private const val BOTTOM_RATIO = .35f
         private const val HIGHEST_Y_RATIO = 0.6f
-        private const val LOWEST_Y_RATIO = 0.9f
         private const val FRAME_PER_MS = 120
     }
 
-    private var mState: PlayerState = PlayerState.JUMP
-    private var mFrame: Int = 0
-    private var mX: Float = UNDEFINED
-    private var mY: Float = UNDEFINED
-    private var mHighestY: Float = UNDEFINED
-    private var mLowestY: Float = UNDEFINED
-    private var mWidth: Float = UNDEFINED
-    private var mHeight: Float = UNDEFINED
-    private var mScreenHeight: Float = UNDEFINED
-    private var mLastFrameTimestamp: Long = 0L
+    private var state: PlayerState = PlayerState.JUMP
+    private var frame: Int = 0
+    private var x: Float = UNDEFINED
+    private var y: Float = UNDEFINED
+    private var highestY: Float = UNDEFINED
+    private var width: Float = UNDEFINED
+    private var height: Float = UNDEFINED
+    private var screenHeight: Float = UNDEFINED
+    private var lastFrameTimestamp: Long = 0L
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
-        val images = resourceManager.player!![mState]!!
-        val image = images[mFrame]!!
+        val images = resourceManager.player!![state]!!
+        val image = images[frame]!!
 
         val screenWidth = canvas.width.toFloat()
-        mScreenHeight = canvas.height.toFloat()
-        if (mX == UNDEFINED) {
-            mWidth = screenWidth * WIDTH_RATIO
-            mHeight = mWidth * image.height / image.width.toFloat()
-            mX = (screenWidth - mWidth) / 2f
-            mY = mScreenHeight - (mScreenHeight * BOTTOM_RATIO) - (mHeight / 2f)
-            mHighestY = (mScreenHeight - mHeight) * HIGHEST_Y_RATIO
-            mLowestY = (mScreenHeight - mHeight) * LOWEST_Y_RATIO
+        screenHeight = canvas.height.toFloat()
+        if (x == UNDEFINED) {
+            width = screenWidth * WIDTH_RATIO
+            height = width * image.height / image.width.toFloat()
+            x = (screenWidth - width) / 2f
+            y = screenHeight - (screenHeight * BOTTOM_RATIO) - (height / 2f)
+            highestY = (screenHeight - height) * HIGHEST_Y_RATIO
         }
 
         if ((status == Sprite.Status.STATUS_PLAY
                     && gameStates.playerState == GameStates.PlayerState.LAUNCHED)
-            || status == Sprite.Status.STATUS_GAME_OVER && mY > 0) {
-            mY -= gameStates.speed
-            if (mY < mHighestY) {
-                mY = mHighestY
+            || status == Sprite.Status.STATUS_GAME_OVER && y > 0) {
+            y -= gameStates.speed
+            if (y < highestY) {
+                y = highestY
             }
         }
 
@@ -73,12 +70,12 @@ class PlayerSprite(
             globalPaint
         )
 
-        if(System.currentTimeMillis() - mLastFrameTimestamp > FRAME_PER_MS) {
-            mFrame++
-            if (mFrame >= images.size) {
-                mFrame = 0
+        if(System.currentTimeMillis() - lastFrameTimestamp > FRAME_PER_MS) {
+            frame++
+            if (frame >= images.size) {
+                frame = 0
             }
-            mLastFrameTimestamp = System.currentTimeMillis()
+            lastFrameTimestamp = System.currentTimeMillis()
         }
     }
 
@@ -92,10 +89,10 @@ class PlayerSprite(
         RectF(0f,0f,0f,0f)
     } else {
         RectF(
-            mX,
-            mY,
-            mX + mWidth,
-            mY + mHeight
+            x,
+            y,
+            x + width,
+            y + height
         )
     }
 
@@ -103,6 +100,6 @@ class PlayerSprite(
 
     }
 
-    fun isDead() = mY > mScreenHeight
+    fun isDead() = y > screenHeight
 
 }

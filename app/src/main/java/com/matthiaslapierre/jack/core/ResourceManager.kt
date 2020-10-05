@@ -58,6 +58,7 @@ interface ResourceManager: GameResources {
     var digits: Array<Image?>?
 
     var bgJump: Image?
+    var clouds: Array<Image?>?
 
     var player: Hashtable<PlayerState, Array<Image?>>?
     var playerMagnet: Hashtable<PlayerState, Array<Image?>>?

@@ -17,26 +17,26 @@ class TapToLaunchSprite(
         private const val WIDTH_RATIO = .9f
     }
 
-    private var mX: Float = Constants.UNDEFINED
-    private var mY: Float = Constants.UNDEFINED
-    private var mWidth: Float = Constants.UNDEFINED
-    private var mHeight: Float = Constants.UNDEFINED
-    private var mIsAlive = true
+    private var x: Float = Constants.UNDEFINED
+    private var y: Float = Constants.UNDEFINED
+    private var width: Float = Constants.UNDEFINED
+    private var height: Float = Constants.UNDEFINED
+    private var isAlive = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
-        mIsAlive = status == Sprite.Status.STATUS_NOT_STARTED
+        isAlive = status == Sprite.Status.STATUS_NOT_STARTED
 
         val image = resourceManager.textTapToLaunch!!
 
         val screenWidth = canvas.width
         val screenHeight = canvas.height
-        if (mX == Constants.UNDEFINED) {
+        if (x == Constants.UNDEFINED) {
             val originalWidth = image.width
             val originalHeight = image.height
-            mWidth = screenWidth * WIDTH_RATIO
-            mHeight = mWidth * originalHeight / originalWidth
-            mX = (screenWidth - mWidth) / 2f
-            mY = screenHeight * Y_RATIO
+            width = screenWidth * WIDTH_RATIO
+            height = width * originalHeight / originalWidth
+            x = (screenWidth - width) / 2f
+            y = screenHeight * Y_RATIO
         }
 
         val srcRect = Rect(
@@ -55,17 +55,17 @@ class TapToLaunchSprite(
         )
     }
 
-    override fun isAlive(): Boolean = mIsAlive
+    override fun isAlive(): Boolean = isAlive
 
     override fun isHit(sprite: Sprite): Boolean = false
 
     override fun getScore(): Int = 0
 
     override fun getRectF(): RectF = RectF(
-        mX,
-        mY,
-        mX + mWidth,
-        mY + mHeight
+        x,
+        y,
+        x + width,
+        y + height
     )
 
     override fun onDispose() {

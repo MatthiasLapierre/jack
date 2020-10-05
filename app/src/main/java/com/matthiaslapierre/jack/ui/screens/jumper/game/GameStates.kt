@@ -39,8 +39,8 @@ class GameStates  {
      */
     var elevation: Float = 0f
 
-    private var mScreenWidth: Float = UNDEFINED
-    private var mScreenHeight: Float = UNDEFINED
+    private var screenWidth: Float = UNDEFINED
+    private var screenHeight: Float = UNDEFINED
 
     fun launch() {
         playerState = PlayerState.LAUNCHED
@@ -52,8 +52,8 @@ class GameStates  {
     }
 
     fun setScreenSize(screenWidth: Float, screenHeight: Float) {
-        mScreenWidth = screenWidth
-        mScreenHeight = screenHeight
+        this.screenWidth = screenWidth
+        this.screenHeight = screenHeight
     }
 
     private fun updateSpeed() {
@@ -64,8 +64,8 @@ class GameStates  {
         }
     }
 
-    private fun getCannonAcceleration() = mScreenHeight * CANNON_ACCELERATION
+    private fun getCannonAcceleration() = screenHeight * CANNON_ACCELERATION
 
-    private fun getGravity() = mScreenHeight * GRAVITY
+    private fun getGravity() = screenHeight * GRAVITY
 
 }
