@@ -48,8 +48,8 @@ class CannonSprite(
         val images = resourceManager.player!![state]!!
         val image = images[frame]!!
 
-        val screenWidth = canvas.width
-        val screenHeight = canvas.height
+        val screenWidth = canvas.width.toFloat()
+        val screenHeight = canvas.height.toFloat()
         if (x == UNDEFINED) {
             width = screenWidth * WIDTH_RATIO
             height = width * image.height / image.width
@@ -74,7 +74,6 @@ class CannonSprite(
             image.bitmap.height
         )
         val dstRect = getRectF()
-
         canvas.drawBitmap(
             image.bitmap,
             srcRect,

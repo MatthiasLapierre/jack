@@ -1,0 +1,99 @@
+package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.obstacles
+
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
+import com.matthiaslapierre.framework.ui.Sprite
+import com.matthiaslapierre.jack.Constants.UNDEFINED
+import com.matthiaslapierre.jack.core.ResourceManager
+import com.matthiaslapierre.jack.ui.screens.jumper.game.GameStates
+
+class BatSprite(
+    private val resourceManager: ResourceManager,
+    private val gameStates: GameStates,
+    var x: Float,
+    var y: Float,
+    var minX: Float,
+    var maxX: Float
+) : Sprite {
+
+    companion object {
+        private const val WIDTH_RATIO = .27f
+        private const val SPEED_RATIO = .02f
+        private const val FRAME_PER_MS = 120
+    }
+
+    private var frame: Int = 0
+    private var width: Float = UNDEFINED
+    private var height: Float = UNDEFINED
+    private var speed: Float = UNDEFINED
+    private var lastFrameTimestamp: Long = 0L
+    private var isAlive: Boolean = true
+
+    override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
+        val batImages = resourceManager.bat!!
+        val batImage = batImages[frame]
+
+        val screenWidth = canvas.width.toFloat()
+        val screenHeight = canvas.height.toFloat()
+        if (width == UNDEFINED) {
+            width = screenWidth * WIDTH_RATIO
+            height = width * batImage.height / batImage.width
+            speed = width * SPEED_RATIO
+        }
+
+        isAlive = y <= (screenHeight * 2f)
+
+        if(maxX - minX > width) {
+            x += speed
+            if (x < minX || x > maxX) {
+                speed = -speed
+            }
+        }
+
+        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+            y += gameStates.speed
+        }
+
+        val srcRect = Rect(
+            0,
+            0,
+            batImage.width,
+            batImage.height
+        )
+        val dstRect = getRectF()
+        canvas.drawBitmap(
+            batImage.bitmap,
+            srcRect,
+            dstRect,
+            globalPaint
+        )
+
+        if(System.currentTimeMillis() - lastFrameTimestamp > FRAME_PER_MS) {
+            frame++
+            if (frame >= batImages.size) {
+                frame = 0
+            }
+            lastFrameTimestamp = System.currentTimeMillis()
+        }
+    }
+
+    override fun isAlive(): Boolean = isAlive
+
+    override fun isHit(sprite: Sprite): Boolean = false
+
+    override fun getScore(): Int = 0
+
+    override fun getRectF(): RectF = RectF(
+        x - (width / 2f),
+        y - (height / 2f),
+        x + (width / 2f),
+        y + (height / 2f)
+    )
+
+    override fun onDispose() {
+
+    }
+
+}

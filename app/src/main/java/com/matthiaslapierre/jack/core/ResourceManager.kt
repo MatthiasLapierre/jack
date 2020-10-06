@@ -75,6 +75,10 @@ interface ResourceManager: GameResources {
     var candies: Array<Image>?
     var powerUps: Hashtable<PlayerPowerUp, Image>?
 
+    // Obstacles
+    var bat: Array<Image>?
+
+    // Player
     var player: Hashtable<PlayerState, Array<Image?>>?
     var playerMagnet: Hashtable<PlayerState, Array<Image?>>?
     var playerCopter: Hashtable<PlayerState, Array<Image?>>?

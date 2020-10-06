@@ -49,6 +49,8 @@ class JackResourceManager(
     override var candies: Array<Image>? = null
     override var powerUps: Hashtable<PlayerPowerUp, Image>? = null
 
+    override var bat: Array<Image>? = null
+
     override var player: Hashtable<PlayerState, Array<Image?>>? = null
     override var playerMagnet: Hashtable<PlayerState, Array<Image?>>? = null
     override var playerCopter: Hashtable<PlayerState, Array<Image?>>? = null
@@ -90,6 +92,8 @@ class JackResourceManager(
         candies = loadCandies()
         powerUps = loadPowerUps()
 
+        bat = loadBat()
+
         player = loadPlayer(Character.JACK, PlayerPowerUp.NORMAL)
         playerArmored = loadPlayer(Character.JACK, PlayerPowerUp.ARMORED)
         playerCopter = loadPlayer(Character.JACK, PlayerPowerUp.COPTER)
@@ -106,14 +110,12 @@ class JackResourceManager(
         return clouds!![randomInt]
     }
 
-    private fun loadClouds(): Array<Image> {
-        return (1..4).map {
-            loadImage("images/bg/jump/layers/cloud$it.png")!!
-        }.toTypedArray()
-    }
+    private fun loadClouds(): Array<Image> = (1..4).map {
+        loadImage("images/bg/jump/layers/cloud$it.png")!!
+    }.toTypedArray()
 
-    private fun loadJumpingPlatforms(): Array<Hashtable<JumpPlatformState, Array<Image>>> {
-        return (1..3).map { index ->
+    private fun loadJumpingPlatforms(): Array<Hashtable<JumpPlatformState, Array<Image>>> =
+        (1..3).map { index ->
             val cache: Hashtable<JumpPlatformState, Array<Image>> = Hashtable()
             cache.run {
                 put(
@@ -129,13 +131,10 @@ class JackResourceManager(
             }
             cache
         }.toTypedArray()
-    }
 
-    private fun loadCandies(): Array<Image> {
-        return (1..3).map { index ->
-            loadImage("images/objects/collectibles/candy/Candy ($index).png")!!
-        }.toTypedArray()
-    }
+    private fun loadCandies(): Array<Image> = (1..3).map { index ->
+        loadImage("images/objects/collectibles/candy/Candy ($index).png")!!
+    }.toTypedArray()
 
     private fun loadPowerUps(): Hashtable<PlayerPowerUp, Image> =
         Hashtable<PlayerPowerUp, Image>().apply {
@@ -144,6 +143,10 @@ class JackResourceManager(
             put(PlayerPowerUp.MAGNET, loadImage("images/objects/collectibles/power_up/Magnet.png"))
             put(PlayerPowerUp.COPTER, loadImage("images/objects/collectibles/power_up/Copter.png"))
         }
+
+    private fun loadBat(): Array<Image> =  (1..4).map { index ->
+        loadImage("images/objects/obstacles/bat/Bat ($index).png")!!
+    }.toTypedArray()
 
     private fun loadPlayer(character: Character, playerPowerUp: PlayerPowerUp): Hashtable<PlayerState, Array<Image?>> {
         val cache: Hashtable<PlayerState, Array<Image?>> = Hashtable()
