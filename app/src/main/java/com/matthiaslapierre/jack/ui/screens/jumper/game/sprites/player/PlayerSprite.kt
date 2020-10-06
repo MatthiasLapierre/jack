@@ -22,10 +22,11 @@ class PlayerSprite(
         private const val FRAME_PER_MS = 120
     }
 
+    override var x: Float = UNDEFINED
+    override var y: Float = UNDEFINED
+
     private var state: PlayerState = PlayerState.JUMP
     private var frame: Int = 0
-    private var x: Float = UNDEFINED
-    private var y: Float = UNDEFINED
     private var highestY: Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED

@@ -25,10 +25,11 @@ class CannonSprite(
         private const val LAUNCH_FRAME_PER_MS = 20
     }
 
+    override var x: Float = UNDEFINED
+    override var y: Float = UNDEFINED
+
     private var state: PlayerState = IDLE
     private var frame: Int = 0
-    private var x: Float = UNDEFINED
-    private var y: Float = UNDEFINED
     private var highestY: Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED

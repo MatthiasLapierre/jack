@@ -12,8 +12,8 @@ import com.matthiaslapierre.jack.ui.screens.jumper.game.GameStates
 class BatSprite(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates,
-    var x: Float,
-    var y: Float,
+    override var x: Float,
+    override var y: Float,
     var minX: Float,
     var maxX: Float
 ) : Sprite {

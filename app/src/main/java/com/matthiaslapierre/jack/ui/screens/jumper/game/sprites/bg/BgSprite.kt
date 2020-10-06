@@ -14,9 +14,10 @@ class BgSprite(
     private val gameStates: GameStates
 ) : Sprite {
 
+    override var x: Float = UNDEFINED
+    override  var y: Float = UNDEFINED
+
     private var maxY: Float = 0f
-    private var x: Float = UNDEFINED
-    private var y: Float = UNDEFINED
     private var minY: Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED

@@ -16,17 +16,17 @@ import java.util.*
 class JumpingPlatformSprite(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates,
-    var y: Float
+    override var x: Float,
+    override var y: Float
 ): Sprite {
 
     companion object {
         private const val WIDTH_RATIO = .2f
-        private const val OUTSET: Float = 0.005f
     }
+
     private var platformImages: Hashtable<JumpPlatformState, Array<Image>>? = null
     private var state: JumpPlatformState = JumpPlatformState.IDLE
     private var frame: Int = 0
-    private var x:Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
     private var isAlive: Boolean = true
@@ -40,8 +40,6 @@ class JumpingPlatformSprite(
             val firstFrame = platformImages!![JumpPlatformState.IDLE]!![0]
             width = screenWidth * WIDTH_RATIO
             height = width * firstFrame.height / firstFrame.width
-            val outset = screenWidth * OUTSET
-            x = Utils.getRandomFloat(outset + (width / 2f), screenWidth - outset - (width / 2f))
         }
 
         isAlive = y <= (screenHeight * 2f)

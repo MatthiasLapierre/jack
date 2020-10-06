@@ -17,8 +17,9 @@ class TapToLaunchSprite(
         private const val WIDTH_RATIO = .9f
     }
 
-    private var x: Float = Constants.UNDEFINED
-    private var y: Float = Constants.UNDEFINED
+    override var x: Float = Constants.UNDEFINED
+    override var y: Float = Constants.UNDEFINED
+
     private var width: Float = Constants.UNDEFINED
     private var height: Float = Constants.UNDEFINED
     private var isAlive = true

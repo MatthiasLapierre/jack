@@ -16,6 +16,9 @@ interface Sprite {
         STATUS_GAME_OVER
     }
 
+    var x: Float
+    var y: Float
+
     /**
      * to request the drawing on the Sprite’s Canvas
      */

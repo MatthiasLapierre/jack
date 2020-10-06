@@ -14,13 +14,13 @@ import com.matthiaslapierre.jack.ui.screens.jumper.game.GameStates
 class PowerUpSprite(
     resourceManager: ResourceManager,
     private val gameStates: GameStates,
-    var x: Float,
-    var y: Float,
+    override var x: Float,
+    override var y: Float,
     powerUp: PlayerPowerUp
 ): Sprite {
 
     companion object {
-        private const val WIDTH_RATIO = .17f
+        private const val WIDTH_RATIO = .15f
     }
 
     private val powerUpImage: Image = resourceManager.powerUps!![powerUp]!!

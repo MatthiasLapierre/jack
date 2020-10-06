@@ -54,6 +54,7 @@ class GameScreen(
     private var screenHeight: Float = 0f
 
     private val gameState: GameStates = GameStates()
+    private val gameMap: GameMap = GameMap(game.getGameResources() as ResourceManager, gameState)
 
     private var pauseBtnIsPressed: Boolean = false
 
@@ -74,6 +75,7 @@ class GameScreen(
         screenWidth = canvas.width.toFloat()
         screenHeight = canvas.height.toFloat()
         gameState.setScreenSize(screenWidth, screenHeight)
+        gameMap.setScreenSize(screenWidth, screenHeight)
         cloudInterval = screenWidth * CLOUD_INTERVAL_RATIO
         jumpingPlatformIntervalMin = screenWidth * JUMPING_PLATFORM_INTERVAL_RATIO_MIN
         jumpingPlatformIntervalMax = screenWidth * JUMPING_PLATFORM_INTERVAL_RATIO_MAX
@@ -137,7 +139,7 @@ class GameScreen(
             setTapToLaunch()
         }
         addClouds()
-        addJumpingPlatforms()
+        workSprites.addAll(gameMap.generate())
     }
 
     private fun addClouds() {
@@ -154,29 +156,6 @@ class GameScreen(
             workSprites.add(1, lastCloudSprite!!)
             nextCloudY -= cloudInterval
             countClouds++
-        }
-    }
-
-    private fun addJumpingPlatforms() {
-        if (jumpingPlatformIntervalMin == UNDEFINED) {
-            return
-        }
-
-        var nextJumpPlatformY = -(screenHeight * 0.2f)
-        if(lastJumpPlatformSprite != null) {
-            val jumpingPlatformInterval = Utils.getRandomFloat(jumpingPlatformIntervalMin, jumpingPlatformIntervalMax)
-            nextJumpPlatformY = lastJumpPlatformSprite!!.y - jumpingPlatformInterval
-        }
-        while(countJumpingPlatforms < MIN_JUMPING_PLATFORMS) {
-            lastJumpPlatformSprite =
-                JumpingPlatformSprite(
-                    getResourceManager(),
-                    gameState,
-                    nextJumpPlatformY
-                )
-            workSprites.add(workSprites.size - 1, lastJumpPlatformSprite!!)
-            nextJumpPlatformY -= Utils.getRandomFloat(jumpingPlatformIntervalMin, jumpingPlatformIntervalMax)
-            countJumpingPlatforms++
         }
     }
 

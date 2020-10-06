@@ -14,7 +14,7 @@ import com.matthiaslapierre.jack.utils.Utils
 class CloudSprite(
     resourceManager: ResourceManager,
     private val gameStates: GameStates,
-    var y: Float
+    override var y: Float
 ): Sprite {
 
     companion object {
@@ -23,8 +23,9 @@ class CloudSprite(
         const val ORIGINAL_RESOLUTION_WIDTH = 960f
     }
 
+    override var x: Float = UNDEFINED
+
     private val cloudImage: Image = resourceManager.getRandomCloud()
-    private var x: Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
     private var isAlive: Boolean = true
