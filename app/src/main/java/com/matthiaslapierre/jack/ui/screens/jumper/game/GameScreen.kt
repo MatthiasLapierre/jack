@@ -11,7 +11,7 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.Constants.UNDEFINED
 import com.matthiaslapierre.jack.core.ResourceManager
 import com.matthiaslapierre.jack.ui.screens.jumper.MenuScreen
-import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.JumpingPlatformSprite
+import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.BgSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg.CloudSprite
 import com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.player.CannonSprite
@@ -168,7 +168,12 @@ class GameScreen(
             nextJumpPlatformY = lastJumpPlatformSprite!!.y - jumpingPlatformInterval
         }
         while(countJumpingPlatforms < MIN_JUMPING_PLATFORMS) {
-            lastJumpPlatformSprite = JumpingPlatformSprite(getResourceManager(), gameState, nextJumpPlatformY)
+            lastJumpPlatformSprite =
+                JumpingPlatformSprite(
+                    getResourceManager(),
+                    gameState,
+                    nextJumpPlatformY
+                )
             workSprites.add(workSprites.size - 1, lastJumpPlatformSprite!!)
             nextJumpPlatformY -= Utils.getRandomFloat(jumpingPlatformIntervalMin, jumpingPlatformIntervalMax)
             countJumpingPlatforms++

@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.bg
+package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.collectibles
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -9,22 +9,19 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.Constants.UNDEFINED
 import com.matthiaslapierre.jack.core.ResourceManager
 import com.matthiaslapierre.jack.ui.screens.jumper.game.GameStates
-import com.matthiaslapierre.jack.utils.Utils
 
-class CloudSprite(
+class CandySprite(
     resourceManager: ResourceManager,
     private val gameStates: GameStates,
+    var x: Float,
     var y: Float
 ): Sprite {
 
     companion object {
-        private const val OUTSET: Float = 0.05f
-        private const val ACCELERATION: Float = 0.5f
-        const val ORIGINAL_RESOLUTION_WIDTH = 960f
+        private const val WIDTH_RATIO = .15f
     }
 
-    private val cloudImage: Image = resourceManager.getRandomCloud()
-    private var x: Float = UNDEFINED
+    private val candyImage: Image = resourceManager.getRandomCandy()
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
     private var isAlive: Boolean = true
@@ -32,45 +29,40 @@ class CloudSprite(
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val screenWidth = canvas.width.toFloat()
         val screenHeight = canvas.height.toFloat()
+
         if (width == UNDEFINED) {
-            val size = Utils.getScaledSize(
-                cloudImage,
-                screenWidth.toInt(),
-                ORIGINAL_RESOLUTION_WIDTH.toInt()
-            )
-            width = size.first.toFloat()
-            height = size.second.toFloat()
-            val outset = (screenWidth * OUTSET)
-            x = Utils.getRandomFloat(outset + (width / 2f), screenWidth - outset - (width / 2f))
+            width = screenWidth * WIDTH_RATIO
+            height = width * candyImage.height / candyImage.width
         }
 
         isAlive = y <= (screenHeight * 2f)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speed * ACCELERATION
+            y += gameStates.speed
         }
 
         val srcRect = Rect(
             0,
             0,
-            cloudImage!!.width,
-            cloudImage!!.height
+            candyImage.width,
+            candyImage.height
         )
         val dstRect = getRectF()
-
         canvas.drawBitmap(
-            cloudImage!!.bitmap,
+            candyImage.bitmap,
             srcRect,
             dstRect,
             globalPaint
         )
     }
 
-    override fun isAlive(): Boolean  = isAlive
+    override fun isAlive(): Boolean = isAlive
 
-    override fun isHit(sprite: Sprite): Boolean = false
+    override fun isHit(sprite: Sprite): Boolean {
+        return false
+    }
 
-    override fun getScore(): Int = 0
+    override fun getScore(): Int = 1
 
     override fun getRectF(): RectF = RectF(
         x - (width / 2f),

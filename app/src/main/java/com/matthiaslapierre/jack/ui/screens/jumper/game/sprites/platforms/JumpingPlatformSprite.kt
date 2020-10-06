@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites
+package com.matthiaslapierre.jack.ui.screens.jumper.game.sprites.platforms
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -20,7 +20,8 @@ class JumpingPlatformSprite(
 ): Sprite {
 
     companion object {
-        private const val OUTSET: Float = 0.05f
+        private const val WIDTH_RATIO = .2f
+        private const val OUTSET: Float = 0.005f
     }
     private var platformImages: Hashtable<JumpPlatformState, Array<Image>>? = null
     private var state: JumpPlatformState = JumpPlatformState.IDLE
@@ -37,10 +38,10 @@ class JumpingPlatformSprite(
         if (platformImages == null) {
             platformImages = getRandomJumpingPlatform()
             val firstFrame = platformImages!![JumpPlatformState.IDLE]!![0]
-            width = (screenWidth / 960f) * firstFrame.width
+            width = screenWidth * WIDTH_RATIO
             height = width * firstFrame.height / firstFrame.width
             val outset = screenWidth * OUTSET
-            x = Utils.getRandomFloat(outset, screenWidth - outset - width)
+            x = Utils.getRandomFloat(outset + (width / 2f), screenWidth - outset - (width / 2f))
         }
 
         isAlive = y <= (screenHeight * 2f)
@@ -57,7 +58,6 @@ class JumpingPlatformSprite(
             firstFrame.height
         )
         val dstRect = getRectF()
-
         canvas.drawBitmap(
             firstFrame.bitmap,
             srcRect,
@@ -78,10 +78,10 @@ class JumpingPlatformSprite(
     override fun getScore(): Int = 0
 
     override fun getRectF(): RectF = RectF(
-        x,
-        y,
-        x + width,
-        y + height
+        x - (width / 2f),
+        y - (height / 2f),
+        x + (width / 2f),
+        y + (height / 2f)
     )
 
     override fun onDispose() {

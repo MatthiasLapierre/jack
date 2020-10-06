@@ -7,6 +7,7 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.android.AndroidImage
 import com.matthiaslapierre.jack.core.ResourceManager
 import com.matthiaslapierre.jack.core.ResourceManager.*
+import com.matthiaslapierre.jack.utils.Utils
 import java.util.*
 
 class JackResourceManager(
@@ -42,7 +43,11 @@ class JackResourceManager(
 
     override var bgJump: Image? = null
     override var clouds: Array<Image>? = null
+
     override var jumpingPlatforms: Array<Hashtable<JumpPlatformState, Array<Image>>>? = null
+
+    override var candies: Array<Image>? = null
+    override var powerUps: Hashtable<PlayerPowerUp, Image>? = null
 
     override var player: Hashtable<PlayerState, Array<Image?>>? = null
     override var playerMagnet: Hashtable<PlayerState, Array<Image?>>? = null
@@ -79,12 +84,26 @@ class JackResourceManager(
 
         bgJump = loadImage("images/bg/jump/bg.png")
         clouds = loadClouds()
+
         jumpingPlatforms = loadJumpingPlatforms()
+
+        candies = loadCandies()
+        powerUps = loadPowerUps()
 
         player = loadPlayer(Character.JACK, PlayerPowerUp.NORMAL)
         playerArmored = loadPlayer(Character.JACK, PlayerPowerUp.ARMORED)
         playerCopter = loadPlayer(Character.JACK, PlayerPowerUp.COPTER)
         playerMagnet = loadPlayer(Character.JACK, PlayerPowerUp.MAGNET)
+    }
+
+    override fun getRandomCandy(): Image {
+        val randomInt = Utils.getRandomInt(0,3)
+        return candies!![randomInt]
+    }
+
+    override fun getRandomCloud(): Image {
+        val randomInt = Utils.getRandomInt(0,4)
+        return clouds!![randomInt]
     }
 
     private fun loadClouds(): Array<Image> {
@@ -111,6 +130,20 @@ class JackResourceManager(
             cache
         }.toTypedArray()
     }
+
+    private fun loadCandies(): Array<Image> {
+        return (1..3).map { index ->
+            loadImage("images/objects/collectibles/candy/Candy ($index).png")!!
+        }.toTypedArray()
+    }
+
+    private fun loadPowerUps(): Hashtable<PlayerPowerUp, Image> =
+        Hashtable<PlayerPowerUp, Image>().apply {
+            put(PlayerPowerUp.ARMORED, loadImage("images/objects/collectibles/power_up/Shield.png"))
+            put(PlayerPowerUp.ROCKET, loadImage("images/objects/collectibles/power_up/Rocket.png"))
+            put(PlayerPowerUp.MAGNET, loadImage("images/objects/collectibles/power_up/Magnet.png"))
+            put(PlayerPowerUp.COPTER, loadImage("images/objects/collectibles/power_up/Copter.png"))
+        }
 
     private fun loadPlayer(character: Character, playerPowerUp: PlayerPowerUp): Hashtable<PlayerState, Array<Image?>> {
         val cache: Hashtable<PlayerState, Array<Image?>> = Hashtable()

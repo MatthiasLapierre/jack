@@ -2,6 +2,7 @@ package com.matthiaslapierre.jack.core
 
 import com.matthiaslapierre.framework.resources.GameResources
 import com.matthiaslapierre.framework.resources.Image
+import com.matthiaslapierre.jack.utils.Utils
 import java.util.*
 
 interface ResourceManager: GameResources {
@@ -32,6 +33,7 @@ interface ResourceManager: GameResources {
         ARMORED("armored"),
         COPTER("copter"),
         MAGNET("magnet"),
+        ROCKET("rocket"),
         NORMAL("normal");
 
         override fun toString(): String = string
@@ -62,12 +64,24 @@ interface ResourceManager: GameResources {
     var candyIndicator: Image?
     var digits: Array<Image?>?
 
+    // Background
     var bgJump: Image?
     var clouds: Array<Image>?
+
+    // Jumping platforms
     var jumpingPlatforms: Array<Hashtable<JumpPlatformState, Array<Image>>>?
+
+    // Collectibles
+    var candies: Array<Image>?
+    var powerUps: Hashtable<PlayerPowerUp, Image>?
 
     var player: Hashtable<PlayerState, Array<Image?>>?
     var playerMagnet: Hashtable<PlayerState, Array<Image?>>?
     var playerCopter: Hashtable<PlayerState, Array<Image?>>?
     var playerArmored: Hashtable<PlayerState, Array<Image?>>?
+
+    fun getRandomCandy(): Image
+
+    fun getRandomCloud(): Image
+
 }
