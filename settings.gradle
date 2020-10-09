@@ -1,3 +1,6 @@
+include ':utils'
+include ':core'
+include ':jumper'
 include ':framework'
 include ':app'
 rootProject.name = "Jack O'Lantern"

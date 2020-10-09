@@ -1,12 +1,12 @@
 package com.matthiaslapierre.jack
 
 import android.content.Context
-import com.matthiaslapierre.jack.core.ResourceManager
-import com.matthiaslapierre.jack.core.SoundManager
-import com.matthiaslapierre.jack.core.TypefaceManager
-import com.matthiaslapierre.jack.core.impl.JackResourceManager
-import com.matthiaslapierre.jack.core.impl.JackSoundManager
-import com.matthiaslapierre.jack.core.impl.JackTypefaceManager
+import com.matthiaslapierre.core.ResourceManager
+import com.matthiaslapierre.core.SoundManager
+import com.matthiaslapierre.core.TypefaceManager
+import com.matthiaslapierre.core.impl.JackResourceManager
+import com.matthiaslapierre.core.impl.JackSoundManager
+import com.matthiaslapierre.core.impl.JackTypefaceManager
 
 /**
  * To solve the issue of reusing objects, you can create your own dependencies container class

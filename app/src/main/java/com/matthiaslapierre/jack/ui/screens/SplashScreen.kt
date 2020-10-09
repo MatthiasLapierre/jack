@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.jack.R
-import com.matthiaslapierre.jack.ui.screens.jumper.MenuScreen
+import com.matthiaslapierre.jumper.ui.MenuScreen
 
 class SplashScreen(
     game: Game
