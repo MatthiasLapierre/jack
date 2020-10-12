@@ -62,7 +62,7 @@ class CannonSprite(
         isAlive = y < screenHeight
 
         if (status == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speed
+            y += gameStates.speedY
             if (y < highestY) {
                 y = highestY
             }

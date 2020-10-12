@@ -47,9 +47,15 @@ class PlayerSprite(
         }
 
         if ((status == Sprite.Status.STATUS_PLAY
-                    && gameStates.playerState == GameStates.PlayerState.LAUNCHED)
+                    && gameStates.state == GameStates.State.LAUNCHED)
             || status == Sprite.Status.STATUS_GAME_OVER && y > 0) {
-            y -= gameStates.speed
+            x -= gameStates.speedX
+            y -= gameStates.speedY
+            if (x > screenWidth) {
+                x = -width
+            } else if(x < -width) {
+                x = screenWidth
+            }
             if (y < highestY) {
                 y = highestY
             }
@@ -85,7 +91,7 @@ class PlayerSprite(
 
     override fun getScore(): Int = 0
 
-    override fun getRectF(): RectF = if (gameStates.playerState == GameStates.PlayerState.READY_TO_LAUNCH) {
+    override fun getRectF(): RectF = if (gameStates.state == GameStates.State.READY_TO_LAUNCH) {
         RectF(0f,0f,0f,0f)
     } else {
         RectF(

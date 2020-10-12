@@ -10,6 +10,7 @@ import com.matthiaslapierre.core.ResourceManager.JumpPlatformState
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.utils.Utils
 import java.util.*
 
@@ -45,7 +46,7 @@ class JumpingPlatformSprite(
         isAlive = y <= (screenHeight * 2f)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speed
+            y += gameStates.speedY
         }
 
         val firstFrame = platformImages!![state]!![frame]

@@ -1,8 +1,14 @@
 package com.matthiaslapierre.jumper.ui
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.util.Log
 import android.view.MotionEvent
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
@@ -10,19 +16,22 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
+import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.ACCELEROMETER_SENSITIVITY
+import com.matthiaslapierre.jumper.core.GameMap
+import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
+import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
+import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jumper.core.sprites.player.CannonSprite
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
-import com.matthiaslapierre.jumper.core.GameMap
-import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.utils.JumperUtils
 
 class GameScreen(
     game: Game
-): Screen(game), CannonSprite.CannonInterface {
+): Screen(game), SensorEventListener, CannonSprite.CannonInterface {
 
     companion object {
         private const val INDICATOR_RATIO = 0.40f
@@ -33,6 +42,8 @@ class GameScreen(
         private const val MIN_CLOUDS = 20
         private const val CLOUD_INTERVAL_RATIO = 0.6f
     }
+
+    private val sensorManager: SensorManager = (game as Context).getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
     private var topBgImage: Image? = null
     private var candyIndicatorImage: Image? = null
@@ -48,13 +59,8 @@ class GameScreen(
     private var screenWidth: Float = 0f
     private var screenHeight: Float = 0f
 
-    private val gameState: GameStates =
-        GameStates()
-    private val gameMap: GameMap =
-        GameMap(
-            game.getGameResources() as ResourceManager,
-            gameState
-        )
+    private val gameState: GameStates = GameStates()
+    private val gameMap: GameMap = GameMap(game.getGameResources() as ResourceManager, gameState)
 
     private var pauseBtnIsPressed: Boolean = false
 
@@ -64,6 +70,7 @@ class GameScreen(
         candyIndicatorImage = resourceManager.candyIndicator
         pauseBtnImage = if(pauseBtnIsPressed) resourceManager.btnPausePressed else
             resourceManager.btnPause
+        gameState.frameRateAdjustFactor = frameRateAdjustFactor
         updateSprites()
         if(gameState.currentStatus != Sprite.Status.STATUS_GAME_OVER) {
             checkCollisions()
@@ -82,11 +89,15 @@ class GameScreen(
     }
 
     override fun pause() {
-
+        sensorManager.unregisterListener(this)
     }
 
     override fun resume() {
-
+        sensorManager.registerListener(
+            this,
+            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_GAME
+        )
     }
 
     override fun dispose() {
@@ -118,6 +129,17 @@ class GameScreen(
 
     override fun onFire() {
         gameState.launch()
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (Sensor.TYPE_ACCELEROMETER == event?.sensor?.type) {
+            val xAcceleration = event.values[0] * ACCELEROMETER_SENSITIVITY * (frameTime / 1000f)
+            gameState.moveX(xAcceleration)
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
     }
 
     private fun startGame() {
@@ -158,6 +180,14 @@ class GameScreen(
     }
 
     private fun checkCollisions() {
+        val iterator: MutableListIterator<Sprite> = workSprites.listIterator()
+        while (iterator.hasNext()) {
+            val sprite = iterator.next()
+            if (sprite is CandySprite && sprite.isHit(playerSprite!!)) {
+                gameState.collectCandies(sprite.getScore())
+                sprite.isConsumed = true
+            }
+        }
         if (playerSprite!!.isDead()) {
             setGameOver()
         }

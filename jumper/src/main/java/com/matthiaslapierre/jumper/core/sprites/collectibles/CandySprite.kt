@@ -9,6 +9,7 @@ import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 
 class CandySprite(
     resourceManager: ResourceManager,
@@ -20,6 +21,8 @@ class CandySprite(
     companion object {
         private const val WIDTH_RATIO = .15f
     }
+
+    var isConsumed: Boolean = false
 
     private val candyImage: Image = resourceManager.getRandomCandy()
     private var width: Float = UNDEFINED
@@ -35,10 +38,10 @@ class CandySprite(
             height = width * candyImage.height / candyImage.width
         }
 
-        isAlive = y <= (screenHeight * 2f)
+        isAlive = y <= (screenHeight * 2f) && !isConsumed
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speed
+            y += gameStates.speedY
         }
 
         val srcRect = Rect(
@@ -58,9 +61,8 @@ class CandySprite(
 
     override fun isAlive(): Boolean = isAlive
 
-    override fun isHit(sprite: Sprite): Boolean {
-        return false
-    }
+    override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
+            && sprite.getRectF().contains(getRectF())
 
     override fun getScore(): Int = 1
 

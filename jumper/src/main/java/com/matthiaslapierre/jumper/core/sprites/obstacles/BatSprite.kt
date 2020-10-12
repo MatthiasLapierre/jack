@@ -53,7 +53,7 @@ class BatSprite(
         }
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speed
+            y += gameStates.speedY
         }
 
         val srcRect = Rect(

@@ -7,6 +7,8 @@ import android.view.MotionEvent
 abstract class Screen(
     protected val game: Game
 ) {
+    var frameTime: Long = 0
+    var frameRateAdjustFactor: Float = 0f
     abstract fun update()
     abstract fun paint(canvas: Canvas, globalPaint: Paint)
     abstract fun pause()

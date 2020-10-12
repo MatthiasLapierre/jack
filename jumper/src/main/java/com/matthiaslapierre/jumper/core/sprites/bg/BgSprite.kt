@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
@@ -23,7 +24,7 @@ class BgSprite(
     private var height: Float = UNDEFINED
     private var screenHeight: Float = UNDEFINED
     private val speed: Float
-        get() = gameStates.speed * getAcceleration()
+        get() = gameStates.speedY * getAcceleration()
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val bitmap = resourceManager.bgJump!!.bitmap
@@ -43,12 +44,10 @@ class BgSprite(
 
         if (status == Sprite.Status.STATUS_PLAY) {
             y += speed
-            if (gameStates.elevation <= height) {
-                if (y < minY) {
-                    y = minY
-                } else if (y > maxY) {
-                    y = maxY
-                }
+            if (y < minY) {
+                y = minY
+            } else if (y > maxY) {
+                y = maxY
             }
         }
 

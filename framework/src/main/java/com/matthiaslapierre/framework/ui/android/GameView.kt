@@ -1,7 +1,10 @@
 package com.matthiaslapierre.framework.ui.android
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PixelFormat
+import android.graphics.PorterDuff
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -59,6 +62,9 @@ class GameView(
            phase of the Game Loop be too fast.
             */
             val frameDuration = System.currentTimeMillis() - startTime
+            game.getCurrentScreen().frameRateAdjustFactor =
+                frameDuration.toFloat() / FrameworkConstants.MS_PER_FRAME
+            game.getCurrentScreen().frameTime = frameDuration
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, "frame duration: $frameDuration")
             }

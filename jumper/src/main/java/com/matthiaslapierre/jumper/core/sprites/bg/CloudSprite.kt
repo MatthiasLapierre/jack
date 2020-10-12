@@ -49,7 +49,7 @@ class CloudSprite(
         isAlive = y <= (screenHeight * 2f)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speed * ACCELERATION
+            y += gameStates.speedY * ACCELERATION
         }
 
         val srcRect = Rect(
