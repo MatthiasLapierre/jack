@@ -62,7 +62,7 @@ class CandySprite(
     override fun isAlive(): Boolean = isAlive
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
-            && sprite.getRectF().contains(getRectF())
+            && sprite.getRectF().intersect(getRectF())
 
     override fun getScore(): Int = 1
 

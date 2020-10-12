@@ -1,15 +1,13 @@
 package com.matthiaslapierre.jumper.core.sprites.platforms
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.JumpPlatformState
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.GameStates.Direction
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.utils.Utils
 import java.util.*
@@ -72,7 +70,9 @@ class JumpingPlatformSprite(
 
     override fun isAlive(): Boolean = isAlive
 
-    override fun isHit(sprite: Sprite): Boolean = false
+    override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
+            && gameStates.direction == Direction.DOWN
+            && sprite.getFeetRectF().intersect(getBoundArea())
 
     override fun getScore(): Int = 0
 
@@ -85,6 +85,15 @@ class JumpingPlatformSprite(
 
     override fun onDispose() {
 
+    }
+
+    private fun getBoundArea(): RectF = getRectF().run {
+        RectF(
+            left + (width * .2f),
+            top,
+            right - (width * .2f),
+            bottom
+        )
     }
 
     private fun getRandomJumpingPlatform(): Hashtable<JumpPlatformState, Array<Image>> {

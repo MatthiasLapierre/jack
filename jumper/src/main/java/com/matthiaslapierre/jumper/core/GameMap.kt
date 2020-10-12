@@ -82,10 +82,10 @@ class GameMap(
             }
 
             var nextSpriteY = -(screenHeight)
-            var nextSpriteX = Utils.getRandomFloat(0f, screenWidth)
+            var nextSpriteX = getNextSpriteX()
             if (lastGeneratedSprite != null) {
                 val previousPattern = getPattern(lastGeneratedSprite!!)
-                nextSpriteX = lastGeneratedSprite!!.x
+                nextSpriteX = getNextSpriteX()
                 nextSpriteY = lastGeneratedSprite!!.y - getSpriteMarginTop(previousPattern)
             }
             while (nextSpriteY > -(screenHeight * 2f)) {
@@ -103,7 +103,7 @@ class GameMap(
                 }
                 lastGeneratedSprite = sprites.last()
                 nextSpriteY = lastGeneratedSprite!!.y
-                nextSpriteX = getNextSpriteX(lastGeneratedSprite!!.x)
+                nextSpriteX = getNextSpriteX()
                 nextSpriteY -= getSpriteMarginTop(pattern)
             }
 
@@ -141,13 +141,8 @@ class GameMap(
             else -> PATTERN_JUMPING_PLATFORM
         }
 
-    private fun getNextSpriteX(previousSpriteX: Float): Float {
-        val maxGap = screenWidth * SPRITE_MAX_GAP_RATIO
-        var minX = previousSpriteX - maxGap
-        if (minX < 0) minX = 0f
-        var maxX = previousSpriteX + maxGap
-        if (maxX > screenWidth) maxX = screenWidth
-        return Utils.getRandomFloat(minX, maxX)
+    private fun getNextSpriteX(): Float {
+        return Utils.getRandomFloat(0f, screenWidth)
     }
 
     private fun getNextObstacleInterval(): Float {

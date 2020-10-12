@@ -8,7 +8,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import android.view.MotionEvent
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
@@ -16,13 +15,13 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants
 import com.matthiaslapierre.jumper.JumperConstants.ACCELEROMETER_SENSITIVITY
 import com.matthiaslapierre.jumper.core.GameMap
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
+import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
 import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jumper.core.sprites.player.CannonSprite
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
@@ -183,9 +182,19 @@ class GameScreen(
         val iterator: MutableListIterator<Sprite> = workSprites.listIterator()
         while (iterator.hasNext()) {
             val sprite = iterator.next()
-            if (sprite is CandySprite && sprite.isHit(playerSprite!!)) {
-                gameState.collectCandies(sprite.getScore())
-                sprite.isConsumed = true
+            if (sprite.isHit(playerSprite!!)) {
+                when(sprite) {
+                    is CandySprite -> {
+                        gameState.collectCandies(sprite.getScore())
+                        sprite.isConsumed = true
+                    }
+                    is JumpingPlatformSprite -> {
+                        gameState.bounce()
+                    }
+                    is BatSprite -> {
+                        gameState.kill()
+                    }
+                }
             }
         }
         if (playerSprite!!.isDead()) {

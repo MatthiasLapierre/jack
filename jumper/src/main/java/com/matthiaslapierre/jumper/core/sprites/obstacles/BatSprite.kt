@@ -8,14 +8,15 @@ import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 
 class BatSprite(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates,
     override var x: Float,
     override var y: Float,
-    var minX: Float,
-    var maxX: Float
+    private var minX: Float,
+    private var maxX: Float
 ) : Sprite {
 
     companion object {
@@ -81,7 +82,8 @@ class BatSprite(
 
     override fun isAlive(): Boolean = isAlive
 
-    override fun isHit(sprite: Sprite): Boolean = false
+    override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
+            && sprite.getRectF().intersect(getRectF())
 
     override fun getScore(): Int = 0
 

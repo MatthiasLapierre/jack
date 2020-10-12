@@ -1,9 +1,6 @@
 package com.matthiaslapierre.jumper.core.sprites.player
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
@@ -107,5 +104,14 @@ class PlayerSprite(
     }
 
     fun isDead() = y > screenHeight
+
+    fun getFeetRectF(): RectF = getRectF().run {
+        RectF(
+            left + (width * .3f),
+            bottom - (height * .1f),
+            right - (width * .3f),
+            bottom
+        )
+    }
 
 }

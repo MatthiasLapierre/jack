@@ -8,6 +8,9 @@ abstract class Screen(
     protected val game: Game
 ) {
     var frameTime: Long = 0
+    /**
+     * https://stackoverflow.com/questions/12053509/android-game-sprite-speed-seems-to-be-different-on-different-phones
+     */
     var frameRateAdjustFactor: Float = 0f
     abstract fun update()
     abstract fun paint(canvas: Canvas, globalPaint: Paint)

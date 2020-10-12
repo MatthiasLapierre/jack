@@ -2,6 +2,7 @@ package com.matthiaslapierre.jumper.core
 
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.framework.ui.Sprite.Status
+import com.matthiaslapierre.jumper.JumperConstants.BOUNCE_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CANDIES_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CANNON_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.GRAVITY
@@ -13,6 +14,12 @@ class GameStates  {
         LAUNCHED
     }
 
+    enum class Direction {
+        UP,
+        DOWN,
+        IDLE
+    }
+
     /**
      * Current status of the game.
      */
@@ -22,6 +29,11 @@ class GameStates  {
      * Game state.
      */
     var state: State = State.READY_TO_LAUNCH
+
+    /**
+     * Current player direction.
+     */
+    var direction: Direction = Direction.IDLE
 
     /**
      * Score.
@@ -66,6 +78,7 @@ class GameStates  {
 
     fun update() {
         updateSpeed()
+        updateDirection()
     }
 
     fun setScreenSize(screenWidth: Float, screenHeight: Float) {
@@ -80,6 +93,14 @@ class GameStates  {
         }
     }
 
+    private fun updateDirection() {
+        direction = when {
+            speedY > 0f -> Direction.UP
+            speedY < 0f -> Direction.DOWN
+            else -> Direction.IDLE
+        }
+    }
+
     fun collectCandies(candies: Int) {
         candiesCollected += candies
         if (_speedY < getCandyAcceleration()) {
@@ -87,9 +108,20 @@ class GameStates  {
         }
     }
 
+    fun bounce() {
+        _speedY = getBounceAcceleration()
+    }
+
+    fun kill() {
+        _speedY = 0f
+        currentStatus = Status.STATUS_GAME_OVER
+    }
+
     private fun getCannonAcceleration() = screenHeight * CANNON_ACCELERATION
 
     private fun getCandyAcceleration() = screenHeight * CANDIES_ACCELERATION
+
+    private fun getBounceAcceleration() = screenHeight * BOUNCE_ACCELERATION
 
     private fun getGravity() = screenHeight * GRAVITY
 

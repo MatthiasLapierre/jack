@@ -10,6 +10,7 @@ import com.matthiaslapierre.core.ResourceManager.PlayerPowerUp
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 
 class PowerUpSprite(
     resourceManager: ResourceManager,
@@ -60,9 +61,8 @@ class PowerUpSprite(
 
     override fun isAlive(): Boolean = isAlive
 
-    override fun isHit(sprite: Sprite): Boolean {
-        return false
-    }
+    override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
+            && sprite.getRectF().intersect(getRectF())
 
     override fun getScore(): Int = 1
 
