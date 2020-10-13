@@ -35,6 +35,9 @@ class GameProcessor(
     private var cloudInterval: Float = Constants.UNDEFINED
     private var countClouds: Int = 0
 
+    private var hasReachedTheTop: Boolean = false
+    private var hasReachedTheBottom: Boolean = false
+
     private var screenWidth: Float = 0f
     private var screenHeight: Float = 0f
 
@@ -99,9 +102,6 @@ class GameProcessor(
         updateCameraMovement()
     }
 
-    private var hasReachedTheTop: Boolean = false
-    private var hasReachedTheBottom: Boolean = false
-
     private fun updateCameraMovement() {
         if(!hasReachedTheTop) {
             hasReachedTheTop = playerSprite.y <= playerSprite.highestY
@@ -111,18 +111,25 @@ class GameProcessor(
         }
         gameState.cameraMovement = when {
             hasReachedTheTop -> {
-                hasReachedTheTop = gameState.globalSpeedY > 0
-                GameStates.CameraMovement.UP
+                if(gameState.globalSpeedY > 0) {
+                    GameStates.CameraMovement.UP
+                } else {
+                    hasReachedTheTop = false
+                    GameStates.CameraMovement.IDLE
+                }
             }
             hasReachedTheBottom -> {
-                hasReachedTheBottom = gameState.globalSpeedY < 0
-                GameStates.CameraMovement.DOWN
+                if(gameState.globalSpeedY < 0) {
+                    GameStates.CameraMovement.DOWN
+                } else {
+                    hasReachedTheBottom = false
+                    GameStates.CameraMovement.IDLE
+                }
             }
             else -> {
                 GameStates.CameraMovement.IDLE
             }
         }
-        Log.d(">>>>>>>> ", ">>>>>>>>> movement: " + gameState.cameraMovement)
     }
 
     private fun addBackgroundLayers() {
