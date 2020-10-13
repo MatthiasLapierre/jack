@@ -1,18 +1,14 @@
 package com.matthiaslapierre.jumper.core
 
 import com.matthiaslapierre.core.Constants.UNDEFINED
+import com.matthiaslapierre.core.ResourceManager.PlayerState
 import com.matthiaslapierre.framework.ui.Sprite.Status
-import com.matthiaslapierre.jumper.JumperConstants.BOUNCE_ACCELERATION
+import com.matthiaslapierre.jumper.JumperConstants.JUMP_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CANDIES_ACCELERATION
-import com.matthiaslapierre.jumper.JumperConstants.CANNON_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.GRAVITY
+import com.matthiaslapierre.jumper.JumperConstants.MAX_ACCELERATION
 
 class GameStates  {
-
-    enum class State {
-        READY_TO_LAUNCH,
-        LAUNCHED
-    }
 
     enum class Direction {
         UP,
@@ -26,9 +22,9 @@ class GameStates  {
     var currentStatus: Status = Status.STATUS_NOT_STARTED
 
     /**
-     * Game state.
+     * Current player state.
      */
-    var state: State = State.READY_TO_LAUNCH
+    var playerState: PlayerState = PlayerState.IDLE
 
     /**
      * Current player direction.
@@ -52,12 +48,22 @@ class GameStates  {
      */
     private var _speedY: Float = 0f
     val speedY: Float
-        get() = _speedY * frameRateAdjustFactor
+        get() {
+            val speed = when {
+                _speedY > maxSpeedY -> {
+                    maxSpeedY
+                }
+                _speedY < -maxSpeedY -> {
+                    -maxSpeedY
+                }
+                else -> {
+                    _speedY
+                }
+            }
+            return speed * frameRateAdjustFactor
+        }
 
-    /**
-     * Elevation in pixel.
-     */
-    var elevation: Float = 0f
+    private var maxSpeedY: Float = 0f
 
     /**
      * When the framerate is not steady, compensate every moving element by a factor.
@@ -67,11 +73,6 @@ class GameStates  {
     private var screenWidth: Float = UNDEFINED
     private var screenHeight: Float = UNDEFINED
 
-    fun launch() {
-        state = State.LAUNCHED
-        _speedY = getCannonAcceleration()
-    }
-
     fun moveX(xAcceleration: Float) {
         _speedX = xAcceleration
     }
@@ -79,16 +80,17 @@ class GameStates  {
     fun update() {
         updateSpeed()
         updateDirection()
+        updatePlayerState()
     }
 
     fun setScreenSize(screenWidth: Float, screenHeight: Float) {
         this.screenWidth = screenWidth
         this.screenHeight = screenHeight
+        this.maxSpeedY = screenHeight * MAX_ACCELERATION
     }
 
     private fun updateSpeed() {
-        if (currentStatus == Status.STATUS_PLAY && state == State.LAUNCHED) {
-            elevation += _speedY * frameRateAdjustFactor
+        if (currentStatus == Status.STATUS_PLAY) {
             _speedY -= getGravity() * frameRateAdjustFactor
         }
     }
@@ -101,6 +103,26 @@ class GameStates  {
         }
     }
 
+    private fun updatePlayerState() {
+        playerState = when(playerState) {
+            PlayerState.JUMP -> {
+                if (direction == Direction.DOWN) {
+                    PlayerState.FALL
+                } else {
+                    PlayerState.JUMP
+                }
+            }
+            PlayerState.FALL -> {
+                if (direction == Direction.UP) {
+                    PlayerState.JUMP
+                } else {
+                    PlayerState.FALL
+                }
+            }
+            else -> playerState
+        }
+    }
+
     fun collectCandies(candies: Int) {
         candiesCollected += candies
         if (_speedY < getCandyAcceleration()) {
@@ -108,7 +130,7 @@ class GameStates  {
         }
     }
 
-    fun bounce() {
+    fun jump() {
         _speedY = getBounceAcceleration()
     }
 
@@ -117,11 +139,9 @@ class GameStates  {
         currentStatus = Status.STATUS_GAME_OVER
     }
 
-    private fun getCannonAcceleration() = screenHeight * CANNON_ACCELERATION
-
     private fun getCandyAcceleration() = screenHeight * CANDIES_ACCELERATION
 
-    private fun getBounceAcceleration() = screenHeight * BOUNCE_ACCELERATION
+    private fun getBounceAcceleration() = screenHeight * JUMP_ACCELERATION
 
     private fun getGravity() = screenHeight * GRAVITY
 

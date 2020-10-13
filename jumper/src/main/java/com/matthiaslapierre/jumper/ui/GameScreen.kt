@@ -20,17 +20,17 @@ import com.matthiaslapierre.jumper.core.GameMap
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
+import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
 import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
 import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
-import com.matthiaslapierre.jumper.core.sprites.player.CannonSprite
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
 import com.matthiaslapierre.jumper.utils.JumperUtils
 
 class GameScreen(
     game: Game
-): Screen(game), SensorEventListener, CannonSprite.CannonInterface {
+): Screen(game), SensorEventListener {
 
     companion object {
         private const val INDICATOR_RATIO = 0.40f
@@ -126,10 +126,6 @@ class GameScreen(
         }
     }
 
-    override fun onFire() {
-        gameState.launch()
-    }
-
     override fun onSensorChanged(event: SensorEvent?) {
         if (Sensor.TYPE_ACCELEROMETER == event?.sensor?.type) {
             val xAcceleration = event.values[0] * ACCELEROMETER_SENSITIVITY * (frameTime / 1000f)
@@ -143,6 +139,8 @@ class GameScreen(
 
     private fun startGame() {
         gameState.currentStatus = Sprite.Status.STATUS_PLAY
+        gameState.playerState = ResourceManager.PlayerState.JUMP
+        gameState.jump()
     }
 
     private fun setGameOver() {
@@ -150,15 +148,19 @@ class GameScreen(
     }
 
     private fun updateSprites() {
-        if(workSprites.size == 0) {
+        if (playerSprite == null) {
             val resourceManager = getResourceManager()
             playerSprite = PlayerSprite(resourceManager, gameState)
+        }
+
+        if(screenHeight == 0f) return
+        val firstInit = workSprites.size == 0
+        if (firstInit) {
             setBackground()
-            workSprites.add(CannonSprite(resourceManager, gameState, this@GameScreen))
             setTapToLaunch()
         }
         addClouds()
-        workSprites.addAll(gameMap.generate())
+        //workSprites.addAll(gameMap.generate())
     }
 
     private fun addClouds() {
@@ -166,7 +168,7 @@ class GameScreen(
             return
         }
 
-        var nextCloudY = -(screenHeight * 0.2f)
+        var nextCloudY = -(screenWidth * 2f)
         if(lastCloudSprite != null) {
             nextCloudY = lastCloudSprite!!.y - cloudInterval
         }
@@ -189,17 +191,20 @@ class GameScreen(
                         sprite.isConsumed = true
                     }
                     is JumpingPlatformSprite -> {
-                        gameState.bounce()
+                        gameState.jump()
                     }
                     is BatSprite -> {
                         gameState.kill()
                     }
+                    is FloorSprite -> {
+                        gameState.jump()
+                    }
                 }
             }
         }
-        if (playerSprite!!.isDead()) {
+        /*if (playerSprite!!.isDead()) {
             setGameOver()
-        }
+        }*/
     }
 
     private fun setTapToLaunch() {
@@ -208,6 +213,7 @@ class GameScreen(
 
     private fun setBackground() {
         workSprites.add(BgSprite(getResourceManager(), gameState))
+        workSprites.add(FloorSprite(gameState))
     }
 
     private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {

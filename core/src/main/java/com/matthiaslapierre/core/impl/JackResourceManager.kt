@@ -156,9 +156,7 @@ class JackResourceManager(
             put(PlayerState.FALL, (1..4).map {
                 loadImage("images/player/$character/$playerPowerUp/Fall ($it).png")
             }.toTypedArray())
-            put(PlayerState.IDLE, (1..4).map {
-                loadImage("images/player/$character/$playerPowerUp/Idle ($it).png")
-            }.toTypedArray())
+            put(PlayerState.IDLE, arrayOf(loadImage("images/player/$character/copter/Idle (1).png")))
             put(PlayerState.JUMP, (1..4).map {
                 loadImage("images/player/$character/$playerPowerUp/Jump ($it).png")
             }.toTypedArray())

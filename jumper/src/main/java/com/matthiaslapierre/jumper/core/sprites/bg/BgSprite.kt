@@ -85,7 +85,7 @@ class BgSprite(
     }
 
     private fun getAcceleration(): Float {
-        val multiplier = 1f - ((1f / (height + screenHeight)) * gameStates.elevation)
+        val multiplier = 1f - ((1f / (height + screenHeight)) * (height - y))
         return when {
             multiplier > 1f -> {
                 1f

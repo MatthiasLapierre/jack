@@ -4,6 +4,8 @@ import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.PlayerPowerUp
+import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.FIRST_CANDIES_Y
 import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
 import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
@@ -59,8 +61,6 @@ class GameMap(
 
         private const val POWER_UP_FIRST_INTERVAL_RATIO = 6f
         private const val OBSTACLE_FIRST_INTERVAL_RATIO = 6f
-
-        private const val SPRITE_MAX_GAP_RATIO = 0.5f
     }
 
     private var lastGeneratedSprite: Sprite? = null
@@ -81,7 +81,7 @@ class GameMap(
                 return generatedSprites
             }
 
-            var nextSpriteY = -(screenHeight)
+            var nextSpriteY = screenHeight - (screenWidth * FIRST_CANDIES_Y)
             var nextSpriteX = getNextSpriteX()
             if (lastGeneratedSprite != null) {
                 val previousPattern = getPattern(lastGeneratedSprite!!)
@@ -309,13 +309,13 @@ class GameMap(
             randomInt <= DRAW_CHANCE_PATTERN_BAT_STATIC + DRAW_CHANCE_PATTERN_BAT_DYNAMIC + DRAW_CHANCE_PATTERN_CANDIES_LINE + DRAW_CHANCE_PATTERN_CANDIES_MATRIX -> PATTERN_CANDIES_MATRIX
             else -> PATTERN_JUMPING_PLATFORM
         }
-        return if ((pattern == PATTERN_BAT_STATIC || pattern == PATTERN_BAT_DYNAMIC)
+        /*return if ((pattern == PATTERN_BAT_STATIC || pattern == PATTERN_BAT_DYNAMIC)
             && ((lastObstacleSprite != null && abs(y - lastObstacleSprite!!.y) < getNextObstacleInterval())
                     || (lastObstacleSprite == null && gameStates.elevation < obstacleIntervalMinElevation))) {
             PATTERN_JUMPING_PLATFORM
-        } else {
-            pattern
-        }
+        } else {*/
+            return pattern
+        //}
     }
 
     private fun getRandomPowerUp(): PlayerPowerUp {
