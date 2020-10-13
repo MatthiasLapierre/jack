@@ -6,6 +6,8 @@ import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.JumpPlatformState
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
+import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.GameStates.Direction
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
@@ -41,7 +43,7 @@ class JumpingPlatformSprite(
             height = width * firstFrame.height / firstFrame.width
         }
 
-        isAlive = y <= (screenHeight * 2f)
+        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY

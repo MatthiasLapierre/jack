@@ -7,6 +7,7 @@ import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.FLOOR_HEIGHT
+import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 
@@ -34,7 +35,7 @@ class FloorSprite(
             highestY = y
         }
 
-        isAlive = y <= (screenHeight * 2f)
+        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
@@ -52,7 +53,7 @@ class FloorSprite(
     override fun isAlive(): Boolean = true
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
-            && sprite.getFeetRectF().top >= y
+            && sprite.getFeetRectF().bottom >= y
 
     override fun getScore(): Int = 0
 

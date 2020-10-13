@@ -21,6 +21,7 @@ class PlayerSprite(
 
     private var frame: Int = 0
     private var highestY: Float = UNDEFINED
+    private var lowestY: Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
     private var screenHeight: Float = UNDEFINED
@@ -38,6 +39,7 @@ class PlayerSprite(
             height = width * image.height / image.width.toFloat()
             x = (screenWidth - width) / 2f
             y = screenHeight - (screenWidth * PLAYER_INITIAL_POSITION) - height
+            lowestY = y
             highestY = (screenHeight - height) * JumperConstants.PLAYER_HIGHEST_Y
         }
 
@@ -52,6 +54,8 @@ class PlayerSprite(
             }
             if (y < highestY) {
                 y = highestY
+            } else if (y > lowestY) {
+                y = lowestY
             }
         }
 

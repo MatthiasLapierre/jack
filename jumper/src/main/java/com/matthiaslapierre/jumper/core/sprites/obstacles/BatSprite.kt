@@ -7,6 +7,8 @@ import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
+import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 
@@ -44,7 +46,7 @@ class BatSprite(
             speed = width * SPEED_RATIO
         }
 
-        isAlive = y <= (screenHeight * 2f)
+        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
         if(maxX - minX > width) {
             x += speed

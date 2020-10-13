@@ -16,4 +16,6 @@ object JumperConstants  {
     const val PLAYER_INITIAL_POSITION = .20f
     const val PLAYER_FRAME_RATE = 30
 
+    const val SPRITE_LIFE_LOWEST_Y = 1f
+
 }
