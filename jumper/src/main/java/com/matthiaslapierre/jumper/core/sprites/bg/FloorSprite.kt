@@ -53,7 +53,7 @@ class FloorSprite(
     override fun isAlive(): Boolean = true
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
-            && sprite.getFeetRectF().bottom >= y
+            && sprite.getFeetRectF().top >= y
 
     override fun getScore(): Int = 0
 
