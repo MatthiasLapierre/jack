@@ -1,7 +1,6 @@
 package com.matthiaslapierre.jumper.core.sprites.player
 
 import android.graphics.*
-import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.PlayerState
@@ -19,9 +18,10 @@ class PlayerSprite(
     override var x: Float = UNDEFINED
     override var y: Float = UNDEFINED
 
+    var highestY: Float = UNDEFINED
+    var lowestY: Float = UNDEFINED
+
     private var frame: Int = 0
-    private var highestY: Float = UNDEFINED
-    private var lowestY: Float = UNDEFINED
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
     private var screenHeight: Float = UNDEFINED
@@ -45,8 +45,8 @@ class PlayerSprite(
 
         if (status == Sprite.Status.STATUS_PLAY
             || status == Sprite.Status.STATUS_GAME_OVER) {
-            x -= gameStates.speedX
-            y -= gameStates.speedY
+            x -= gameStates.playerSpeedX
+            y -= gameStates.playerSpeedY
             if (x > screenWidth) {
                 x = -width
             } else if(x < -width) {
@@ -73,6 +73,16 @@ class PlayerSprite(
             dstRect,
             globalPaint
         )
+
+        canvas.drawRect(RectF(0f, highestY, screenWidth, highestY+1), Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.RED
+        })
+
+        canvas.drawRect(RectF(0f, lowestY, screenWidth, lowestY+1), Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.BLUE
+        })
 
         frame = getFrameIndex(frame, previousState, gameStates.playerState)
         previousState = gameStates.playerState
@@ -110,7 +120,7 @@ class PlayerSprite(
         )
     }
 
-    fun getFrameIndex(previousFrameIndex: Int, previousState: PlayerState, state: PlayerState): Int {
+    private fun getFrameIndex(previousFrameIndex: Int, previousState: PlayerState, state: PlayerState): Int {
         val playerState = gameStates.playerState
         val images = resourceManager.player!![playerState]!!
         var frame = previousFrameIndex
@@ -132,10 +142,8 @@ class PlayerSprite(
                 lastFrameTimestamp = System.currentTimeMillis()
             }
         } else {
-            Log.d(">>>>>>>>>> ", ">>>>>>>> $previousState - $state")
             frame = 0
         }
-        Log.d(">>>>>>>>>> ", ">>>>>>>> $playerState - $frame")
         return frame
     }
 

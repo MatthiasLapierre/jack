@@ -3,14 +3,20 @@ package com.matthiaslapierre.jumper.core
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager.PlayerState
 import com.matthiaslapierre.framework.ui.Sprite.Status
-import com.matthiaslapierre.jumper.JumperConstants.JUMP_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CANDIES_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.GRAVITY
+import com.matthiaslapierre.jumper.JumperConstants.JUMP_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.MAX_ACCELERATION
 
 class GameStates  {
 
     enum class Direction {
+        UP,
+        DOWN,
+        IDLE
+    }
+
+    enum class CameraMovement {
         UP,
         DOWN,
         IDLE
@@ -31,6 +37,8 @@ class GameStates  {
      */
     var direction: Direction = Direction.IDLE
 
+    var cameraMovement: CameraMovement = CameraMovement.IDLE
+
     /**
      * Score.
      */
@@ -40,28 +48,26 @@ class GameStates  {
      * Current speed on the x-axis.
      */
     private var _speedX: Float = 0f
-    val speedX: Float
-        get() = _speedX * frameRateAdjustFactor
 
     /**
      * Current speed on the y-axis.
      */
     private var _speedY: Float = 0f
+
     val speedY: Float
-        get() {
-            val speed = when {
-                _speedY > maxSpeedY -> {
-                    maxSpeedY
-                }
-                _speedY < -maxSpeedY -> {
-                    -maxSpeedY
-                }
-                else -> {
-                    _speedY
-                }
-            }
-            return speed * frameRateAdjustFactor
+        get() = if (cameraMovement != CameraMovement.IDLE) {
+            globalSpeedY
+        } else {
+            0f
         }
+
+    val playerSpeedX: Float
+        get() = normalizedSpeedX(_speedX)
+    val playerSpeedY: Float
+        get() = globalSpeedY
+
+    val globalSpeedY: Float
+        get() = normalizedSpeedY(_speedY)
 
     private var maxSpeedY: Float = 0f
 
@@ -97,8 +103,8 @@ class GameStates  {
 
     private fun updateDirection() {
         direction = when {
-            speedY > 0f -> Direction.UP
-            speedY < 0f -> Direction.DOWN
+            globalSpeedY > 0f -> Direction.UP
+            globalSpeedY < 0f -> Direction.DOWN
             else -> Direction.IDLE
         }
     }
@@ -131,7 +137,7 @@ class GameStates  {
     }
 
     fun jump() {
-        _speedY = getBounceAcceleration()
+        _speedY = getJumpAcceleration()
     }
 
     fun kill() {
@@ -141,8 +147,27 @@ class GameStates  {
 
     private fun getCandyAcceleration() = screenHeight * CANDIES_ACCELERATION
 
-    private fun getBounceAcceleration() = screenHeight * JUMP_ACCELERATION
+    private fun getJumpAcceleration() = screenHeight * JUMP_ACCELERATION
 
     private fun getGravity() = screenHeight * GRAVITY
+
+    private fun normalizedSpeedX(speedX: Float): Float {
+        return speedX * frameRateAdjustFactor
+    }
+
+    private fun normalizedSpeedY(speedY: Float): Float {
+        val newSpeedY = when {
+            speedY > maxSpeedY -> {
+                maxSpeedY
+            }
+            speedY < -maxSpeedY -> {
+                -maxSpeedY
+            }
+            else -> {
+                speedY
+            }
+        }
+        return newSpeedY * frameRateAdjustFactor
+    }
 
 }

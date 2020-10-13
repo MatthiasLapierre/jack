@@ -44,10 +44,10 @@ class FloorSprite(
             }
         }
 
-        canvas.drawRect(getRectF(), Paint().apply {
+        /*canvas.drawRect(getRectF(), Paint().apply {
             style = Paint.Style.FILL
             color = Color.BLACK
-        })
+        })*/
     }
 
     override fun isAlive(): Boolean = true

@@ -30,6 +30,7 @@ class JumpingPlatformSprite(
     private var frame: Int = 0
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
+    private var highestY: Float = UNDEFINED
     private var isAlive: Boolean = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {

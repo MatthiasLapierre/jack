@@ -9,23 +9,13 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.view.MotionEvent
-import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.ACCELEROMETER_SENSITIVITY
-import com.matthiaslapierre.jumper.core.GameMap
-import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
-import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
-import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
-import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
-import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
-import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
-import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
+import com.matthiaslapierre.jumper.core.GameProcessor
 import com.matthiaslapierre.jumper.utils.JumperUtils
 
 class GameScreen(
@@ -33,33 +23,22 @@ class GameScreen(
 ): Screen(game), SensorEventListener {
 
     companion object {
-        private const val INDICATOR_RATIO = 0.40f
-        private const val TERNARY_BTN_RATIO = 0.14f
+        private const val INDICATOR_WIDTH = 0.40f
+        private const val TERNARY_BTN_WIDTH = 0.14f
         private const val TOP_BAR_INSET_X = .13f
         private const val TOP_BAR_INSET_Y = .18f
-
-        private const val MIN_CLOUDS = 20
-        private const val CLOUD_INTERVAL_RATIO = 0.6f
     }
 
     private val sensorManager: SensorManager = (game as Context).getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    private val gameProcessor =
+        GameProcessor(game.getGameResources() as ResourceManager)
 
     private var topBgImage: Image? = null
     private var candyIndicatorImage: Image? = null
     private var pauseBtnImage: Image? = null
 
-    private var workSprites: MutableList<Sprite> = mutableListOf()
-    private var playerSprite: PlayerSprite? = null
-    private var lastCloudSprite: CloudSprite? = null
-    private var cloudInterval: Float = UNDEFINED
-    private var countClouds: Int = 0
-    private var countJumpingPlatforms: Int = 0
-
     private var screenWidth: Float = 0f
-    private var screenHeight: Float = 0f
-
-    private val gameState: GameStates = GameStates()
-    private val gameMap: GameMap = GameMap(game.getGameResources() as ResourceManager, gameState)
 
     private var pauseBtnIsPressed: Boolean = false
 
@@ -69,21 +48,13 @@ class GameScreen(
         candyIndicatorImage = resourceManager.candyIndicator
         pauseBtnImage = if(pauseBtnIsPressed) resourceManager.btnPausePressed else
             resourceManager.btnPause
-        gameState.frameRateAdjustFactor = frameRateAdjustFactor
-        updateSprites()
-        if(gameState.currentStatus != Sprite.Status.STATUS_GAME_OVER) {
-            checkCollisions()
-        }
-        gameState.update()
+        gameProcessor.setFrameRateAdjustFactor(frameRateAdjustFactor)
+        gameProcessor.process()
     }
 
     override fun paint(canvas: Canvas, globalPaint: Paint) {
         screenWidth = canvas.width.toFloat()
-        screenHeight = canvas.height.toFloat()
-        gameState.setScreenSize(screenWidth, screenHeight)
-        gameMap.setScreenSize(screenWidth, screenHeight)
-        cloudInterval = screenWidth * CLOUD_INTERVAL_RATIO
-        drawSprites(canvas, globalPaint)
+        gameProcessor.paint(canvas, globalPaint)
         drawTopBar(canvas, globalPaint)
     }
 
@@ -113,15 +84,15 @@ class GameScreen(
             MotionEvent.ACTION_UP -> {
                 pauseBtnIsPressed = false
                 if (touchY > getPauseBtnRect().bottom
-                    && gameState.currentStatus == Sprite.Status.STATUS_NOT_STARTED) {
-                    startGame()
+                    && gameProcessor.getGameStatus() == Sprite.Status.STATUS_NOT_STARTED) {
+                    gameProcessor.startGame()
                 }
             }
         }
     }
 
     override fun onBackPressed() {
-        if(gameState.currentStatus != Sprite.Status.STATUS_PLAY) {
+        if(gameProcessor.getGameStatus() != Sprite.Status.STATUS_PLAY) {
             game.setScreen(MenuScreen(game))
         }
     }
@@ -129,7 +100,7 @@ class GameScreen(
     override fun onSensorChanged(event: SensorEvent?) {
         if (Sensor.TYPE_ACCELEROMETER == event?.sensor?.type) {
             val xAcceleration = event.values[0] * ACCELEROMETER_SENSITIVITY * (frameTime / 1000f)
-            gameState.moveX(xAcceleration)
+            gameProcessor.moveX(xAcceleration)
         }
     }
 
@@ -137,107 +108,10 @@ class GameScreen(
 
     }
 
-    private fun startGame() {
-        gameState.currentStatus = Sprite.Status.STATUS_PLAY
-        gameState.playerState = ResourceManager.PlayerState.JUMP
-        gameState.jump()
-    }
-
-    private fun setGameOver() {
-        gameState.currentStatus = Sprite.Status.STATUS_GAME_OVER
-    }
-
-    private fun updateSprites() {
-        if (playerSprite == null) {
-            val resourceManager = getResourceManager()
-            playerSprite = PlayerSprite(resourceManager, gameState)
-        }
-
-        if(screenHeight == 0f) return
-        val firstInit = workSprites.size == 0
-        if (firstInit) {
-            setBackground()
-            setTapToLaunch()
-        }
-        addClouds()
-        //workSprites.addAll(gameMap.generate())
-    }
-
-    private fun addClouds() {
-        if (cloudInterval == UNDEFINED) {
-            return
-        }
-
-        var nextCloudY = -(screenWidth * 2f)
-        if(lastCloudSprite != null) {
-            nextCloudY = lastCloudSprite!!.y - cloudInterval
-        }
-        while(countClouds < MIN_CLOUDS) {
-            lastCloudSprite = CloudSprite(getResourceManager(), gameState, nextCloudY)
-            workSprites.add(1, lastCloudSprite!!)
-            nextCloudY -= cloudInterval
-            countClouds++
-        }
-    }
-
-    private fun checkCollisions() {
-        val iterator: MutableListIterator<Sprite> = workSprites.listIterator()
-        while (iterator.hasNext()) {
-            val sprite = iterator.next()
-            if (sprite.isHit(playerSprite!!)) {
-                when(sprite) {
-                    is CandySprite -> {
-                        gameState.collectCandies(sprite.getScore())
-                        sprite.isConsumed = true
-                    }
-                    is JumpingPlatformSprite -> {
-                        gameState.jump()
-                    }
-                    is BatSprite -> {
-                        gameState.kill()
-                    }
-                    is FloorSprite -> {
-                        gameState.jump()
-                    }
-                }
-            }
-        }
-        /*if (playerSprite!!.isDead()) {
-            setGameOver()
-        }*/
-    }
-
-    private fun setTapToLaunch() {
-        workSprites.add(TapToLaunchSprite(getResourceManager()))
-    }
-
-    private fun setBackground() {
-        workSprites.add(BgSprite(getResourceManager(), gameState))
-        workSprites.add(FloorSprite(gameState))
-    }
-
     private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {
         drawTopBarBackground(canvas, globalPaint)
         drawCandyIndicator(canvas, globalPaint)
         drawPauseBtn(canvas, globalPaint)
-    }
-
-    private fun drawSprites(canvas: Canvas, globalPaint: Paint) {
-        val iterator: MutableListIterator<Sprite> = workSprites.listIterator()
-        while (iterator.hasNext()) {
-            val sprite = iterator.next()
-            if (sprite.isAlive()) {
-                sprite.onDraw(canvas, globalPaint, gameState.currentStatus)
-            } else {
-                when (sprite) {
-                    is CloudSprite -> countClouds--
-                    is JumpingPlatformSprite -> countJumpingPlatforms--
-                }
-                iterator.remove()
-                sprite.onDispose()
-            }
-        }
-        playerSprite?.onDraw(canvas, globalPaint, gameState.currentStatus)
     }
 
     private fun drawTopBarBackground(canvas: Canvas, globalPaint: Paint) {
@@ -269,7 +143,10 @@ class GameScreen(
             globalPaint
         )
 
-        val scoreBitmap = JumperUtils.generateScoreBitmap(gameState.candiesCollected, getResourceManager())
+        val scoreBitmap = JumperUtils.generateScoreBitmap(
+            gameProcessor.getCandiesCollected(),
+            getResourceManager()
+        )
         val originalScoreWidth = scoreBitmap.width
         val originalScoreHeight = scoreBitmap.height
         val targetScoreHeight = (candyIndicatorRect.height() * .4f).toInt()
@@ -315,7 +192,7 @@ class GameScreen(
     private fun getCandyIndicatorRect(): Rect {
         val fromWidth = candyIndicatorImage!!.width
         val fromHeight = candyIndicatorImage!!.height
-        val toWidth = (screenWidth * INDICATOR_RATIO).toInt()
+        val toWidth = (screenWidth * INDICATOR_WIDTH).toInt()
         val toHeight = (toWidth * fromHeight / fromWidth.toFloat()).toInt()
         val xOutset = (toHeight * TOP_BAR_INSET_X).toInt()
         val yOutset = (toHeight * TOP_BAR_INSET_Y).toInt()
@@ -330,7 +207,7 @@ class GameScreen(
     private fun getPauseBtnRect(): Rect {
         val fromWidth = pauseBtnImage!!.width
         val fromHeight = pauseBtnImage!!.height
-        val toWidth =  (screenWidth * TERNARY_BTN_RATIO).toInt()
+        val toWidth =  (screenWidth * TERNARY_BTN_WIDTH).toInt()
         val toHeight = (toWidth * fromHeight / fromWidth.toFloat()).toInt()
         val xOutset = (toHeight * TOP_BAR_INSET_X).toInt()
         val yOutset = (toHeight * TOP_BAR_INSET_Y).toInt()

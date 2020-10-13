@@ -4,8 +4,7 @@ import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.PlayerPowerUp
-import com.matthiaslapierre.jumper.JumperConstants
-import com.matthiaslapierre.jumper.JumperConstants.FIRST_CANDIES_Y
+import com.matthiaslapierre.jumper.JumperConstants.FIRST_CANDIES_BOTTOM
 import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
 import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
@@ -81,7 +80,7 @@ class GameMap(
                 return generatedSprites
             }
 
-            var nextSpriteY = screenHeight - (screenWidth * FIRST_CANDIES_Y)
+            var nextSpriteY = screenHeight - (screenWidth * FIRST_CANDIES_BOTTOM)
             var nextSpriteX = getNextSpriteX()
             if (lastGeneratedSprite != null) {
                 val previousPattern = getPattern(lastGeneratedSprite!!)
@@ -314,7 +313,7 @@ class GameMap(
                     || (lastObstacleSprite == null && gameStates.elevation < obstacleIntervalMinElevation))) {
             PATTERN_JUMPING_PLATFORM
         } else {*/
-            return pattern
+            return PATTERN_JUMPING_PLATFORM
         //}
     }
 
