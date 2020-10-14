@@ -6,8 +6,12 @@ import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.PlayerState
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FEET_BOTTOM
+import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FEET_TOP
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FRAME_RATE
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INITIAL_POSITION
+import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INSET_X
+import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INSET_Y
 import com.matthiaslapierre.jumper.core.GameStates
 
 internal class PlayerSprite(
@@ -44,7 +48,7 @@ internal class PlayerSprite(
         }
 
         if (status == Sprite.Status.STATUS_PLAY
-            || status == Sprite.Status.STATUS_GAME_OVER) {
+            || (status == Sprite.Status.STATUS_GAME_OVER && y < screenHeight)) {
             x -= gameStates.playerSpeedX
             y -= gameStates.playerSpeedY
             if (x > screenWidth) {
@@ -54,7 +58,7 @@ internal class PlayerSprite(
             }
             if (y < highestY) {
                 y = highestY
-            } else if (y > lowestY) {
+            } else if (status != Sprite.Status.STATUS_GAME_OVER && y > lowestY) {
                 y = lowestY
             }
         }
@@ -113,10 +117,19 @@ internal class PlayerSprite(
 
     fun getFeetRectF(): RectF = getRectF().run {
         RectF(
-            left + (width * .3f),
-            bottom - (height * .2f),
-            right - (width * .3f),
-            bottom - (height * .1f)
+            left + (width * PLAYER_INSET_X),
+            bottom - (height * PLAYER_FEET_TOP),
+            right - (width * PLAYER_INSET_X),
+            bottom - (height * PLAYER_FEET_BOTTOM)
+        )
+    }
+
+    fun getBodyRectF(): RectF = getRectF().run {
+        RectF(
+            left + (width * PLAYER_INSET_X),
+            top + (height * PLAYER_INSET_Y),
+            right - (width * PLAYER_INSET_X),
+            bottom - (height * PLAYER_INSET_Y)
         )
     }
 
@@ -127,14 +140,16 @@ internal class PlayerSprite(
         if(previousState == state) {
             if(System.currentTimeMillis() - lastFrameTimestamp > PLAYER_FRAME_RATE) {
                 when (playerState) {
-                    PlayerState.JUMP -> {
+                    PlayerState.JUMP, PlayerState.FALL -> {
                         if (frame < images.size - 1) {
                             frame++
                         }
                     }
-                    PlayerState.FALL -> {
+                    PlayerState.DEAD -> {
                         if (frame < images.size - 1) {
                             frame++
+                        } else {
+                            frame = 0
                         }
                     }
                     else -> frame = 0

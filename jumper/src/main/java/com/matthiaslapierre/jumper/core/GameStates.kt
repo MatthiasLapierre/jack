@@ -96,7 +96,7 @@ internal class GameStates  {
     }
 
     private fun updateSpeed() {
-        if (currentStatus == Status.STATUS_PLAY) {
+        if (currentStatus == Status.STATUS_PLAY || currentStatus == Status.STATUS_GAME_OVER) {
             _speedY -= getGravity() * frameRateAdjustFactor
         }
     }
@@ -142,6 +142,7 @@ internal class GameStates  {
 
     fun kill() {
         _speedY = 0f
+        playerState = PlayerState.DEAD
         currentStatus = Status.STATUS_GAME_OVER
     }
 

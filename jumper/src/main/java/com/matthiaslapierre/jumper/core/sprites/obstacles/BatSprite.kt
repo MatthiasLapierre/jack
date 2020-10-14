@@ -7,7 +7,9 @@ import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.BAT_FRAME_RAYE
+import com.matthiaslapierre.jumper.JumperConstants.BAT_SPEED
+import com.matthiaslapierre.jumper.JumperConstants.BAT_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
@@ -20,12 +22,6 @@ internal class BatSprite(
     private var minX: Float,
     private var maxX: Float
 ) : Sprite {
-
-    companion object {
-        private const val WIDTH_RATIO = .27f
-        private const val SPEED_RATIO = .02f
-        private const val FRAME_PER_MS = 120
-    }
 
     private var frame: Int = 0
     private var width: Float = UNDEFINED
@@ -41,9 +37,9 @@ internal class BatSprite(
         val screenWidth = canvas.width.toFloat()
         val screenHeight = canvas.height.toFloat()
         if (width == UNDEFINED) {
-            width = screenWidth * WIDTH_RATIO
+            width = screenWidth * BAT_WIDTH
             height = width * batImage.height / batImage.width
-            speed = width * SPEED_RATIO
+            speed = width * BAT_SPEED
         }
 
         isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
@@ -73,7 +69,7 @@ internal class BatSprite(
             globalPaint
         )
 
-        if(System.currentTimeMillis() - lastFrameTimestamp > FRAME_PER_MS) {
+        if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RAYE) {
             frame++
             if (frame >= batImages.size) {
                 frame = 0
@@ -85,7 +81,7 @@ internal class BatSprite(
     override fun isAlive(): Boolean = isAlive
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
-            && sprite.getRectF().intersect(getRectF())
+            && sprite.getBodyRectF().intersect(getRectF())
 
     override fun getScore(): Int = 0
 

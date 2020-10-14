@@ -2,12 +2,10 @@ package com.matthiaslapierre.jumper.core
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.util.Log
 import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
-import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
@@ -103,32 +101,38 @@ class GameProcessor(
     }
 
     private fun updateCameraMovement() {
-        if(!hasReachedTheTop) {
-            hasReachedTheTop = playerSprite.y <= playerSprite.highestY
-        }
-        if(!hasReachedTheBottom) {
-            hasReachedTheBottom = playerSprite.y >= playerSprite.lowestY
-        }
-        gameState.cameraMovement = when {
-            hasReachedTheTop -> {
-                if(gameState.globalSpeedY > 0) {
-                    GameStates.CameraMovement.UP
-                } else {
-                    hasReachedTheTop = false
+        if (gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
+            if (!hasReachedTheTop) {
+                hasReachedTheTop = playerSprite.y <= playerSprite.highestY
+            }
+            if (!hasReachedTheBottom) {
+                hasReachedTheBottom = playerSprite.y >= playerSprite.lowestY
+            }
+            gameState.cameraMovement = when {
+                hasReachedTheTop -> {
+                    if (gameState.globalSpeedY > 0) {
+                        GameStates.CameraMovement.UP
+                    } else {
+                        hasReachedTheTop = false
+                        GameStates.CameraMovement.IDLE
+                    }
+                }
+                hasReachedTheBottom -> {
+                    if (gameState.globalSpeedY < 0) {
+                        GameStates.CameraMovement.DOWN
+                    } else {
+                        hasReachedTheBottom = false
+                        GameStates.CameraMovement.IDLE
+                    }
+                }
+                else -> {
                     GameStates.CameraMovement.IDLE
                 }
             }
-            hasReachedTheBottom -> {
-                if(gameState.globalSpeedY < 0) {
-                    GameStates.CameraMovement.DOWN
-                } else {
-                    hasReachedTheBottom = false
-                    GameStates.CameraMovement.IDLE
-                }
-            }
-            else -> {
-                GameStates.CameraMovement.IDLE
-            }
+        } else {
+            hasReachedTheTop = false
+            hasReachedTheBottom = false
+            gameState.cameraMovement = GameStates.CameraMovement.IDLE
         }
     }
 

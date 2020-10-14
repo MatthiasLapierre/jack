@@ -34,7 +34,7 @@ internal class GameMap(
         private const val DRAW_CHANCE_POWER_UP_ROCKET = 25
         private const val DRAW_CHANCE_POWER_UP_SHIELD = 25
 
-        private const val MAX_CANDIES_X_CAPACITY = 4
+        private const val MAX_CANDIES_X_CAPACITY = 2
         private const val MAX_CANDIES_Y_CAPACITY = 5
 
         private const val DIRECTION_LEFT = 1
@@ -313,7 +313,7 @@ internal class GameMap(
                     || (lastObstacleSprite == null && gameStates.elevation < obstacleIntervalMinElevation))) {
             PATTERN_JUMPING_PLATFORM
         } else {*/
-            return PATTERN_JUMPING_PLATFORM
+            return PATTERN_CANDIES_MATRIX
         //}
     }
 
