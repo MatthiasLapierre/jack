@@ -6,6 +6,7 @@ import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
+import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
@@ -35,6 +36,7 @@ class GameProcessor(
 
     private var hasReachedTheTop: Boolean = false
     private var hasReachedTheBottom: Boolean = false
+    private var freeFall: Float? = null
 
     private var screenWidth: Float = 0f
     private var screenHeight: Float = 0f
@@ -48,10 +50,11 @@ class GameProcessor(
 
     fun process() {
         updateSprites()
+        updateStates()
         if(gameState.currentStatus != Sprite.Status.STATUS_GAME_OVER) {
             checkCollisions()
+            catchFreeFall()
         }
-        updateStates()
     }
 
     fun paint(canvas: Canvas, globalPaint: Paint) {
@@ -70,7 +73,7 @@ class GameProcessor(
     }
 
     fun gameOver() {
-        gameState.currentStatus = Sprite.Status.STATUS_GAME_OVER
+        gameState.gameOver()
     }
 
     fun moveX(xAcceleration: Float) {
@@ -114,7 +117,7 @@ class GameProcessor(
                         GameStates.CameraMovement.UP
                     } else {
                         hasReachedTheTop = false
-                        GameStates.CameraMovement.IDLE
+                        GameStates.CameraMovement.NONE
                     }
                 }
                 hasReachedTheBottom -> {
@@ -122,17 +125,34 @@ class GameProcessor(
                         GameStates.CameraMovement.DOWN
                     } else {
                         hasReachedTheBottom = false
-                        GameStates.CameraMovement.IDLE
+                        GameStates.CameraMovement.NONE
                     }
                 }
                 else -> {
-                    GameStates.CameraMovement.IDLE
+                    GameStates.CameraMovement.NONE
                 }
             }
         } else {
             hasReachedTheTop = false
             hasReachedTheBottom = false
-            gameState.cameraMovement = GameStates.CameraMovement.IDLE
+            gameState.cameraMovement = GameStates.CameraMovement.NONE
+        }
+    }
+
+    private fun catchFreeFall() {
+        freeFall = if (gameState.direction == GameStates.Direction.DOWN) {
+            if (freeFall != null) {
+                freeFall!! - gameState.globalSpeedY
+            } else {
+                0f
+            }
+        } else {
+            null
+        }
+
+        val freeFallMax = screenHeight * FREE_FALL_MAX
+        if (freeFall != null && freeFall!! > freeFallMax) {
+            gameOver()
         }
     }
 
@@ -173,7 +193,7 @@ class GameProcessor(
                         sprite.bounce()
                     }
                     is BatSprite -> {
-                        gameState.kill()
+                        gameOver()
                     }
                     is FloorSprite -> {
                         gameState.jump()

@@ -19,7 +19,7 @@ internal class GameStates  {
     enum class CameraMovement {
         UP,
         DOWN,
-        IDLE
+        NONE
     }
 
     /**
@@ -37,7 +37,7 @@ internal class GameStates  {
      */
     var direction: Direction = Direction.IDLE
 
-    var cameraMovement: CameraMovement = CameraMovement.IDLE
+    var cameraMovement: CameraMovement = CameraMovement.NONE
 
     /**
      * Score.
@@ -55,7 +55,7 @@ internal class GameStates  {
     private var _speedY: Float = 0f
 
     val speedY: Float
-        get() = if (cameraMovement != CameraMovement.IDLE) {
+        get() = if (cameraMovement != CameraMovement.NONE) {
             globalSpeedY
         } else {
             0f
@@ -140,7 +140,7 @@ internal class GameStates  {
         _speedY = getJumpAcceleration()
     }
 
-    fun kill() {
+    fun gameOver() {
         _speedY = 0f
         playerState = PlayerState.DEAD
         currentStatus = Status.STATUS_GAME_OVER

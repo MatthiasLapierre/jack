@@ -20,7 +20,8 @@ internal object JumperConstants  {
     const val PLAYER_FEET_TOP = .2f
     const val PLAYER_FEET_BOTTOM = .1f
 
-    const val SPRITE_LIFE_LOWEST_Y = 2f
+    const val SPRITE_LIFE_LOWEST_Y = 1.2f
+    const val FREE_FALL_MAX = 0.5f
 
     const val CLOUD_INTERVAL = 0.6f
 
