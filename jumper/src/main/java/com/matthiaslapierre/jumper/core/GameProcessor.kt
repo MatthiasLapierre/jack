@@ -2,13 +2,15 @@ package com.matthiaslapierre.jumper.core
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.Handler
+import android.os.Looper
 import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
 import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
+import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TIMER
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
@@ -47,6 +49,10 @@ class GameProcessor(
     private val gameState: GameStates = GameStates()
     private val gameMap: GameMap = GameMap(resourceManager, gameState)
 
+    private val handler: Handler = Handler(Looper.getMainLooper())
+    private var rocketTimerRunnable: Runnable? = null
+    private var rocketTimer: Int = 0
+
     init {
         playerSprite = PlayerSprite(resourceManager, gameState)
     }
@@ -58,6 +64,11 @@ class GameProcessor(
             catchFreeFall()
         }
         updateStates()
+        updateRocketTimer()
+    }
+
+    fun pause() {
+        stopRocketTimer()
     }
 
     fun paint(canvas: Canvas, globalPaint: Paint) {
@@ -122,6 +133,13 @@ class GameProcessor(
         }
     }
 
+    private fun addPowerUp(powerUp: Int) {
+        gameState.addPowerUp(powerUp)
+        if (powerUp == GameStates.POWER_UP_ROCKET) {
+            rocketTimer = ROCKET_TIMER
+        }
+    }
+
     private fun addBackgroundLayers() {
         if (cloudInterval == Constants.UNDEFINED) {
             return
@@ -156,7 +174,7 @@ class GameProcessor(
                     }
                     is PowerUpSprite -> {
                         gameState.collectCandies(sprite.getScore())
-                        gameState.addPowerUp(sprite.powerUp)
+                        addPowerUp(sprite.powerUp)
                         sprite.isConsumed = true
                     }
                     is JumpingPlatformSprite -> {
@@ -212,6 +230,36 @@ class GameProcessor(
                 iterator.remove()
                 sprite.onDispose()
             }
+        }
+    }
+
+    private fun updateRocketTimer() {
+        if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ROCKET)) {
+            startRocketTimer()
+        } else {
+            stopRocketTimer()
+        }
+    }
+
+    private fun startRocketTimer() {
+        if (rocketTimerRunnable == null) {
+            rocketTimerRunnable = Runnable {
+                if (rocketTimer == 0) {
+                    gameState.removePowerUp(GameStates.POWER_UP_ROCKET)
+                    stopRocketTimer()
+                } else {
+                    rocketTimer--
+                    handler.postDelayed(rocketTimerRunnable!!, 1000)
+                }
+            }
+            handler.postDelayed(rocketTimerRunnable!!, 1000)
+        }
+    }
+
+    private fun stopRocketTimer() {
+        if (rocketTimerRunnable != null) {
+            handler.removeCallbacks(rocketTimerRunnable!!)
+            rocketTimerRunnable = null
         }
     }
 

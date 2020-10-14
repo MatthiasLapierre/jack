@@ -60,6 +60,7 @@ class GameScreen(
 
     override fun pause() {
         sensorManager.unregisterListener(this)
+        gameProcessor.pause()
     }
 
     override fun resume() {
@@ -151,7 +152,7 @@ class GameScreen(
         val originalScoreHeight = scoreBitmap.height
         val targetScoreHeight = (candyIndicatorRect.height() * .4f).toInt()
         val targetScoreWidth = (targetScoreHeight * originalScoreWidth / originalScoreHeight.toFloat()).toInt()
-        val scoreX = (candyIndicatorRect.left + (candyIndicatorRect.width() * .5f)).toInt()
+        val scoreX = (candyIndicatorRect.left + (candyIndicatorRect.width() * .48f)).toInt()
         val scoreY = (candyIndicatorRect.top + ((candyIndicatorRect.height() - targetScoreHeight) / 2f)
                 + (candyIndicatorRect.height() * .05f)).toInt()
         canvas.drawBitmap(

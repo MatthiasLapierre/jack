@@ -154,10 +154,10 @@ internal class PlayerSprite(
         previousState = gameStates.playerState
 
         //DEBUG
-        canvas.drawRect(RectF(0f, highestY, screenWidth, highestY+1), Paint().apply {
+        /*canvas.drawRect(RectF(0f, highestY, screenWidth, highestY+1), Paint().apply {
             style = Paint.Style.FILL
             color = Color.RED
-        })
+        })*/
         canvas.drawRect(RectF(0f, lowestY, screenWidth, lowestY+1), Paint().apply {
             style = Paint.Style.FILL
             color = Color.BLUE

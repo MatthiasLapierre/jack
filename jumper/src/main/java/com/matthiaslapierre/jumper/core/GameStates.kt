@@ -10,6 +10,7 @@ import com.matthiaslapierre.jumper.JumperConstants.BACKGROUND_SPEED_DECELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_SPEED_DECELERATION
 import com.matthiaslapierre.jumper.JumperConstants.MAX_FALL_SPEED
 import com.matthiaslapierre.jumper.utils.hasFlag
+import com.matthiaslapierre.jumper.utils.minusFlag
 import com.matthiaslapierre.jumper.utils.withFlag
 
 internal class GameStates  {
@@ -168,6 +169,13 @@ internal class GameStates  {
         }
     }
 
+    fun removePowerUp(powerUpFlag: Int) {
+        powerUp = powerUp.minusFlag(powerUpFlag)
+        if (powerUpFlag == POWER_UP_COPTER) {
+            playerState = PlayerState.JUMP
+        }
+    }
+
     fun gameOver() {
         _speedY = 0f
         playerState = PlayerState.DEAD
@@ -202,18 +210,18 @@ internal class GameStates  {
 
     private fun updatePlayerState() {
         playerState = when(playerState) {
-            ResourceManager.PlayerState.JUMP -> {
-                if (direction == GameStates.Direction.DOWN) {
-                    ResourceManager.PlayerState.FALL
+            PlayerState.JUMP -> {
+                if (direction == Direction.DOWN) {
+                    PlayerState.FALL
                 } else {
-                    ResourceManager.PlayerState.JUMP
+                    PlayerState.JUMP
                 }
             }
-            ResourceManager.PlayerState.FALL -> {
+            PlayerState.FALL -> {
                 if (direction == Direction.UP) {
-                    ResourceManager.PlayerState.JUMP
+                    PlayerState.JUMP
                 } else {
-                    ResourceManager.PlayerState.FALL
+                    PlayerState.FALL
                 }
             }
             else -> playerState

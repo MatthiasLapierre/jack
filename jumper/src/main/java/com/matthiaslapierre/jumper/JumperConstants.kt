@@ -46,4 +46,6 @@ internal object JumperConstants  {
     const val POWER_UP_WIDTH = .15f
     const val ROCKET_TOP = .07f
 
+    const val ROCKET_TIMER = 10
+
 }
