@@ -9,6 +9,7 @@ import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
 import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
 import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.utils.Utils
+import java.lang.Math.abs
 
 internal class GameMap(
     private val resourceManager: ResourceManager,
@@ -205,9 +206,9 @@ internal class GameMap(
                     spriteX
                 }
             }
-            val sprite = if (!powerUpGenerated/*
+            val sprite = if (!powerUpGenerated
                 && ((lastPowerUpSprite == null && y > powerUpIntervalMinElevation)
-                || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))*/) {
+                || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))) {
                 powerUpGenerated = true
                 PowerUpSprite(resourceManager, gameStates, spriteX, spriteY, getRandomPowerUp())
             } else {
@@ -252,9 +253,9 @@ internal class GameMap(
         var powerUpGenerated = false
         for (indexY in 0 until capacityY) {
             for (indexX in 0 until capacityX) {
-                val sprite: Sprite = if (!powerUpGenerated/*
+                val sprite: Sprite = if (!powerUpGenerated
                     && ((lastPowerUpSprite == null && y > powerUpIntervalMinElevation)
-                    || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))*/) {
+                    || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))) {
                     powerUpGenerated = true
                     PowerUpSprite(resourceManager, gameStates, spriteX, spriteY, getRandomPowerUp())
                 } else {

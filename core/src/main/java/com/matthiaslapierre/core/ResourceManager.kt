@@ -81,6 +81,8 @@ interface ResourceManager: GameResources {
     var magnet: Image?
     var rocket: Array<Image>?
 
+    var collectibleExplosion: Array<Image>?
+
     fun getRandomCandy(): Image
 
     fun getRandomCloud(): Image

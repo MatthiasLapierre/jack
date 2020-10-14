@@ -41,7 +41,7 @@ internal class JumpingPlatformSprite(
             height = width * firstFrame.height / firstFrame.width
         }
 
-        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y)
+        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY

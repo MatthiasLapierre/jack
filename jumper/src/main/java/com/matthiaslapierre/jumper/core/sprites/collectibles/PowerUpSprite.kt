@@ -15,7 +15,7 @@ import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 
 internal class PowerUpSprite(
-    resourceManager: ResourceManager,
+    private val resourceManager: ResourceManager,
     private val gameStates: GameStates,
     override var x: Float,
     override var y: Float,
@@ -41,34 +41,65 @@ internal class PowerUpSprite(
     private var width: Float = Constants.UNDEFINED
     private var height: Float = Constants.UNDEFINED
     private var isAlive: Boolean = true
+    private var explosionFrame: Int = 0
+    private var animateExplosionEnded: Boolean = false
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val screenWidth = canvas.width.toFloat()
+        val screenHeight = canvas.height.toFloat()
+
+        val explosionImages = resourceManager.collectibleExplosion!!
 
         if (width == Constants.UNDEFINED) {
             width = screenWidth * POWER_UP_WIDTH
             height = width * powerUpImage.height / powerUpImage.width
         }
 
-        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y) && !isConsumed
+        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isConsumed
+                || !animateExplosionEnded))
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
-        val srcRect = Rect(
-            0,
-            0,
-            powerUpImage.width,
-            powerUpImage.height
-        )
-        val dstRect = getRectF()
-        canvas.drawBitmap(
-            powerUpImage.bitmap,
-            srcRect,
-            dstRect,
-            globalPaint
-        )
+        if (!isConsumed || explosionFrame < explosionImages.size / 2) {
+            canvas.drawBitmap(
+                powerUpImage.bitmap,
+                Rect(
+                    0,
+                    0,
+                    powerUpImage.width,
+                    powerUpImage.height
+                ),
+                getRectF(),
+                globalPaint
+            )
+        }
+
+        if (isConsumed) {
+            val explosionImage = explosionImages[explosionFrame]
+            canvas.drawBitmap(
+                explosionImage.bitmap,
+                Rect(
+                    0,
+                    0,
+                    explosionImage.width,
+                    explosionImage.height
+                ),
+                RectF(
+                    x - (width / 2f),
+                    y - (width / 2f),
+                    x + (width / 2f),
+                    y + (width / 2f)
+                ),
+                globalPaint
+            )
+            if(explosionFrame == explosionImages.size - 1) {
+                animateExplosionEnded = true
+            } else {
+                explosionFrame++
+            }
+        }
     }
 
     override fun isAlive(): Boolean = isAlive

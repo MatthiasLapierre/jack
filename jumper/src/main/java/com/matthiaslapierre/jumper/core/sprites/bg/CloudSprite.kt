@@ -32,6 +32,7 @@ internal class CloudSprite(
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val screenWidth = canvas.width.toFloat()
+        val screenHeight = canvas.height.toFloat()
         if (width == UNDEFINED) {
             width = Utils.getRandomFloat(screenWidth * CLOUD_MIN_WIDTH, screenWidth * CLOUD_MAX_WIDTH)
             height = width *  cloudImage.height / cloudImage.width
@@ -39,7 +40,7 @@ internal class CloudSprite(
             x = Utils.getRandomFloat(outset + (width / 2f), screenWidth - outset - (width / 2f))
         }
 
-        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y)
+        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += speed

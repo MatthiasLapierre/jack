@@ -56,6 +56,8 @@ class JackResourceManager(
     override var magnet: Image? = null
     override var rocket: Array<Image>? = null
 
+    override var collectibleExplosion: Array<Image>? = null
+
     override fun load() {
         logoJumperJack = loadImage("images/ui/logos/jumper_jack.png")
         textTapToLaunch = loadImage("images/ui/texts/text_tap_to_launch.png")
@@ -100,6 +102,10 @@ class JackResourceManager(
         magnet = loadImage("images/player/accessories/Magnet.png")
         rocket = (1..4).map { digit ->
             loadImage("images/player/accessories/Rocket Animated ($digit).png")!!
+        }.toTypedArray()
+
+        collectibleExplosion = (1..8).map { digit ->
+            loadImage("images/objects/explosion/collectibles/Collect ($digit).png")!!
         }.toTypedArray()
     }
 
