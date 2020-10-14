@@ -46,14 +46,15 @@ class JackResourceManager(
     override var jumpingPlatforms: Array<Hashtable<JumpPlatformState, Array<Image>>>? = null
 
     override var candies: Array<Image>? = null
-    override var powerUps: Hashtable<PlayerPowerUp, Image>? = null
+    override var powerUps: Hashtable<PowerUp, Image>? = null
 
     override var bat: Array<Image>? = null
 
     override var player: Hashtable<PlayerState, Array<Image?>>? = null
-    override var playerMagnet: Hashtable<PlayerState, Array<Image?>>? = null
-    override var playerCopter: Hashtable<PlayerState, Array<Image?>>? = null
-    override var playerArmored: Hashtable<PlayerState, Array<Image?>>? = null
+
+    override var armor: Image? = null
+    override var magnet: Image? = null
+    override var rocket: Array<Image>? = null
 
     override fun load() {
         logoJumperJack = loadImage("images/ui/logos/jumper_jack.png")
@@ -93,10 +94,13 @@ class JackResourceManager(
 
         bat = loadBat()
 
-        player = loadPlayer(Character.JACK, PlayerPowerUp.NORMAL)
-        playerArmored = loadPlayer(Character.JACK, PlayerPowerUp.ARMORED)
-        playerCopter = loadPlayer(Character.JACK, PlayerPowerUp.COPTER)
-        playerMagnet = loadPlayer(Character.JACK, PlayerPowerUp.MAGNET)
+        player = loadPlayer(Character.JACK)
+
+        armor = loadImage("images/player/accessories/Armor.png")
+        magnet = loadImage("images/player/accessories/Magnet.png")
+        rocket = (1..4).map { digit ->
+            loadImage("images/player/accessories/Rocket Animated ($digit).png")!!
+        }.toTypedArray()
     }
 
     override fun getRandomCandy(): Image {
@@ -135,42 +139,33 @@ class JackResourceManager(
         loadImage("images/objects/collectibles/candy/Candy ($index).png")!!
     }.toTypedArray()
 
-    private fun loadPowerUps(): Hashtable<PlayerPowerUp, Image> =
-        Hashtable<PlayerPowerUp, Image>().apply {
-            put(PlayerPowerUp.ARMORED, loadImage("images/objects/collectibles/power_up/Shield.png"))
-            put(PlayerPowerUp.ROCKET, loadImage("images/objects/collectibles/power_up/Rocket.png"))
-            put(PlayerPowerUp.MAGNET, loadImage("images/objects/collectibles/power_up/Magnet.png"))
-            put(PlayerPowerUp.COPTER, loadImage("images/objects/collectibles/power_up/Copter.png"))
+    private fun loadPowerUps(): Hashtable<PowerUp, Image> =
+        Hashtable<PowerUp, Image>().apply {
+            put(PowerUp.ARMORED, loadImage("images/objects/collectibles/power_up/Shield.png"))
+            put(PowerUp.ROCKET, loadImage("images/objects/collectibles/power_up/Rocket.png"))
+            put(PowerUp.MAGNET, loadImage("images/objects/collectibles/power_up/Magnet.png"))
+            put(PowerUp.COPTER, loadImage("images/objects/collectibles/power_up/Copter.png"))
         }
 
     private fun loadBat(): Array<Image> =  (1..4).map { index ->
         loadImage("images/objects/obstacles/bat/Bat ($index).png")!!
     }.toTypedArray()
 
-    private fun loadPlayer(character: Character, playerPowerUp: PlayerPowerUp): Hashtable<PlayerState, Array<Image?>> {
+    private fun loadPlayer(character: Character): Hashtable<PlayerState, Array<Image?>> {
         val cache: Hashtable<PlayerState, Array<Image?>> = Hashtable()
         cache.run {
             put(PlayerState.DEAD, (1..8).map {
-                loadImage("images/player/$character/$playerPowerUp/Dead ($it).png")
+                loadImage("images/player/$character/Dead ($it).png")
             }.toTypedArray())
             put(PlayerState.FALL, (1..4).map {
-                loadImage("images/player/$character/$playerPowerUp/Fall ($it).png")
+                loadImage("images/player/$character/Fall ($it).png")
             }.toTypedArray())
-            put(PlayerState.IDLE, arrayOf(loadImage("images/player/$character/copter/Idle (1).png")))
+            put(PlayerState.IDLE, arrayOf(loadImage("images/player/$character/Idle (1).png")))
             put(PlayerState.JUMP, (1..4).map {
-                loadImage("images/player/$character/$playerPowerUp/Jump ($it).png")
+                loadImage("images/player/$character/Jump ($it).png")
             }.toTypedArray())
-            put(PlayerState.LAUNCH, (1..9).map {
-                loadImage("images/player/$character/$playerPowerUp/Launch ($it).png")
-            }.toTypedArray())
-            put(PlayerState.LEAN_LEFT, (1..5).map {
-                loadImage("images/player/$character/$playerPowerUp/Lean Left ($it).png")
-            }.toTypedArray())
-            put(PlayerState.LEAN_RIGHT, (1..5).map {
-                loadImage("images/player/$character/$playerPowerUp/Lean Right ($it).png")
-            }.toTypedArray())
-            put(PlayerState.ROCKET, (1..4).map {
-                loadImage("images/player/$character/$playerPowerUp/Rocket ($it).png")
+            put(PlayerState.COPTER, (1..5).map {
+                loadImage("images/player/$character/Copter ($it).png")
             }.toTypedArray())
         }
         return cache

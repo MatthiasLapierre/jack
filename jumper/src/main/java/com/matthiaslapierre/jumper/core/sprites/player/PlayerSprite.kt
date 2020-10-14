@@ -8,11 +8,12 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FEET_BOTTOM
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FEET_TOP
-import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FRAME_RATE
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INITIAL_POSITION
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INSET_X
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INSET_Y
+import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TOP
 import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.utils.hasFlag
 
 internal class PlayerSprite(
     private val resourceManager: ResourceManager,
@@ -26,10 +27,10 @@ internal class PlayerSprite(
     var lowestY: Float = UNDEFINED
 
     private var frame: Int = 0
+    private var rocketFrame: Int = 0
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
     private var screenHeight: Float = UNDEFINED
-    private var lastFrameTimestamp: Long = 0L
     private var previousState: PlayerState = PlayerState.IDLE
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
@@ -63,35 +64,104 @@ internal class PlayerSprite(
             }
         }
 
-        val srcRect = Rect(
-            0,
-            0,
-            image.bitmap.width,
-            image.bitmap.height
-        )
-        val dstRect = getRectF()
+        // Draw the rocket power-up
+        if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_ROCKET)) {
+            val rocketImages = resourceManager.rocket!!
+            val rocketImage = rocketImages[rocketFrame]
+            val rocketWidth = width
+            val rocketHeight = rocketWidth * rocketImage.height / rocketImage.width
+            canvas.drawBitmap(
+                rocketImage.bitmap,
+                Rect(
+                    0,
+                    0,
+                    rocketImage.width,
+                    rocketImage.height
+                ),
+                RectF(
+                    (x + width / 2f) - (rocketWidth / 2f),
+                    y - (rocketHeight * ROCKET_TOP),
+                    (x + width / 2f) + (rocketWidth / 2f),
+                    y - (rocketHeight * ROCKET_TOP) + rocketHeight
+                ),
+                globalPaint
+            )
+            if (rocketFrame < rocketImages.size - 2) {
+                rocketFrame++
+            } else {
+                rocketFrame = 0
+            }
+        }
 
+        // Draw the main character.
+        val dstRect = getRectF()
         canvas.drawBitmap(
             image.bitmap,
-            srcRect,
+            Rect(
+                0,
+                0,
+                image.width,
+                image.height
+            ),
             dstRect,
             globalPaint
         )
 
-        canvas.drawRect(RectF(0f, highestY, screenWidth, highestY+1), Paint().apply {
-            style = Paint.Style.FILL
-            color = Color.RED
-        })
-
-        canvas.drawRect(RectF(0f, lowestY, screenWidth, lowestY+1), Paint().apply {
-            style = Paint.Style.FILL
-            color = Color.BLUE
-        })
+        // Draw power-ups
+        if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_MAGNET)) {
+            val magnetImage = resourceManager.magnet!!
+            val magnetWidth = width
+            val magnetHeight = magnetWidth * magnetImage.height / magnetImage.width
+            canvas.drawBitmap(
+                magnetImage.bitmap,
+                Rect(
+                    0,
+                    0,
+                    magnetImage.width,
+                    magnetImage.height
+                ),
+                RectF(
+                    (x + width / 2f) - (magnetWidth / 2f),
+                    y,
+                    (x + width / 2f) + (magnetWidth / 2f),
+                    y + magnetHeight
+                ),
+                globalPaint
+            )
+        } else if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)) {
+            val armorImage = resourceManager.armor!!
+            val armorWidth = width
+            val armorHeight = armorWidth * armorImage.height / armorImage.width
+            canvas.drawBitmap(
+                armorImage.bitmap,
+                Rect(
+                    0,
+                    0,
+                    armorImage.width,
+                    armorImage.height
+                ),
+                RectF(
+                    (x + width / 2f) - (armorWidth / 2f),
+                    y,
+                    (x + width / 2f) + (armorWidth / 2f),
+                    y + armorHeight
+                ),
+                globalPaint
+            )
+        }
 
         frame = getFrameIndex(frame, previousState, gameStates.playerState)
         previousState = gameStates.playerState
 
         //DEBUG
+        canvas.drawRect(RectF(0f, highestY, screenWidth, highestY+1), Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.RED
+        })
+        canvas.drawRect(RectF(0f, lowestY, screenWidth, lowestY+1), Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.BLUE
+        })
         canvas.drawRect(getFeetRectF(), Paint().apply {
             style = Paint.Style.FILL
             color = Color.RED
@@ -138,23 +208,20 @@ internal class PlayerSprite(
         val images = resourceManager.player!![playerState]!!
         var frame = previousFrameIndex
         if(previousState == state) {
-            if(System.currentTimeMillis() - lastFrameTimestamp > PLAYER_FRAME_RATE) {
-                when (playerState) {
-                    PlayerState.JUMP, PlayerState.FALL -> {
-                        if (frame < images.size - 1) {
-                            frame++
-                        }
+            when (playerState) {
+                PlayerState.JUMP, PlayerState.FALL -> {
+                    if (frame < images.size - 1) {
+                        frame++
                     }
-                    PlayerState.DEAD -> {
-                        if (frame < images.size - 1) {
-                            frame++
-                        } else {
-                            frame = 0
-                        }
-                    }
-                    else -> frame = 0
                 }
-                lastFrameTimestamp = System.currentTimeMillis()
+                PlayerState.COPTER, PlayerState.DEAD -> {
+                    if (frame < images.size - 1) {
+                        frame++
+                    } else {
+                        frame = 0
+                    }
+                }
+                else -> frame = 0
             }
         } else {
             frame = 0

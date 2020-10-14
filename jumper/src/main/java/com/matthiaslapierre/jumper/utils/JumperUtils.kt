@@ -4,6 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import com.matthiaslapierre.utils.toDigits
+import kotlin.experimental.and
+import kotlin.experimental.inv
+import kotlin.experimental.or
 
 object JumperUtils  {
 
@@ -38,3 +41,7 @@ object JumperUtils  {
     }
 
 }
+
+fun Int.hasFlag(flag: Int) = flag and this == flag
+fun Int.withFlag(flag: Int) = this or flag
+fun Int.minusFlag(flag: Int) = this and flag.inv()

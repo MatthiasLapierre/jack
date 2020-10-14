@@ -6,10 +6,10 @@ import android.graphics.Rect
 import android.graphics.RectF
 import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.core.ResourceManager.PlayerPowerUp
+import com.matthiaslapierre.core.ResourceManager.PowerUp
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.POWER_UP_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
@@ -19,28 +19,38 @@ internal class PowerUpSprite(
     private val gameStates: GameStates,
     override var x: Float,
     override var y: Float,
-    powerUp: PlayerPowerUp
+    val powerUp: Int
 ): Sprite {
 
     companion object {
-        private const val WIDTH_RATIO = .15f
+        private fun getPowerUpImage(resourceManager: ResourceManager, powerUp: Int): Image {
+            val resId = when (powerUp) {
+                GameStates.POWER_UP_ARMORED -> PowerUp.ARMORED
+                GameStates.POWER_UP_COPTER -> PowerUp.COPTER
+                GameStates.POWER_UP_MAGNET -> PowerUp.MAGNET
+                GameStates.POWER_UP_ROCKET -> PowerUp.ROCKET
+                else -> PowerUp.ARMORED
+            }
+            return resourceManager.powerUps!![resId]!!
+        }
     }
 
-    private val powerUpImage: Image = resourceManager.powerUps!![powerUp]!!
+    var isConsumed: Boolean = false
+
+    private val powerUpImage: Image = getPowerUpImage(resourceManager, powerUp)
     private var width: Float = Constants.UNDEFINED
     private var height: Float = Constants.UNDEFINED
     private var isAlive: Boolean = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val screenWidth = canvas.width.toFloat()
-        val screenHeight = canvas.height.toFloat()
 
         if (width == Constants.UNDEFINED) {
-            width = screenWidth * WIDTH_RATIO
+            width = screenWidth * POWER_UP_WIDTH
             height = width * powerUpImage.height / powerUpImage.width
         }
 
-        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
+        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y) && !isConsumed
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
@@ -65,6 +75,7 @@ internal class PowerUpSprite(
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && sprite.getBodyRectF().intersect(getRectF())
+            && !isConsumed
 
     override fun getScore(): Int = 1
 

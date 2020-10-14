@@ -12,10 +12,13 @@ import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
+import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
 import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
 import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
+import com.matthiaslapierre.jumper.utils.hasFlag
+import com.matthiaslapierre.jumper.utils.minusFlag
 
 class GameProcessor(
     private val resourceManager: ResourceManager
@@ -189,12 +192,22 @@ class GameProcessor(
                         gameState.collectCandies(sprite.getScore())
                         sprite.isConsumed = true
                     }
+                    is PowerUpSprite -> {
+                        gameState.collectCandies(sprite.getScore())
+                        gameState.powerUp(sprite.powerUp)
+                        sprite.isConsumed = true
+                    }
                     is JumpingPlatformSprite -> {
                         gameState.jump()
                         sprite.bounce()
                     }
                     is BatSprite -> {
-                        gameOver()
+                        if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)) {
+                            // Shield will be lost if damage is taken.
+                            gameState.powerUp.minusFlag(GameStates.POWER_UP_ARMORED)
+                        } else {
+                            gameOver()
+                        }
                     }
                     is FloorSprite -> {
                         gameState.jump()
@@ -202,9 +215,6 @@ class GameProcessor(
                 }
             }
         }
-        /*if (playerSprite!!.isDead()) {
-            gameOver()
-        }*/
     }
 
     private fun setFloor() {

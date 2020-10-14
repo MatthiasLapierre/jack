@@ -42,7 +42,7 @@ internal class BatSprite(
             speed = width * BAT_SPEED
         }
 
-        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
+        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y)
 
         if(maxX - minX > width) {
             x += speed

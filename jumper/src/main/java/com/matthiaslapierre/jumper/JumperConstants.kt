@@ -5,7 +5,9 @@ internal object JumperConstants  {
     const val GRAVITY = 0.00078f
     const val ACCELEROMETER_SENSITIVITY = 250f
     const val CANDIES_ACCELERATION = 0.039166667f
-    const val JUMP_ACCELERATION = 0.025458334f
+    const val JUMP_ACCELERATION = 0.025f
+    const val ROCKET_SPEED = 0.02f
+    const val COPTER_SPEED = 0.013f
     const val MAX_SPEED = 0.013708334f
     const val CLOUD_SPEED_DECELERATION = 0.5f
     const val BACKGROUND_SPEED_DECELERATION = 0.3f
@@ -16,7 +18,6 @@ internal object JumperConstants  {
     const val PLAYER_WIDTH = .27f
     const val PLAYER_HIGHEST_Y = 0.5f
     const val PLAYER_INITIAL_POSITION = .18f
-    const val PLAYER_FRAME_RATE = 30
     const val PLAYER_INSET_X = .3f
     const val PLAYER_INSET_Y = .1f
     const val PLAYER_FEET_TOP = .2f
@@ -41,5 +42,8 @@ internal object JumperConstants  {
     const val CLOUD_OUTSET = .05f
     const val CLOUD_MIN_WIDTH = .3f
     const val CLOUD_MAX_WIDTH = .45f
+
+    const val POWER_UP_WIDTH = .15f
+    const val ROCKET_TOP = .07f
 
 }

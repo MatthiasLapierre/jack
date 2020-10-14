@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.resources.Image
@@ -41,13 +40,11 @@ internal class CloudSprite(
             x = Utils.getRandomFloat(outset + (width / 2f), screenWidth - outset - (width / 2f))
         }
 
-        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
+        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += speed
         }
-
-        Log.d(">>>>>>>>>>> ", ">>>>>>>>>>>> y: $y")
 
         val srcRect = Rect(
             0,

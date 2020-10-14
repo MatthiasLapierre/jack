@@ -29,7 +29,6 @@ internal class CandySprite(
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val screenWidth = canvas.width.toFloat()
-        val screenHeight = canvas.height.toFloat()
 
         if (width == UNDEFINED) {
             width = screenWidth * CANDY_WIDTH

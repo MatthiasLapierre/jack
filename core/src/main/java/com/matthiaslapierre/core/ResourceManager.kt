@@ -11,10 +11,7 @@ interface ResourceManager: GameResources {
         FALL,
         IDLE,
         JUMP,
-        LAUNCH,
-        LEAN_LEFT,
-        LEAN_RIGHT,
-        ROCKET
+        COPTER
     }
 
     enum class JumpPlatformState {
@@ -28,12 +25,11 @@ interface ResourceManager: GameResources {
         override fun toString(): String = string
     }
 
-    enum class PlayerPowerUp(private val string: String) {
+    enum class PowerUp(private val string: String) {
         ARMORED("armored"),
         COPTER("copter"),
         MAGNET("magnet"),
-        ROCKET("rocket"),
-        NORMAL("normal");
+        ROCKET("rocket");
 
         override fun toString(): String = string
     }
@@ -72,16 +68,18 @@ interface ResourceManager: GameResources {
 
     // Collectibles
     var candies: Array<Image>?
-    var powerUps: Hashtable<PlayerPowerUp, Image>?
+    var powerUps: Hashtable<PowerUp, Image>?
 
     // Obstacles
     var bat: Array<Image>?
 
     // Player
     var player: Hashtable<PlayerState, Array<Image?>>?
-    var playerMagnet: Hashtable<PlayerState, Array<Image?>>?
-    var playerCopter: Hashtable<PlayerState, Array<Image?>>?
-    var playerArmored: Hashtable<PlayerState, Array<Image?>>?
+
+    // Power-up
+    var armor: Image?
+    var magnet: Image?
+    var rocket: Array<Image>?
 
     fun getRandomCandy(): Image
 

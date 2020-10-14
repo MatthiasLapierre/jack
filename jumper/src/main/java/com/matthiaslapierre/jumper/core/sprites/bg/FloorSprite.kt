@@ -35,7 +35,7 @@ internal class FloorSprite(
             highestY = y
         }
 
-        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
+        isAlive = y <= (screenWith * SPRITE_LIFE_LOWEST_Y)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY

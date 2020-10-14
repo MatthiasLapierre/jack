@@ -1,17 +1,27 @@
 package com.matthiaslapierre.jumper.core
 
-import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager.PlayerState
 import com.matthiaslapierre.framework.ui.Sprite.Status
 import com.matthiaslapierre.jumper.JumperConstants.BACKGROUND_SPEED_DECELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CANDIES_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_SPEED_DECELERATION
+import com.matthiaslapierre.jumper.JumperConstants.COPTER_SPEED
 import com.matthiaslapierre.jumper.JumperConstants.GRAVITY
 import com.matthiaslapierre.jumper.JumperConstants.JUMP_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.MAX_SPEED
+import com.matthiaslapierre.jumper.JumperConstants.ROCKET_SPEED
+import com.matthiaslapierre.jumper.utils.hasFlag
+import com.matthiaslapierre.jumper.utils.withFlag
 
 internal class GameStates  {
+
+    companion object {
+        const val POWER_UP_COPTER = 0x00000001
+        const val POWER_UP_MAGNET = 0x00000010
+        const val POWER_UP_ROCKET = 0x00000100
+        const val POWER_UP_ARMORED = 0x00001000
+    }
 
     enum class Direction {
         UP,
@@ -47,7 +57,7 @@ internal class GameStates  {
      */
     var candiesCollected: Int = 0
 
-    var elevation: Float = 0f
+    var powerUp: Int = 0
 
     /**
      * Current speed on the x-axis.
@@ -94,7 +104,6 @@ internal class GameStates  {
 
     fun update() {
         updateSpeed()
-        updateElevation()
         updateDirection()
         updatePlayerState()
     }
@@ -106,14 +115,21 @@ internal class GameStates  {
     }
 
     private fun updateSpeed() {
-        if (currentStatus == Status.STATUS_PLAY || currentStatus == Status.STATUS_GAME_OVER) {
+        if (currentStatus == Status.STATUS_PLAY) {
+            when {
+                powerUp.hasFlag(POWER_UP_ROCKET) -> {
+                    _speedY = getRocketSpeed()
+                }
+                powerUp.hasFlag(POWER_UP_COPTER) -> {
+                    _speedY = getCopterSpeed()
+                }
+                else -> {
+                    _speedY -= getGravity() * frameRateAdjustFactor
+                }
+            }
+        } else if(currentStatus == Status.STATUS_GAME_OVER) {
             _speedY -= getGravity() * frameRateAdjustFactor
         }
-    }
-
-    private fun updateElevation() {
-        elevation += speedY
-        Log.d(">>>>>>>> ", ">>>>>>> elevation: $elevation / $speedY")
     }
 
     private fun updateDirection() {
@@ -151,6 +167,13 @@ internal class GameStates  {
         }
     }
 
+    fun powerUp(powerUpFlag: Int) {
+        powerUp = powerUp.withFlag(powerUpFlag)
+        if (powerUpFlag == POWER_UP_COPTER) {
+            playerState = PlayerState.COPTER
+        }
+    }
+
     fun jump() {
         _speedY = getJumpAcceleration()
     }
@@ -165,6 +188,10 @@ internal class GameStates  {
 
     private fun getJumpAcceleration() = screenWidth * JUMP_ACCELERATION
 
+    private fun getRocketSpeed() = screenWidth * ROCKET_SPEED
+
+    private fun getCopterSpeed() = screenWidth * COPTER_SPEED
+
     private fun getGravity() = screenWidth * GRAVITY
 
     private fun normalizedSpeedX(speedX: Float): Float {
@@ -173,9 +200,6 @@ internal class GameStates  {
 
     private fun normalizedSpeedY(speedY: Float): Float {
         val newSpeedY = when {
-            speedY > maxSpeedY -> {
-                maxSpeedY
-            }
             speedY < -maxSpeedY -> {
                 -maxSpeedY
             }

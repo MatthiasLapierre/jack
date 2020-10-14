@@ -3,14 +3,12 @@ package com.matthiaslapierre.jumper.core
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.core.ResourceManager.PlayerPowerUp
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_CANDIES_BOTTOM
 import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
 import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
 import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.utils.Utils
-import kotlin.math.abs
 
 internal class GameMap(
     private val resourceManager: ResourceManager,
@@ -207,9 +205,9 @@ internal class GameMap(
                     spriteX
                 }
             }
-            val sprite = if (!powerUpGenerated
+            val sprite = if (!powerUpGenerated/*
                 && ((lastPowerUpSprite == null && y > powerUpIntervalMinElevation)
-                || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))) {
+                || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))*/) {
                 powerUpGenerated = true
                 PowerUpSprite(resourceManager, gameStates, spriteX, spriteY, getRandomPowerUp())
             } else {
@@ -254,9 +252,9 @@ internal class GameMap(
         var powerUpGenerated = false
         for (indexY in 0 until capacityY) {
             for (indexX in 0 until capacityX) {
-                val sprite: Sprite = if (!powerUpGenerated
+                val sprite: Sprite = if (!powerUpGenerated/*
                     && ((lastPowerUpSprite == null && y > powerUpIntervalMinElevation)
-                    || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))) {
+                    || (lastPowerUpSprite != null && abs(lastPowerUpSprite!!.y - y) >= getNextPowerUpInterval()))*/) {
                     powerUpGenerated = true
                     PowerUpSprite(resourceManager, gameStates, spriteX, spriteY, getRandomPowerUp())
                 } else {
@@ -313,18 +311,18 @@ internal class GameMap(
                     || (lastObstacleSprite == null && gameStates.elevation < obstacleIntervalMinElevation))) {
             PATTERN_JUMPING_PLATFORM
         } else {*/
-            return PATTERN_CANDIES_MATRIX
+            return PATTERN_JUMPING_PLATFORM
         //}
     }
 
-    private fun getRandomPowerUp(): PlayerPowerUp {
+    private fun getRandomPowerUp(): Int {
         val randomInt = Utils.getRandomInt(1, 100)
         return when {
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER -> PlayerPowerUp.COPTER
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET -> PlayerPowerUp.MAGNET
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET + DRAW_CHANCE_POWER_UP_ROCKET -> PlayerPowerUp.ROCKET
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET + DRAW_CHANCE_POWER_UP_ROCKET + DRAW_CHANCE_POWER_UP_SHIELD -> PlayerPowerUp.ROCKET
-            else -> PlayerPowerUp.ARMORED
+            randomInt <= DRAW_CHANCE_POWER_UP_COPTER -> GameStates.POWER_UP_COPTER
+            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET -> GameStates.POWER_UP_MAGNET
+            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET + DRAW_CHANCE_POWER_UP_ROCKET -> GameStates.POWER_UP_ROCKET
+            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET + DRAW_CHANCE_POWER_UP_ROCKET + DRAW_CHANCE_POWER_UP_SHIELD -> GameStates.POWER_UP_ARMORED
+            else -> GameStates.POWER_UP_ARMORED
         }
     }
 
