@@ -36,7 +36,7 @@ internal class CandySprite(
             height = width * candyImage.height / candyImage.width
         }
 
-        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && !isConsumed
+        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y) && !isConsumed
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY

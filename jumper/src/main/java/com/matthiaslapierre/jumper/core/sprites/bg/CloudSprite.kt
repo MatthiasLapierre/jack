@@ -4,14 +4,16 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.CLOUD_MAX_WIDTH
+import com.matthiaslapierre.jumper.JumperConstants.CLOUD_MIN_WIDTH
+import com.matthiaslapierre.jumper.JumperConstants.CLOUD_OUTSET
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.utils.JumperUtils
 import com.matthiaslapierre.utils.Utils
 
 internal class CloudSprite(
@@ -20,50 +22,43 @@ internal class CloudSprite(
     override var y: Float
 ): Sprite {
 
-    companion object {
-        private const val OUTSET: Float = 0.05f
-        private const val ACCELERATION: Float = 0.5f
-        const val ORIGINAL_RESOLUTION_WIDTH = 960f
-    }
-
     override var x: Float = UNDEFINED
 
     private val cloudImage: Image = resourceManager.getRandomCloud()
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
+    private val speed: Float
+        get() = gameStates.cloudSpeedY
     private var isAlive: Boolean = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val screenWidth = canvas.width.toFloat()
         val screenHeight = canvas.height.toFloat()
         if (width == UNDEFINED) {
-            val size = JumperUtils.getScaledSize(
-                cloudImage,
-                screenWidth.toInt(),
-                ORIGINAL_RESOLUTION_WIDTH.toInt()
-            )
-            width = size.first.toFloat()
-            height = size.second.toFloat()
-            val outset = (screenWidth * OUTSET)
+            width = Utils.getRandomFloat(screenWidth * CLOUD_MIN_WIDTH, screenWidth * CLOUD_MAX_WIDTH)
+            height = width *  cloudImage.height / cloudImage.width
+            val outset = (screenWidth * CLOUD_OUTSET)
             x = Utils.getRandomFloat(outset + (width / 2f), screenWidth - outset - (width / 2f))
         }
 
         isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
-            y += gameStates.speedY * ACCELERATION
+            y += speed
         }
+
+        Log.d(">>>>>>>>>>> ", ">>>>>>>>>>>> y: $y")
 
         val srcRect = Rect(
             0,
             0,
-            cloudImage!!.width,
-            cloudImage!!.height
+            cloudImage.width,
+            cloudImage.height
         )
         val dstRect = getRectF()
 
         canvas.drawBitmap(
-            cloudImage!!.bitmap,
+            cloudImage.bitmap,
             srcRect,
             dstRect,
             globalPaint

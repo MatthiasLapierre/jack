@@ -24,7 +24,7 @@ internal class BgSprite(
     private var height: Float = UNDEFINED
     private var screenHeight: Float = UNDEFINED
     private val speed: Float
-        get() = gameStates.speedY * getAcceleration()
+        get() = gameStates.backgroundSpeedY
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val bitmap = resourceManager.bgJump!!.bitmap
@@ -83,20 +83,5 @@ internal class BgSprite(
     override fun onDispose() {
 
     }
-
-    private fun getAcceleration(): Float  = 1f
-        /*val multiplier = 1f - ((1f / (height + screenHeight)) * (height - y))
-        return when {
-            multiplier > 1f -> {
-                1f
-            }
-            multiplier < 0f -> {
-                0f
-            }
-            else -> {
-                multiplier
-            }
-        }
-    }*/
 
 }

@@ -1,12 +1,15 @@
 package com.matthiaslapierre.jumper.core
 
+import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager.PlayerState
 import com.matthiaslapierre.framework.ui.Sprite.Status
+import com.matthiaslapierre.jumper.JumperConstants.BACKGROUND_SPEED_DECELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CANDIES_ACCELERATION
+import com.matthiaslapierre.jumper.JumperConstants.CLOUD_SPEED_DECELERATION
 import com.matthiaslapierre.jumper.JumperConstants.GRAVITY
 import com.matthiaslapierre.jumper.JumperConstants.JUMP_ACCELERATION
-import com.matthiaslapierre.jumper.JumperConstants.MAX_ACCELERATION
+import com.matthiaslapierre.jumper.JumperConstants.MAX_SPEED
 
 internal class GameStates  {
 
@@ -44,6 +47,8 @@ internal class GameStates  {
      */
     var candiesCollected: Int = 0
 
+    var elevation: Float = 0f
+
     /**
      * Current speed on the x-axis.
      */
@@ -65,6 +70,10 @@ internal class GameStates  {
         get() = normalizedSpeedX(_speedX)
     val playerSpeedY: Float
         get() = globalSpeedY
+    val backgroundSpeedY: Float
+        get() = speedY * BACKGROUND_SPEED_DECELERATION
+    val cloudSpeedY: Float
+        get() = speedY * CLOUD_SPEED_DECELERATION
 
     val globalSpeedY: Float
         get() = normalizedSpeedY(_speedY)
@@ -85,6 +94,7 @@ internal class GameStates  {
 
     fun update() {
         updateSpeed()
+        updateElevation()
         updateDirection()
         updatePlayerState()
     }
@@ -92,13 +102,18 @@ internal class GameStates  {
     fun setScreenSize(screenWidth: Float, screenHeight: Float) {
         this.screenWidth = screenWidth
         this.screenHeight = screenHeight
-        this.maxSpeedY = screenHeight * MAX_ACCELERATION
+        this.maxSpeedY = screenWidth * MAX_SPEED
     }
 
     private fun updateSpeed() {
         if (currentStatus == Status.STATUS_PLAY || currentStatus == Status.STATUS_GAME_OVER) {
             _speedY -= getGravity() * frameRateAdjustFactor
         }
+    }
+
+    private fun updateElevation() {
+        elevation += speedY
+        Log.d(">>>>>>>> ", ">>>>>>> elevation: $elevation / $speedY")
     }
 
     private fun updateDirection() {
@@ -146,11 +161,11 @@ internal class GameStates  {
         currentStatus = Status.STATUS_GAME_OVER
     }
 
-    private fun getCandyAcceleration() = screenHeight * CANDIES_ACCELERATION
+    private fun getCandyAcceleration() = screenWidth * CANDIES_ACCELERATION
 
-    private fun getJumpAcceleration() = screenHeight * JUMP_ACCELERATION
+    private fun getJumpAcceleration() = screenWidth * JUMP_ACCELERATION
 
-    private fun getGravity() = screenHeight * GRAVITY
+    private fun getGravity() = screenWidth * GRAVITY
 
     private fun normalizedSpeedX(speedX: Float): Float {
         return speedX * frameRateAdjustFactor

@@ -3,7 +3,6 @@ package com.matthiaslapierre.jumper.utils
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.utils.toDigits
 
 object JumperUtils  {
@@ -36,12 +35,6 @@ object JumperUtils  {
         }
 
         return bitmap
-    }
-
-    fun getScaledSize(image: Image, screenWidth: Int, originalScreenWidth: Int): Pair<Int, Int> {
-        val width = ((screenWidth / originalScreenWidth.toFloat()) * image.width).toInt()
-        val height = width * image.height / image.width
-        return Pair(width, height)
     }
 
 }

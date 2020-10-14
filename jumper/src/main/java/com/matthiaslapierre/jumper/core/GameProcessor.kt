@@ -6,6 +6,7 @@ import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
+import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
 import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
@@ -50,11 +51,11 @@ class GameProcessor(
 
     fun process() {
         updateSprites()
-        updateStates()
         if(gameState.currentStatus != Sprite.Status.STATUS_GAME_OVER) {
             checkCollisions()
             catchFreeFall()
         }
+        updateStates()
     }
 
     fun paint(canvas: Canvas, globalPaint: Paint) {
@@ -150,7 +151,7 @@ class GameProcessor(
             null
         }
 
-        val freeFallMax = screenHeight * FREE_FALL_MAX
+        val freeFallMax = screenWidth * FREE_FALL_MAX
         if (freeFall != null && freeFall!! > freeFallMax) {
             gameOver()
         }
@@ -166,8 +167,8 @@ class GameProcessor(
             backgroundSprites.add(bgSprite!!)
         }
 
-        var nextCloudY = -(screenWidth * 2f)
-        if(backgroundSprites.isNotEmpty()) {
+        var nextCloudY = -(screenWidth * FIRST_CLOUD_Y)
+        if(backgroundSprites.size > 1) {
             val lastCloudSprite = backgroundSprites.last()
             nextCloudY = lastCloudSprite.y - cloudInterval
         }
