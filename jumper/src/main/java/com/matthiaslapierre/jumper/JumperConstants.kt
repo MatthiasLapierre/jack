@@ -46,6 +46,9 @@ internal object JumperConstants  {
     const val POWER_UP_WIDTH = .15f
     const val ROCKET_TOP = .07f
 
-    const val ROCKET_TIMER = 10
+    const val ROCKET_TIMER = 5
+
+    const val MAGNET_RANGE_X = .5f
+    const val MAGNET_RANGE_Y = .25f
 
 }

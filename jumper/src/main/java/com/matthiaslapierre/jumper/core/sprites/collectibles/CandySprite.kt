@@ -20,7 +20,7 @@ internal class CandySprite(
     override var y: Float
 ): Sprite {
 
-    var isConsumed: Boolean = false
+    var isCollected: Boolean = false
 
     private val candyImage: Image = resourceManager.getRandomCandy()
     private var width: Float = UNDEFINED
@@ -35,7 +35,7 @@ internal class CandySprite(
             height = width * candyImage.height / candyImage.width
         }
 
-        isAlive = y <= (screenWidth * SPRITE_LIFE_LOWEST_Y) && !isConsumed
+        isAlive = (y <= (screenWidth * SPRITE_LIFE_LOWEST_Y) && !isCollected)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
@@ -60,7 +60,7 @@ internal class CandySprite(
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && sprite.getBodyRectF().intersect(getRectF())
-            && !isConsumed
+            && !isCollected
 
     override fun getScore(): Int = 1
 

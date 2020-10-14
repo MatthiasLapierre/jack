@@ -10,6 +10,8 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
 import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
+import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_X
+import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_Y
 import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TIMER
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
@@ -21,7 +23,6 @@ import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
 import com.matthiaslapierre.jumper.utils.hasFlag
-import com.matthiaslapierre.jumper.utils.minusFlag
 
 class GameProcessor(
     private val resourceManager: ResourceManager
@@ -170,7 +171,7 @@ class GameProcessor(
                 when(sprite) {
                     is CandySprite -> {
                         gameState.collectCandies(sprite.getScore())
-                        sprite.isConsumed = true
+                        sprite.isCollected = true
                     }
                     is PowerUpSprite -> {
                         gameState.collectCandies(sprite.getScore())
@@ -184,7 +185,7 @@ class GameProcessor(
                     is BatSprite -> {
                         if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)) {
                             // Shield will be lost if damage is taken.
-                            gameState.powerUp.minusFlag(GameStates.POWER_UP_ARMORED)
+                            gameState.removeAllPowerUps()
                         } else {
                             gameOver()
                         }
@@ -193,6 +194,16 @@ class GameProcessor(
                         gameState.jump()
                     }
                 }
+            } else if (gameState.powerUp.hasFlag(GameStates.POWER_UP_MAGNET)
+                && sprite is CandySprite) {
+                val minX = playerSprite.x - (screenWidth * MAGNET_RANGE_X)
+                val maxX = playerSprite.x + (screenWidth * MAGNET_RANGE_X)
+                val minY = playerSprite.y - (screenWidth * MAGNET_RANGE_Y)
+                val maxY = playerSprite.y + (screenWidth * MAGNET_RANGE_Y)
+                 if (sprite.x in minX..maxX && sprite.y in minY..maxY && !sprite.isCollected) {
+                     gameState.collectCandies(sprite.getScore())
+                     sprite.isCollected = true
+                 }
             }
         }
     }

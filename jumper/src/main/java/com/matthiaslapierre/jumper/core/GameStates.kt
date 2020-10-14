@@ -176,6 +176,11 @@ internal class GameStates  {
         }
     }
 
+    fun removeAllPowerUps() {
+        powerUp = 0
+        playerState = PlayerState.JUMP
+    }
+
     fun gameOver() {
         _speedY = 0f
         playerState = PlayerState.DEAD
