@@ -311,7 +311,7 @@ internal class GameMap(
                     || (lastObstacleSprite == null && gameStates.elevation < obstacleIntervalMinElevation))) {
             PATTERN_JUMPING_PLATFORM
         } else {*/
-            return PATTERN_JUMPING_PLATFORM
+            return PATTERN_CANDIES_MATRIX
         //}
     }
 

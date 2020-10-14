@@ -6,9 +6,9 @@ internal object JumperConstants  {
     const val ACCELEROMETER_SENSITIVITY = 250f
     const val CANDIES_ACCELERATION = 0.039166667f
     const val JUMP_ACCELERATION = 0.025f
-    const val ROCKET_SPEED = 0.02f
+    const val ROCKET_SPEED = 0.025f
     const val COPTER_SPEED = 0.013f
-    const val MAX_SPEED = 0.013708334f
+    const val MAX_FALL_SPEED = 0.02f
     const val CLOUD_SPEED_DECELERATION = 0.5f
     const val BACKGROUND_SPEED_DECELERATION = 0.3f
 

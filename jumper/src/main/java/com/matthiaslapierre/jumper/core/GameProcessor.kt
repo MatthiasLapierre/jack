@@ -5,6 +5,7 @@ import android.graphics.Paint
 import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
+import com.matthiaslapierre.jumper.JumperConstants
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
 import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
@@ -38,8 +39,6 @@ class GameProcessor(
     private var cloudInterval: Float = Constants.UNDEFINED
     private var countClouds: Int = 0
 
-    private var hasReachedTheTop: Boolean = false
-    private var hasReachedTheBottom: Boolean = false
     private var freeFall: Float? = null
 
     private var screenWidth: Float = 0f
@@ -64,7 +63,7 @@ class GameProcessor(
     fun paint(canvas: Canvas, globalPaint: Paint) {
         screenWidth = canvas.width.toFloat()
         screenHeight = canvas.height.toFloat()
-        gameState.setScreenSize(screenWidth, screenHeight)
+        gameState.setScreenSize(screenWidth)
         gameMap.setScreenSize(screenWidth, screenHeight)
         cloudInterval = screenWidth * CLOUD_INTERVAL
         drawSprites(canvas, globalPaint)
@@ -84,13 +83,13 @@ class GameProcessor(
         gameState.moveX(xAcceleration)
     }
 
-    fun setFrameRateAdjustFactor(frameRate: Float) {
-        gameState.frameRateAdjustFactor = frameRate
-    }
-
     fun getGameStatus(): Sprite.Status = gameState.currentStatus
 
     fun getCandiesCollected(): Int = gameState.candiesCollected
+
+    fun setFrameRateAdjustFactor(frameRateAdjustFactor: Float) {
+        gameState.frameRateAdjustFactor = frameRateAdjustFactor
+    }
 
     private fun updateSprites() {
         if(screenHeight == 0f) return
@@ -103,44 +102,7 @@ class GameProcessor(
     }
 
     private fun updateStates() {
-        gameState.update()
-        updateCameraMovement()
-    }
-
-    private fun updateCameraMovement() {
-        if (gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
-            if (!hasReachedTheTop) {
-                hasReachedTheTop = playerSprite.y <= playerSprite.highestY
-            }
-            if (!hasReachedTheBottom) {
-                hasReachedTheBottom = playerSprite.y >= playerSprite.lowestY
-            }
-            gameState.cameraMovement = when {
-                hasReachedTheTop -> {
-                    if (gameState.globalSpeedY > 0) {
-                        GameStates.CameraMovement.UP
-                    } else {
-                        hasReachedTheTop = false
-                        GameStates.CameraMovement.NONE
-                    }
-                }
-                hasReachedTheBottom -> {
-                    if (gameState.globalSpeedY < 0) {
-                        GameStates.CameraMovement.DOWN
-                    } else {
-                        hasReachedTheBottom = false
-                        GameStates.CameraMovement.NONE
-                    }
-                }
-                else -> {
-                    GameStates.CameraMovement.NONE
-                }
-            }
-        } else {
-            hasReachedTheTop = false
-            hasReachedTheBottom = false
-            gameState.cameraMovement = GameStates.CameraMovement.NONE
-        }
+        gameState.update(playerSprite.y, playerSprite.lowestY, playerSprite.highestY)
     }
 
     private fun catchFreeFall() {
@@ -194,7 +156,7 @@ class GameProcessor(
                     }
                     is PowerUpSprite -> {
                         gameState.collectCandies(sprite.getScore())
-                        gameState.powerUp(sprite.powerUp)
+                        gameState.addPowerUp(sprite.powerUp)
                         sprite.isConsumed = true
                     }
                     is JumpingPlatformSprite -> {

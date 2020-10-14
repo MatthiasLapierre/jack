@@ -1,16 +1,14 @@
 package com.matthiaslapierre.jumper.core
 
 import com.matthiaslapierre.core.Constants.UNDEFINED
+import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.PlayerState
+import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.framework.ui.Sprite.Status
+import com.matthiaslapierre.jumper.JumperConstants
 import com.matthiaslapierre.jumper.JumperConstants.BACKGROUND_SPEED_DECELERATION
-import com.matthiaslapierre.jumper.JumperConstants.CANDIES_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_SPEED_DECELERATION
-import com.matthiaslapierre.jumper.JumperConstants.COPTER_SPEED
-import com.matthiaslapierre.jumper.JumperConstants.GRAVITY
-import com.matthiaslapierre.jumper.JumperConstants.JUMP_ACCELERATION
-import com.matthiaslapierre.jumper.JumperConstants.MAX_SPEED
-import com.matthiaslapierre.jumper.JumperConstants.ROCKET_SPEED
+import com.matthiaslapierre.jumper.JumperConstants.MAX_FALL_SPEED
 import com.matthiaslapierre.jumper.utils.hasFlag
 import com.matthiaslapierre.jumper.utils.withFlag
 
@@ -60,6 +58,11 @@ internal class GameStates  {
     var powerUp: Int = 0
 
     /**
+     * When the framerate is not steady, compensate every moving element by a factor.
+     */
+    var frameRateAdjustFactor: Float = 1f
+
+    /**
      * Current speed on the x-axis.
      */
     private var _speedX: Float = 0f
@@ -88,30 +91,87 @@ internal class GameStates  {
     val globalSpeedY: Float
         get() = normalizedSpeedY(_speedY)
 
+    private val gravity: Float
+        get() = screenWidth * JumperConstants.GRAVITY * frameRateAdjustFactor
     private var maxSpeedY: Float = 0f
-
-    /**
-     * When the framerate is not steady, compensate every moving element by a factor.
-     */
-    var frameRateAdjustFactor: Float = 0f
-
     private var screenWidth: Float = UNDEFINED
-    private var screenHeight: Float = UNDEFINED
+    private var hasReachedTheTop: Boolean = false
+    private var hasReachedTheBottom: Boolean = false
+
+    fun update(playerY: Float, playerLowestY: Float, playerHighestY: Float) {
+        updateSpeed()
+        updateDirection()
+        updatePlayerState()
+        updateCameraMovement(playerY, playerLowestY, playerHighestY)
+    }
+
+    private fun updateCameraMovement(playerY: Float, playerLowestY: Float, playerHighestY: Float) {
+        if (currentStatus == Status.STATUS_PLAY) {
+            if (!hasReachedTheTop) {
+                hasReachedTheTop = playerY <= playerHighestY
+            }
+            if (!hasReachedTheBottom) {
+                hasReachedTheBottom = playerY >= playerLowestY
+            }
+            cameraMovement = when {
+                hasReachedTheTop -> {
+                    if (globalSpeedY > 0) {
+                        CameraMovement.UP
+                    } else {
+                        hasReachedTheTop = false
+                        CameraMovement.NONE
+                    }
+                }
+                hasReachedTheBottom -> {
+                    if (globalSpeedY < 0) {
+                        CameraMovement.DOWN
+                    } else {
+                        hasReachedTheBottom = false
+                        CameraMovement.NONE
+                    }
+                }
+                else -> {
+                    CameraMovement.NONE
+                }
+            }
+        } else {
+            hasReachedTheTop = false
+            hasReachedTheBottom = false
+            cameraMovement = CameraMovement.NONE
+        }
+    }
 
     fun moveX(xAcceleration: Float) {
         _speedX = xAcceleration
     }
 
-    fun update() {
-        updateSpeed()
-        updateDirection()
-        updatePlayerState()
+    fun jump() {
+        _speedY = getJumpAcceleration()
     }
 
-    fun setScreenSize(screenWidth: Float, screenHeight: Float) {
+    fun collectCandies(candies: Int) {
+        candiesCollected += candies
+        if (_speedY < getCandyAcceleration()) {
+            _speedY = getCandyAcceleration()
+        }
+    }
+
+    fun setScreenSize(screenWidth: Float) {
         this.screenWidth = screenWidth
-        this.screenHeight = screenHeight
-        this.maxSpeedY = screenWidth * MAX_SPEED
+        this.maxSpeedY = screenWidth * MAX_FALL_SPEED
+    }
+
+    fun addPowerUp(powerUpFlag: Int) {
+        powerUp = powerUp.withFlag(powerUpFlag)
+        if (powerUpFlag == POWER_UP_COPTER) {
+            playerState = PlayerState.COPTER
+        }
+    }
+
+    fun gameOver() {
+        _speedY = 0f
+        playerState = PlayerState.DEAD
+        currentStatus = Status.STATUS_GAME_OVER
     }
 
     private fun updateSpeed() {
@@ -124,11 +184,11 @@ internal class GameStates  {
                     _speedY = getCopterSpeed()
                 }
                 else -> {
-                    _speedY -= getGravity() * frameRateAdjustFactor
+                    _speedY -= gravity
                 }
             }
         } else if(currentStatus == Status.STATUS_GAME_OVER) {
-            _speedY -= getGravity() * frameRateAdjustFactor
+            _speedY -= gravity
         }
     }
 
@@ -142,57 +202,23 @@ internal class GameStates  {
 
     private fun updatePlayerState() {
         playerState = when(playerState) {
-            PlayerState.JUMP -> {
-                if (direction == Direction.DOWN) {
-                    PlayerState.FALL
+            ResourceManager.PlayerState.JUMP -> {
+                if (direction == GameStates.Direction.DOWN) {
+                    ResourceManager.PlayerState.FALL
                 } else {
-                    PlayerState.JUMP
+                    ResourceManager.PlayerState.JUMP
                 }
             }
-            PlayerState.FALL -> {
+            ResourceManager.PlayerState.FALL -> {
                 if (direction == Direction.UP) {
-                    PlayerState.JUMP
+                    ResourceManager.PlayerState.JUMP
                 } else {
-                    PlayerState.FALL
+                    ResourceManager.PlayerState.FALL
                 }
             }
             else -> playerState
         }
     }
-
-    fun collectCandies(candies: Int) {
-        candiesCollected += candies
-        if (_speedY < getCandyAcceleration()) {
-            _speedY = getCandyAcceleration()
-        }
-    }
-
-    fun powerUp(powerUpFlag: Int) {
-        powerUp = powerUp.withFlag(powerUpFlag)
-        if (powerUpFlag == POWER_UP_COPTER) {
-            playerState = PlayerState.COPTER
-        }
-    }
-
-    fun jump() {
-        _speedY = getJumpAcceleration()
-    }
-
-    fun gameOver() {
-        _speedY = 0f
-        playerState = PlayerState.DEAD
-        currentStatus = Status.STATUS_GAME_OVER
-    }
-
-    private fun getCandyAcceleration() = screenWidth * CANDIES_ACCELERATION
-
-    private fun getJumpAcceleration() = screenWidth * JUMP_ACCELERATION
-
-    private fun getRocketSpeed() = screenWidth * ROCKET_SPEED
-
-    private fun getCopterSpeed() = screenWidth * COPTER_SPEED
-
-    private fun getGravity() = screenWidth * GRAVITY
 
     private fun normalizedSpeedX(speedX: Float): Float {
         return speedX * frameRateAdjustFactor
@@ -209,5 +235,13 @@ internal class GameStates  {
         }
         return newSpeedY * frameRateAdjustFactor
     }
+
+    private fun getRocketSpeed() = screenWidth * JumperConstants.ROCKET_SPEED
+
+    private fun getCopterSpeed() = screenWidth * JumperConstants.COPTER_SPEED
+
+    private fun getCandyAcceleration() = screenWidth * JumperConstants.CANDIES_ACCELERATION
+
+    private fun getJumpAcceleration() = screenWidth * JumperConstants.JUMP_ACCELERATION
 
 }
