@@ -1,6 +1,6 @@
 package com.matthiaslapierre.jumper
 
-object JumperConstants  {
+internal object JumperConstants  {
 
     const val GRAVITY = 0.0004f
     const val ACCELEROMETER_SENSITIVITY = 250f
@@ -19,5 +19,9 @@ object JumperConstants  {
     const val SPRITE_LIFE_LOWEST_Y = 2f
 
     const val CLOUD_INTERVAL = 0.6f
+
+    const val JUMPING_PLATFORM_WIDTH = .2f
+    const val JUMPING_PLATFORM_BOUNCE_AREA_OUTSET = .2f
+    const val JUMPING_PLATFORM_BOUNCE_AREA_HEIGHT = .5f
 
 }

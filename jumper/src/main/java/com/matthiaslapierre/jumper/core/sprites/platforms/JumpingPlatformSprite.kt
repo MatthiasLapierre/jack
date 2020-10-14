@@ -6,7 +6,9 @@ import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.JumpPlatformState
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_BOUNCE_AREA_HEIGHT
+import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_BOUNCE_AREA_OUTSET
+import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.GameStates.Direction
@@ -14,23 +16,18 @@ import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.utils.Utils
 import java.util.*
 
-class JumpingPlatformSprite(
+internal class JumpingPlatformSprite(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates,
     override var x: Float,
     override var y: Float
 ): Sprite {
 
-    companion object {
-        private const val WIDTH_RATIO = .2f
-    }
-
     private var platformImages: Hashtable<JumpPlatformState, Array<Image>>? = null
     private var state: JumpPlatformState = JumpPlatformState.IDLE
     private var frame: Int = 0
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
-    private var highestY: Float = UNDEFINED
     private var isAlive: Boolean = true
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
@@ -40,7 +37,7 @@ class JumpingPlatformSprite(
         if (platformImages == null) {
             platformImages = getRandomJumpingPlatform()
             val firstFrame = platformImages!![JumpPlatformState.IDLE]!![0]
-            width = screenWidth * WIDTH_RATIO
+            width = screenWidth * JUMPING_PLATFORM_WIDTH
             height = width * firstFrame.height / firstFrame.width
         }
 
@@ -65,17 +62,27 @@ class JumpingPlatformSprite(
             globalPaint
         )
 
-        if (state == JumpPlatformState.BOUNCE && frame == 4) {
-            state = JumpPlatformState.IDLE
-            frame = 0
+        if (state == JumpPlatformState.BOUNCE) {
+            if (frame < 4) {
+                frame++
+            } else {
+                state = JumpPlatformState.IDLE
+                frame = 0
+            }
         }
+
+        //DEBUG
+        /*canvas.drawRect(getBounceArea(), Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.WHITE
+        })*/
     }
 
     override fun isAlive(): Boolean = isAlive
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && gameStates.direction == Direction.DOWN
-            && sprite.getFeetRectF().intersect(getBoundArea())
+            && sprite.getFeetRectF().intersect(getBounceArea())
 
     override fun getScore(): Int = 0
 
@@ -90,12 +97,16 @@ class JumpingPlatformSprite(
 
     }
 
-    private fun getBoundArea(): RectF = getRectF().run {
+    fun bounce() {
+        state = JumpPlatformState.BOUNCE
+    }
+
+    private fun getBounceArea(): RectF = getRectF().run {
         RectF(
-            left + (width * .2f),
+            left + (width * JUMPING_PLATFORM_BOUNCE_AREA_OUTSET),
             top,
-            right - (width * .2f),
-            bottom
+            right - (width * JUMPING_PLATFORM_BOUNCE_AREA_OUTSET),
+            top + (height * JUMPING_PLATFORM_BOUNCE_AREA_HEIGHT)
         )
     }
 

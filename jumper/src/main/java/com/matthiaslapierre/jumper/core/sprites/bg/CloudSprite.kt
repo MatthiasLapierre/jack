@@ -14,7 +14,7 @@ import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.utils.JumperUtils
 import com.matthiaslapierre.utils.Utils
 
-class CloudSprite(
+internal class CloudSprite(
     resourceManager: ResourceManager,
     private val gameStates: GameStates,
     override var y: Float

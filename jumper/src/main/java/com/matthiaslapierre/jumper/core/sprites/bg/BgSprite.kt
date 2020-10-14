@@ -10,7 +10,7 @@ import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.core.GameStates
 
-class BgSprite(
+internal class BgSprite(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates
 ) : Sprite {

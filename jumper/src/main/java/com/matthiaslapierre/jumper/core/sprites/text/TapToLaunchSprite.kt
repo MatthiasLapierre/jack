@@ -8,7 +8,7 @@ import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 
-class TapToLaunchSprite(
+internal class TapToLaunchSprite(
     private val resourceManager: ResourceManager
 ) : Sprite {
 

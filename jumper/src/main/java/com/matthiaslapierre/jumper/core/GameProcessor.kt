@@ -166,6 +166,7 @@ class GameProcessor(
                     }
                     is JumpingPlatformSprite -> {
                         gameState.jump()
+                        sprite.bounce()
                     }
                     is BatSprite -> {
                         gameState.kill()

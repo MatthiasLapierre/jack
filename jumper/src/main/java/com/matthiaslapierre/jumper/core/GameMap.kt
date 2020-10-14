@@ -12,7 +12,7 @@ import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.utils.Utils
 import kotlin.math.abs
 
-class GameMap(
+internal class GameMap(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates
 ) {

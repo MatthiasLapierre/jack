@@ -8,7 +8,7 @@ import com.matthiaslapierre.jumper.JumperConstants.GRAVITY
 import com.matthiaslapierre.jumper.JumperConstants.JUMP_ACCELERATION
 import com.matthiaslapierre.jumper.JumperConstants.MAX_ACCELERATION
 
-class GameStates  {
+internal class GameStates  {
 
     enum class Direction {
         UP,

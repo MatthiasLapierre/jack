@@ -10,7 +10,7 @@ import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FRAME_RATE
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INITIAL_POSITION
 import com.matthiaslapierre.jumper.core.GameStates
 
-class PlayerSprite(
+internal class PlayerSprite(
     private val resourceManager: ResourceManager,
     private val gameStates: GameStates
 ): Sprite {
@@ -88,10 +88,10 @@ class PlayerSprite(
         previousState = gameStates.playerState
 
         //DEBUG
-        /*canvas.drawRect(getFeetRectF(), Paint().apply {
+        canvas.drawRect(getFeetRectF(), Paint().apply {
             style = Paint.Style.FILL
             color = Color.RED
-        })*/
+        })
     }
 
     override fun isAlive(): Boolean = true

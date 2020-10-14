@@ -11,7 +11,7 @@ import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 
-class FloorSprite(
+internal class FloorSprite(
     private val gameStates: GameStates
 ) : Sprite {
 
