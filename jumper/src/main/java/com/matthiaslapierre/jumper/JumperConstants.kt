@@ -24,4 +24,6 @@ internal object JumperConstants  {
     const val JUMPING_PLATFORM_BOUNCE_AREA_OUTSET = .2f
     const val JUMPING_PLATFORM_BOUNCE_AREA_HEIGHT = .5f
 
+    const val CANDY_WIDTH = .15f
+
 }

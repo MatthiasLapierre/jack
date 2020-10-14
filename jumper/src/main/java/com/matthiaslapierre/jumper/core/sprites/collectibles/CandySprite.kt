@@ -8,7 +8,7 @@ import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.JumperConstants.CANDY_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
@@ -19,10 +19,6 @@ internal class CandySprite(
     override var x: Float,
     override var y: Float
 ): Sprite {
-
-    companion object {
-        private const val WIDTH_RATIO = .15f
-    }
 
     var isConsumed: Boolean = false
 
@@ -36,7 +32,7 @@ internal class CandySprite(
         val screenHeight = canvas.height.toFloat()
 
         if (width == UNDEFINED) {
-            width = screenWidth * WIDTH_RATIO
+            width = screenWidth * CANDY_WIDTH
             height = width * candyImage.height / candyImage.width
         }
 
@@ -65,6 +61,7 @@ internal class CandySprite(
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && sprite.getRectF().intersect(getRectF())
+            && !isConsumed
 
     override fun getScore(): Int = 1
 
