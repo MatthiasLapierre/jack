@@ -8,10 +8,12 @@ import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
+import com.matthiaslapierre.jumper.JumperConstants.COPTER_TIMER
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
 import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
 import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_X
 import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_Y
+import com.matthiaslapierre.jumper.JumperConstants.MAGNET_TIMER
 import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TIMER
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
 import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
@@ -24,6 +26,7 @@ import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
 import com.matthiaslapierre.jumper.utils.hasFlag
+import java.util.*
 
 class GameProcessor(
     private val resourceManager: ResourceManager
@@ -52,8 +55,8 @@ class GameProcessor(
     private val gameMap: GameMap = GameMap(resourceManager, gameState)
 
     private val handler: Handler = Handler(Looper.getMainLooper())
-    private var rocketTimerRunnable: Runnable? = null
-    private var rocketTimer: Int = 0
+    private var powerUpTimersRunnable: Runnable? = null
+    private var powerUpTimers: Hashtable<Int, Int> = Hashtable()
 
     init {
         playerSprite = PlayerSprite(resourceManager, gameState)
@@ -64,13 +67,13 @@ class GameProcessor(
         if(gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
             checkCollisions()
             catchFreeFall()
-            updateRocketTimer()
+            updatePowerUpTimers()
         }
         updateStates()
     }
 
     fun pause() {
-        stopRocketTimer()
+        stopPowerUpTimers()
     }
 
     fun paint(canvas: Canvas, globalPaint: Paint) {
@@ -139,9 +142,21 @@ class GameProcessor(
 
     private fun addPowerUp(powerUp: Int) {
         gameState.addPowerUp(powerUp)
-        if (powerUp == GameStates.POWER_UP_ROCKET) {
-            rocketTimer = ROCKET_TIMER
+        val timer = when (powerUp) {
+            GameStates.POWER_UP_ROCKET -> {
+                ROCKET_TIMER
+            }
+            GameStates.POWER_UP_MAGNET -> {
+                MAGNET_TIMER
+            }
+            GameStates.POWER_UP_COPTER -> {
+                COPTER_TIMER
+            }
+            else -> {
+                -1
+            }
         }
+        powerUpTimers[powerUp] = timer
     }
 
     private fun addBackgroundLayers() {
@@ -247,33 +262,44 @@ class GameProcessor(
         }
     }
 
-    private fun updateRocketTimer() {
-        if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ROCKET)) {
-            startRocketTimer()
+    private fun updatePowerUpTimers() {
+        if (gameState.hasPowerUps()) {
+            startPowerUpTimers()
         } else {
-            stopRocketTimer()
+            stopPowerUpTimers()
         }
     }
 
-    private fun startRocketTimer() {
-        if (rocketTimerRunnable == null) {
-            rocketTimerRunnable = Runnable {
-                if (rocketTimer == 0) {
-                    gameState.removePowerUp(GameStates.POWER_UP_ROCKET)
-                    stopRocketTimer()
-                } else {
-                    rocketTimer--
-                    handler.postDelayed(rocketTimerRunnable!!, 1000)
+    private fun startPowerUpTimers() {
+        if (powerUpTimersRunnable == null) {
+            powerUpTimersRunnable = Runnable {
+                val powerUpFlags = arrayOf(
+                    GameStates.POWER_UP_ROCKET,
+                    GameStates.POWER_UP_MAGNET,
+                    GameStates.POWER_UP_ARMORED,
+                    GameStates.POWER_UP_COPTER
+                )
+                for (flag in powerUpFlags) {
+                    powerUpTimers[flag]?.let { timer ->
+                        if (timer == 0) {
+                            gameState.removePowerUp(flag)
+                        } else if (timer > 0) {
+                            powerUpTimers[flag] = timer - 1
+                        }
+                    }
+                }
+                if (gameState.hasPowerUps()) {
+                    handler.postDelayed(powerUpTimersRunnable!!, 1000)
                 }
             }
-            handler.postDelayed(rocketTimerRunnable!!, 1000)
+            handler.postDelayed(powerUpTimersRunnable!!, 1000)
         }
     }
 
-    private fun stopRocketTimer() {
-        if (rocketTimerRunnable != null) {
-            handler.removeCallbacks(rocketTimerRunnable!!)
-            rocketTimerRunnable = null
+    private fun stopPowerUpTimers() {
+        if (powerUpTimersRunnable != null) {
+            handler.removeCallbacks(powerUpTimersRunnable!!)
+            powerUpTimersRunnable = null
         }
     }
 

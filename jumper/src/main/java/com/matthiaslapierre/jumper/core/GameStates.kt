@@ -181,6 +181,8 @@ internal class GameStates  {
         playerState = PlayerState.JUMP
     }
 
+    fun hasPowerUps(): Boolean = powerUp > 0
+
     fun gameOver() {
         _speedY = 0f
         playerState = PlayerState.DEAD

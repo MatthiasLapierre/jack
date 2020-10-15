@@ -35,6 +35,9 @@ internal class PlayerSprite(
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val images = resourceManager.player!![gameStates.playerState]!!
+        if (frame > images.size - 1) {
+            frame = 0
+        }
         val image = images[frame]!!
 
         val screenWidth = canvas.width.toFloat()
@@ -150,7 +153,7 @@ internal class PlayerSprite(
             )
         }
 
-        frame = getFrameIndex(frame, previousState, gameStates.playerState)
+        frame = getNextFrameIndex(frame, previousState, gameStates.playerState)
         previousState = gameStates.playerState
 
         //DEBUG
@@ -203,7 +206,7 @@ internal class PlayerSprite(
         )
     }
 
-    private fun getFrameIndex(previousFrameIndex: Int, previousState: PlayerState, state: PlayerState): Int {
+    private fun getNextFrameIndex(previousFrameIndex: Int, previousState: PlayerState, state: PlayerState): Int {
         val playerState = gameStates.playerState
         val images = resourceManager.player!![playerState]!!
         var frame = previousFrameIndex
