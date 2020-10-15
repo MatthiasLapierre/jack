@@ -54,6 +54,7 @@ internal object JumperConstants  {
     const val COPTER_TIMER = 10
 
     const val MAGNET_RANGE_X = .5f
+    const val MAGNET_RANGE_Y = .05f
 
     // Generator
     const val GENERATOR_HIGHEST_Y = 2f

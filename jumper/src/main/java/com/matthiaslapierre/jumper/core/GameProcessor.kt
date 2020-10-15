@@ -12,6 +12,7 @@ import com.matthiaslapierre.jumper.JumperConstants.COPTER_TIMER
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
 import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
 import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_X
+import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_Y
 import com.matthiaslapierre.jumper.JumperConstants.MAGNET_TIMER
 import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TIMER
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
@@ -221,7 +222,9 @@ class GameProcessor(
                 && sprite is CandySprite) {
                 val minX = playerSprite.x - (screenWidth * MAGNET_RANGE_X)
                 val maxX = playerSprite.x + (screenWidth * MAGNET_RANGE_X)
-                 if (sprite.x in minX..maxX && !sprite.isCollected) {
+                val minY = playerSprite.y - (screenWidth * MAGNET_RANGE_Y)
+                val maxY = playerSprite.y + (screenWidth * MAGNET_RANGE_Y)
+                 if (sprite.x in minX..maxX && sprite.y in minY..maxY && !sprite.isCollected) {
                      gameState.collectCandies(sprite.getScore())
                      sprite.isCollected = true
                  }

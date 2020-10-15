@@ -1,6 +1,5 @@
 package com.matthiaslapierre.jumper.core
 
-import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
