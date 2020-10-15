@@ -19,6 +19,7 @@ import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
 import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
 import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
+import com.matthiaslapierre.jumper.core.sprites.obstacles.SpikeSprite
 import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
 import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
@@ -182,7 +183,7 @@ class GameProcessor(
                         gameState.jump()
                         sprite.bounce()
                     }
-                    is BatSprite -> {
+                    is BatSprite, is SpikeSprite -> {
                         if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)) {
                             // Shield will be lost if damage is taken.
                             gameState.removeAllPowerUps()

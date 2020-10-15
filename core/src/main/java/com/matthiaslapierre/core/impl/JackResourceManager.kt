@@ -49,6 +49,7 @@ class JackResourceManager(
     override var powerUps: Hashtable<PowerUp, Image>? = null
 
     override var bat: Array<Image>? = null
+    override var spike: Image? = null
 
     override var player: Hashtable<PlayerState, Array<Image?>>? = null
 
@@ -57,6 +58,7 @@ class JackResourceManager(
     override var rocket: Array<Image>? = null
 
     override var collectibleExplosion: Array<Image>? = null
+    override var smoke: Array<Image>? = null
 
     override fun load() {
         logoJumperJack = loadImage("images/ui/logos/jumper_jack.png")
@@ -95,6 +97,7 @@ class JackResourceManager(
         powerUps = loadPowerUps()
 
         bat = loadBat()
+        spike = loadImage("images/objects/obstacles/spike.png")
 
         player = loadPlayer(Character.JACK)
 
@@ -106,6 +109,9 @@ class JackResourceManager(
 
         collectibleExplosion = (1..8).map { digit ->
             loadImage("images/objects/explosion/collectibles/Collect ($digit).png")!!
+        }.toTypedArray()
+        smoke = (1..8).map { digit ->
+            loadImage("images/objects/explosion/smoke/Smoke ($digit).png")!!
         }.toTypedArray()
     }
 

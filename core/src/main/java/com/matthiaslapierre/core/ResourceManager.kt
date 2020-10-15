@@ -72,6 +72,7 @@ interface ResourceManager: GameResources {
 
     // Obstacles
     var bat: Array<Image>?
+    var spike: Image?
 
     // Player
     var player: Hashtable<PlayerState, Array<Image?>>?
@@ -82,6 +83,7 @@ interface ResourceManager: GameResources {
     var rocket: Array<Image>?
 
     var collectibleExplosion: Array<Image>?
+    var smoke: Array<Image>?
 
     fun getRandomCandy(): Image
 

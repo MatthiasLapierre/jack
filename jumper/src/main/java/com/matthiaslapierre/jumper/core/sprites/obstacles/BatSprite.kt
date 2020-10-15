@@ -7,7 +7,7 @@ import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants.BAT_FRAME_RAYE
+import com.matthiaslapierre.jumper.JumperConstants.BAT_FRAME_RATE
 import com.matthiaslapierre.jumper.JumperConstants.BAT_SPEED
 import com.matthiaslapierre.jumper.JumperConstants.BAT_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
@@ -69,7 +69,7 @@ internal class BatSprite(
             globalPaint
         )
 
-        if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RAYE) {
+        if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RATE) {
             frame++
             if (frame >= batImages.size) {
                 frame = 0

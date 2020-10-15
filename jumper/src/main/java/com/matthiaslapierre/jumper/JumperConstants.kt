@@ -37,7 +37,11 @@ internal object JumperConstants  {
 
     const val BAT_WIDTH = .27f
     const val BAT_SPEED = .02f
-    const val BAT_FRAME_RAYE = 120
+    const val BAT_FRAME_RATE = 120
+
+    const val SPIKE_WIDTH = .15f
+    const val SPIKE_WRAITH_DURATION = 3
+    const val SPIKE_HIGHEST_Y = .2f
 
     const val CLOUD_OUTSET = .05f
     const val CLOUD_MIN_WIDTH = .3f
