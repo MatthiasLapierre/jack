@@ -12,7 +12,6 @@ import com.matthiaslapierre.jumper.JumperConstants.COPTER_TIMER
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
 import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
 import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_X
-import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_Y
 import com.matthiaslapierre.jumper.JumperConstants.MAGNET_TIMER
 import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TIMER
 import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
@@ -67,8 +66,8 @@ class GameProcessor(
         if(gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
             checkCollisions()
             catchFreeFall()
-            updatePowerUpTimers()
         }
+        updatePowerUpTimers()
         updateStates()
     }
 
@@ -201,8 +200,14 @@ class GameProcessor(
                         sprite.bounce()
                     }
                     is BatSprite, is SpikeSprite -> {
-                        if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)) {
+                        if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)
+                            || gameState.powerUp.hasFlag(GameStates.POWER_UP_ROCKET)) {
                             // Shield will be lost if damage is taken.
+                            if (sprite is BatSprite) {
+                                sprite.destroy()
+                            } else if (sprite is SpikeSprite) {
+                                sprite.destroy()
+                            }
                             gameState.removeAllPowerUps()
                         } else {
                             gameOver()
@@ -216,9 +221,7 @@ class GameProcessor(
                 && sprite is CandySprite) {
                 val minX = playerSprite.x - (screenWidth * MAGNET_RANGE_X)
                 val maxX = playerSprite.x + (screenWidth * MAGNET_RANGE_X)
-                val minY = playerSprite.y - (screenWidth * MAGNET_RANGE_Y)
-                val maxY = playerSprite.y + (screenWidth * MAGNET_RANGE_Y)
-                 if (sprite.x in minX..maxX && sprite.y in minY..maxY && !sprite.isCollected) {
+                 if (sprite.x in minX..maxX && !sprite.isCollected) {
                      gameState.collectCandies(sprite.getScore())
                      sprite.isCollected = true
                  }
@@ -263,7 +266,7 @@ class GameProcessor(
     }
 
     private fun updatePowerUpTimers() {
-        if (gameState.hasPowerUps()) {
+        if (gameState.hasPowerUps() && gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
             startPowerUpTimers()
         } else {
             stopPowerUpTimers()

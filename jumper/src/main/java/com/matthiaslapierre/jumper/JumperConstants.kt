@@ -4,15 +4,14 @@ internal object JumperConstants  {
 
     const val GRAVITY = 0.00078f
     const val ACCELEROMETER_SENSITIVITY = 250f
-    const val CANDIES_ACCELERATION = 0.039166667f
+    const val CANDIES_ACCELERATION = 0.033f
     const val JUMP_ACCELERATION = 0.025f
-    const val ROCKET_SPEED = 0.025f
-    const val COPTER_SPEED = 0.013f
+    const val ROCKET_SPEED = 0.033f
+    const val COPTER_SPEED = 0.02f
     const val MAX_FALL_SPEED = 0.02f
     const val CLOUD_SPEED_DECELERATION = 0.5f
     const val BACKGROUND_SPEED_DECELERATION = 0.3f
 
-    const val FIRST_CANDIES_BOTTOM = .3f
     const val FLOOR_HEIGHT = .27f
 
     const val PLAYER_WIDTH = .27f
@@ -55,6 +54,42 @@ internal object JumperConstants  {
     const val COPTER_TIMER = 10
 
     const val MAGNET_RANGE_X = .5f
-    const val MAGNET_RANGE_Y = .25f
 
+    // Generator
+    const val GENERATOR_HIGHEST_Y = 2f
+    const val SPRITE_SWING_X = .5f
+    const val FIRST_SPRITE_Y = .4f
+    // Outsets
+    const val BAT_OUTSET = .14f
+    const val CANDY_SPACE_X = .18f
+    const val CANDY_SPACE_Y = .12f
+    const val CANDY_OUTSET = .09f
+    const val JUMPING_PLATFORM_OUTSET = .12f
+    // -- Margin top
+    const val CANDIES_MIN_MARGIN_TOP = 0.15f
+    const val CANDIES_MAX_MARGIN_TOP = 0.3f
+    const val JUMPING_PLATFORM_MIN_MARGIN_TOP = 0.15f
+    const val JUMPING_PLATFORM_MAX_MARGIN_TOP = 0.3f
+    const val BAT_MIN_MARGIN_TOP = 0.16f
+    const val BAT_MAX_MARGIN_TOP = 0.20f
+    const val SPIKE_MIN_MARGIN_TOP = 0.14f
+    const val SPIKE_MAX_MARGIN_TOP = 0.18f
+    // Jumping platforms
+    const val MIN_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS = 1
+    const val MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS = 10
+    // Candies
+    const val MAX_CANDIES_X_CAPACITY = 3
+    const val MAX_CANDIES_Y_CAPACITY = 10
+    // Power-up
+    const val POWER_UP_INTERVAL_MIN = 6f
+    const val POWER_UP_INTERVAL_MAX = 10f
+    const val DRAW_CHANCE_POWER_UP_COPTER = 25
+    const val DRAW_CHANCE_POWER_UP_MAGNET = 25
+    const val DRAW_CHANCE_POWER_UP_ROCKET = 25
+    const val DRAW_CHANCE_POWER_UP_SHIELD = 25
+    // Obstacles interval
+    const val OBSTACLE_INTERVAL_MIN = 12f
+    const val OBSTACLE_INTERVAL_MAX = 16f
+    const val SPIKE_FIRST_INTERVAL = 40f
+    const val DRAW_CHANCE_SPIKE = 40
 }

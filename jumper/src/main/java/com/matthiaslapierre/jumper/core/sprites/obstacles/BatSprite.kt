@@ -29,10 +29,14 @@ internal class BatSprite(
     private var speed: Float = UNDEFINED
     private var lastFrameTimestamp: Long = 0L
     private var isAlive: Boolean = true
+    private var isDestroyed: Boolean = false
+    private var explosionFrame: Int = 0
+    private var animateExplosionEnded: Boolean = false
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
         val batImages = resourceManager.bat!!
         val batImage = batImages[frame]
+        val explosionImages = resourceManager.collectibleExplosion!!
 
         val screenWidth = canvas.width.toFloat()
         val screenHeight = canvas.height.toFloat()
@@ -42,7 +46,8 @@ internal class BatSprite(
             speed = width * BAT_SPEED
         }
 
-        isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
+        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isDestroyed
+                || !animateExplosionEnded))
 
         if(maxX - minX > width) {
             x += speed
@@ -55,26 +60,51 @@ internal class BatSprite(
             y += gameStates.speedY
         }
 
-        val srcRect = Rect(
-            0,
-            0,
-            batImage.width,
-            batImage.height
-        )
-        val dstRect = getRectF()
-        canvas.drawBitmap(
-            batImage.bitmap,
-            srcRect,
-            dstRect,
-            globalPaint
-        )
+        if (!isDestroyed || explosionFrame < explosionImages.size / 2) {
+            canvas.drawBitmap(
+                batImage.bitmap,
+                Rect(
+                    0,
+                    0,
+                    batImage.width,
+                    batImage.height
+                ),
+                getRectF(),
+                globalPaint
+            )
 
-        if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RATE) {
-            frame++
-            if (frame >= batImages.size) {
-                frame = 0
+            if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RATE) {
+                frame++
+                if (frame >= batImages.size) {
+                    frame = 0
+                }
+                lastFrameTimestamp = System.currentTimeMillis()
             }
-            lastFrameTimestamp = System.currentTimeMillis()
+        }
+
+        if (isDestroyed) {
+            val explosionImage = explosionImages[explosionFrame]
+            canvas.drawBitmap(
+                explosionImage.bitmap,
+                Rect(
+                    0,
+                    0,
+                    explosionImage.width,
+                    explosionImage.height
+                ),
+                RectF(
+                    x - (width / 2f),
+                    y - (width / 2f),
+                    x + (width / 2f),
+                    y + (width / 2f)
+                ),
+                globalPaint
+            )
+            if(explosionFrame == explosionImages.size - 1) {
+                animateExplosionEnded = true
+            } else {
+                explosionFrame++
+            }
         }
     }
 
@@ -82,6 +112,7 @@ internal class BatSprite(
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && sprite.getBodyRectF().intersect(getRectF())
+            && !isDestroyed
 
     override fun getScore(): Int = 0
 
@@ -94,6 +125,10 @@ internal class BatSprite(
 
     override fun onDispose() {
 
+    }
+
+    fun destroy() {
+        isDestroyed = true
     }
 
 }

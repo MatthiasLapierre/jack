@@ -35,6 +35,7 @@ internal class SpikeSprite(
     private var height: Float = UNDEFINED
     private var smokeFrame: Int = 0
     private var isAlive: Boolean = true
+    private var isDestroyed: Boolean = false
     private var wraithDuration: Long = 0L
     private var lastShowingTimestamp: Long = 0L
     private var state: State = State.IDLE
@@ -54,6 +55,7 @@ internal class SpikeSprite(
         }
 
         isAlive = y <= (screenHeight * JumperConstants.SPRITE_LIFE_LOWEST_Y)
+                && (!isDestroyed || smokeFrame < smokeImages.size - 1)
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
@@ -96,7 +98,7 @@ internal class SpikeSprite(
             smokeFrame++
         }
 
-        if (state == State.SHOW) {
+        if (state == State.SHOW && !isDestroyed) {
             val now = System.currentTimeMillis()
             if (lastShowingTimestamp != 0L) {
                 val interval = now - lastShowingTimestamp
@@ -106,7 +108,7 @@ internal class SpikeSprite(
             }
             lastShowingTimestamp = now
         }
-        val newState = if (wraithDuration > SPIKE_WRAITH_DURATION * 1000L) {
+        val newState = if (wraithDuration > SPIKE_WRAITH_DURATION * 1000L || isDestroyed) {
             State.HIDE
         } else {
             State.SHOW
@@ -127,6 +129,7 @@ internal class SpikeSprite(
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && state == State.SHOW
             && sprite.getBodyRectF().intersect(getRectF())
+            && !isDestroyed
 
     override fun getScore(): Int = 0
 
@@ -139,6 +142,10 @@ internal class SpikeSprite(
 
     override fun onDispose() {
 
+    }
+
+    fun destroy() {
+        isDestroyed = true
     }
 
     private fun drawSpike(canvas: Canvas, globalPaint: Paint, spikeImage: Image) {
