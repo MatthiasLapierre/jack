@@ -4,6 +4,7 @@ import android.graphics.*
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.core.ResourceManager.PlayerState
+import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_FEET_BOTTOM
@@ -34,11 +35,10 @@ internal class PlayerSprite(
     private var previousState: PlayerState = PlayerState.IDLE
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
-        val images = resourceManager.player!![gameStates.playerState]!!
-        if (frame > images.size - 1) {
-            frame = 0
-        }
-        val image = images[frame]!!
+        val playerState = gameStates.playerState
+        frame = getCurrentFrameIndex(frame, previousState, playerState)
+        previousState = gameStates.playerState
+        val image = getImage(frame, playerState)
 
         val screenWidth = canvas.width.toFloat()
         screenHeight = canvas.height.toFloat()
@@ -153,14 +153,13 @@ internal class PlayerSprite(
             )
         }
 
-        frame = getNextFrameIndex(frame, previousState, gameStates.playerState)
-        previousState = gameStates.playerState
+        frame = getNextFrameIndex(frame, playerState)
 
         //DEBUG
         /*canvas.drawRect(RectF(0f, highestY, screenWidth, highestY+1), Paint().apply {
             style = Paint.Style.FILL
             color = Color.RED
-        })*/
+        })
         canvas.drawRect(RectF(0f, lowestY, screenWidth, lowestY+1), Paint().apply {
             style = Paint.Style.FILL
             color = Color.BLUE
@@ -168,7 +167,7 @@ internal class PlayerSprite(
         canvas.drawRect(getFeetRectF(), Paint().apply {
             style = Paint.Style.FILL
             color = Color.RED
-        })
+        })*/
     }
 
     override fun isAlive(): Boolean = true
@@ -206,28 +205,41 @@ internal class PlayerSprite(
         )
     }
 
-    private fun getNextFrameIndex(previousFrameIndex: Int, previousState: PlayerState, state: PlayerState): Int {
-        val playerState = gameStates.playerState
+    private fun getImage(frameIndex: Int, playerState: PlayerState): Image {
         val images = resourceManager.player!![playerState]!!
-        var frame = previousFrameIndex
-        if(previousState == state) {
-            when (playerState) {
-                PlayerState.JUMP, PlayerState.FALL -> {
-                    if (frame < images.size - 1) {
-                        frame++
-                    }
-                }
-                PlayerState.COPTER, PlayerState.DEAD -> {
-                    if (frame < images.size - 1) {
-                        frame++
-                    } else {
-                        frame = 0
-                    }
-                }
-                else -> frame = 0
-            }
+        return if (frameIndex >= images.size) {
+            images[0]!!
         } else {
-            frame = 0
+            images[frameIndex]!!
+        }
+    }
+
+    private fun getCurrentFrameIndex(currentFrameIndex: Int, previousState: PlayerState, currentState: PlayerState): Int {
+        val images = resourceManager.player!![currentState]!!
+        return if(previousState != currentState || currentFrameIndex >= images.size) {
+            0
+        } else {
+            currentFrameIndex
+        }
+    }
+
+    private fun getNextFrameIndex(frameIndex: Int, playerState: PlayerState): Int {
+        val images = resourceManager.player!![playerState]!!
+        var frame = frameIndex
+        when (playerState) {
+            PlayerState.JUMP, PlayerState.FALL -> {
+                if (frame < images.size - 1) {
+                    frame++
+                }
+            }
+            PlayerState.COPTER, PlayerState.DEAD -> {
+                if (frame < images.size - 1) {
+                    frame++
+                } else {
+                    frame = 0
+                }
+            }
+            else -> frame = 0
         }
         return frame
     }
