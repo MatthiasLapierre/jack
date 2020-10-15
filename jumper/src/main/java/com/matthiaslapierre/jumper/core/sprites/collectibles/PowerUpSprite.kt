@@ -6,13 +6,13 @@ import android.graphics.Rect
 import android.graphics.RectF
 import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.core.ResourceManager.PowerUp
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.POWER_UP_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
 import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.utils.JumperUtils
 
 internal class PowerUpSprite(
     private val resourceManager: ResourceManager,
@@ -23,14 +23,8 @@ internal class PowerUpSprite(
 ): Sprite {
 
     companion object {
-        private fun getPowerUpImage(resourceManager: ResourceManager, powerUp: Int): Image {
-            val resId = when (powerUp) {
-                GameStates.POWER_UP_ARMORED -> PowerUp.ARMORED
-                GameStates.POWER_UP_COPTER -> PowerUp.COPTER
-                GameStates.POWER_UP_MAGNET -> PowerUp.MAGNET
-                GameStates.POWER_UP_ROCKET -> PowerUp.ROCKET
-                else -> PowerUp.ARMORED
-            }
+        private fun getPowerUpImage(resourceManager: ResourceManager, flag: Int): Image {
+            val resId = JumperUtils.getFlagToPowerUp(flag)
             return resourceManager.powerUps!![resId]!!
         }
     }

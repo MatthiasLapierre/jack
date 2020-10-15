@@ -82,6 +82,9 @@ interface ResourceManager: GameResources {
     var magnet: Image?
     var rocket: Array<Image>?
 
+    // Badges
+    var badges: Hashtable<PowerUp, Image>?
+
     var collectibleExplosion: Array<Image>?
     var smoke: Array<Image>?
 

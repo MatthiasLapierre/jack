@@ -1,19 +1,16 @@
 package com.matthiaslapierre.jumper.utils
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
+import android.graphics.*
+import com.matthiaslapierre.core.ResourceManager
+import com.matthiaslapierre.jumper.core.GameStates
 import com.matthiaslapierre.utils.toDigits
-import kotlin.experimental.and
-import kotlin.experimental.inv
-import kotlin.experimental.or
 
 object JumperUtils  {
 
     /**
      * Draws the score in a new bitmap.
      */
-    fun generateScoreBitmap(score: Int, resourceManager: com.matthiaslapierre.core.ResourceManager): Bitmap {
+    fun generateScoreBitmap(resourceManager: ResourceManager, score: Int): Bitmap {
         val digits = score.toDigits()
 
         var width = 0
@@ -39,6 +36,51 @@ object JumperUtils  {
 
         return bitmap
     }
+
+    fun generateBadgesBitmap(resourceManager: ResourceManager, powerUpFlag: Int): Bitmap {
+        val firstBadge = resourceManager.badges!![ResourceManager.PowerUp.ARMORED]!!
+        val badgeWidth = firstBadge.width
+        val badgeHeight = firstBadge.height
+        val badgeSpace = badgeWidth * .1f
+
+        val height = ((badgeHeight * 4) + (badgeSpace * 3)).toInt()
+
+        val bitmap = Bitmap.createBitmap(badgeWidth, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        var y = 0f
+
+        val powerUpFlags = arrayOf(
+            GameStates.POWER_UP_ROCKET,
+            GameStates.POWER_UP_MAGNET,
+            GameStates.POWER_UP_ARMORED,
+            GameStates.POWER_UP_COPTER
+        )
+
+        for (flag in powerUpFlags) {
+            if (powerUpFlag.hasFlag(flag)) {
+                canvas.drawBitmap(
+                    resourceManager.badges!![getFlagToPowerUp(flag)]!!.bitmap,
+                    0f,
+                    y,
+                    paint
+                )
+                y += badgeHeight + badgeSpace
+            }
+        }
+
+        return bitmap
+    }
+
+    fun getFlagToPowerUp(flag: Int): ResourceManager.PowerUp =
+        when (flag) {
+            GameStates.POWER_UP_MAGNET -> ResourceManager.PowerUp.MAGNET
+            GameStates.POWER_UP_ROCKET -> ResourceManager.PowerUp.ROCKET
+            GameStates.POWER_UP_COPTER -> ResourceManager.PowerUp.COPTER
+            GameStates.POWER_UP_ARMORED -> ResourceManager.PowerUp.ARMORED
+            else -> ResourceManager.PowerUp.ARMORED
+        }
 
 }
 

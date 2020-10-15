@@ -61,12 +61,12 @@ class GameProcessor(
 
     fun process() {
         updateSprites()
-        if(gameState.currentStatus != Sprite.Status.STATUS_GAME_OVER) {
+        if(gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
             checkCollisions()
             catchFreeFall()
+            updateRocketTimer()
         }
         updateStates()
-        updateRocketTimer()
     }
 
     fun pause() {
@@ -99,6 +99,8 @@ class GameProcessor(
     fun getGameStatus(): Sprite.Status = gameState.currentStatus
 
     fun getCandiesCollected(): Int = gameState.candiesCollected
+
+    fun getPowerUps(): Int = gameState.powerUp
 
     fun setFrameRateAdjustFactor(frameRateAdjustFactor: Float) {
         gameState.frameRateAdjustFactor = frameRateAdjustFactor

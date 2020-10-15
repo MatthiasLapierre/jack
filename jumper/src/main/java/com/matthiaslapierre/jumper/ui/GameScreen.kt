@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -27,6 +28,9 @@ class GameScreen(
         private const val TERNARY_BTN_WIDTH = 0.14f
         private const val TOP_BAR_INSET_X = .13f
         private const val TOP_BAR_INSET_Y = .18f
+        private const val BADGES_SIZE = .12f
+        private const val BADGES_X = 0.025f
+        private const val BADGES_Y = .22f
     }
 
     private val sensorManager: SensorManager = (game as Context).getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -113,6 +117,7 @@ class GameScreen(
         drawTopBarBackground(canvas, globalPaint)
         drawCandyIndicator(canvas, globalPaint)
         drawPauseBtn(canvas, globalPaint)
+        drawBadges(canvas, globalPaint)
     }
 
     private fun drawTopBarBackground(canvas: Canvas, globalPaint: Paint) {
@@ -145,8 +150,8 @@ class GameScreen(
         )
 
         val scoreBitmap = JumperUtils.generateScoreBitmap(
-            gameProcessor.getCandiesCollected(),
-            getResourceManager()
+            getResourceManager(),
+            gameProcessor.getCandiesCollected()
         )
         val originalScoreWidth = scoreBitmap.width
         val originalScoreHeight = scoreBitmap.height
@@ -174,6 +179,35 @@ class GameScreen(
                 pauseBtnImage!!.height
             ),
             getPauseBtnRect(),
+            globalPaint
+        )
+    }
+
+    private fun drawBadges(canvas: Canvas, globalPaint: Paint) {
+        val badgesBitmap = JumperUtils.generateBadgesBitmap(
+            getResourceManager(),
+            gameProcessor.getPowerUps()
+        )
+        val originalWidth = badgesBitmap.width
+        val originalHeight = badgesBitmap.height
+        val width = screenWidth * BADGES_SIZE
+        val height = width * originalHeight / originalWidth
+        val x = screenWidth * BADGES_X
+        val y = screenWidth * BADGES_Y
+        canvas.drawBitmap(
+            badgesBitmap,
+            Rect(
+                0,
+                0,
+                originalWidth,
+                originalHeight
+            ),
+            RectF(
+                x,
+                y,
+                x + width,
+                y + height
+            ),
             globalPaint
         )
     }

@@ -57,6 +57,8 @@ class JackResourceManager(
     override var magnet: Image? = null
     override var rocket: Array<Image>? = null
 
+    override var badges: Hashtable<PowerUp, Image>? = null
+
     override var collectibleExplosion: Array<Image>? = null
     override var smoke: Array<Image>? = null
 
@@ -106,6 +108,8 @@ class JackResourceManager(
         rocket = (1..4).map { digit ->
             loadImage("images/player/accessories/Rocket Animated ($digit).png")!!
         }.toTypedArray()
+
+        badges = loadBadges()
 
         collectibleExplosion = (1..8).map { digit ->
             loadImage("images/objects/explosion/collectibles/Collect ($digit).png")!!
@@ -182,6 +186,14 @@ class JackResourceManager(
         }
         return cache
     }
+
+    private fun loadBadges(): Hashtable<PowerUp, Image> =
+        Hashtable<PowerUp, Image>().apply {
+            put(PowerUp.ARMORED, loadImage("images/ui/badges/badge_shield.png"))
+            put(PowerUp.ROCKET, loadImage("images/ui/badges/badge_rocket.png"))
+            put(PowerUp.MAGNET, loadImage("images/ui/badges/badge_magnet.png"))
+            put(PowerUp.COPTER, loadImage("images/ui/badges/badge_copter.png"))
+        }
 
     private fun loadImage(path: String): Image? {
         val bitmapResult = runCatching {
