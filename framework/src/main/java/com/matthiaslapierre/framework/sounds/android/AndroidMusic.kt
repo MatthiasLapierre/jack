@@ -21,6 +21,7 @@ class AndroidMusic(
             )
             prepare()
             mIsPrepared = true
+            isLooping = true
             setOnCompletionListener(this@AndroidMusic)
             setOnPreparedListener(this@AndroidMusic)
         } catch (e: Exception) {

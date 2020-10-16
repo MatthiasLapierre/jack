@@ -23,6 +23,8 @@ abstract class SoundManager(
 
     abstract fun playGameMusic()
 
+    abstract fun playGameOverMusic()
+
     abstract fun resumeMusic()
 
     abstract fun pauseMusic()

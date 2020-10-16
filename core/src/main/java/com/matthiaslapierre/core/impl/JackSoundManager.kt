@@ -2,10 +2,11 @@ package com.matthiaslapierre.core.impl
 
 import android.content.Context
 import com.matthiaslapierre.core.Constants
+import com.matthiaslapierre.core.SoundManager
 import com.matthiaslapierre.framework.sounds.Music
 import com.matthiaslapierre.framework.sounds.Sound
 
-class JackSoundManager(context: Context): com.matthiaslapierre.core.SoundManager(context) {
+class JackSoundManager(context: Context): SoundManager(context) {
 
     private val soundVolume = Constants.SOUND_VOLUME
     private val musicVolume = Constants.MUSIC_VOLUME
@@ -15,6 +16,7 @@ class JackSoundManager(context: Context): com.matthiaslapierre.core.SoundManager
 
     private var menuMusic: Music? = null
     private var gameMusic: Music? = null
+    private var gameOverMusic: Music? = null
     private var stageEnterSound: Sound? = null
     private var stageClearSound: Sound? = null
     private var jumpSound: Sound? = null
@@ -25,7 +27,9 @@ class JackSoundManager(context: Context): com.matthiaslapierre.core.SoundManager
     private var currentMusic: Music? = null
 
     override fun load() {
-
+        menuMusic = createMusic("musics/soundtrack.mp3")
+        gameMusic = createMusic("musics/game.mp3")
+        gameOverMusic = createMusic("musics/game_over.mp3")
     }
 
     override fun playStageEnterSound() {
@@ -67,6 +71,8 @@ class JackSoundManager(context: Context): com.matthiaslapierre.core.SoundManager
     override fun playMenuMusic() = playMusic(menuMusic)
 
     override fun playGameMusic() = playMusic(gameMusic)
+
+    override fun playGameOverMusic() = playMusic(gameOverMusic)
 
     override fun resumeMusic() {
         currentMusic?.play()

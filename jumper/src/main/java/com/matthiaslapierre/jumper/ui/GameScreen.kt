@@ -11,6 +11,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.view.MotionEvent
 import com.matthiaslapierre.core.ResourceManager
+import com.matthiaslapierre.core.SoundManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
@@ -136,6 +137,7 @@ class GameScreen(
     }
 
     private fun startGame() {
+        (game.getAudio() as SoundManager).playGameMusic()
         jumperGameLogic.gameProcessor.startGame()
     }
 

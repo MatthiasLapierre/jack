@@ -3,6 +3,7 @@ package com.matthiaslapierre.jumper.ui
 import android.graphics.*
 import android.view.MotionEvent
 import com.matthiaslapierre.core.ResourceManager
+import com.matthiaslapierre.core.SoundManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
@@ -52,6 +53,7 @@ class GameOverScreen(
     private var highScoreDstRect: Rect? = null
 
     override fun update() {
+        (game.getAudio() as SoundManager).playGameOverMusic()
         val resourceManager = (game.getGameResources() as ResourceManager)
         windowImage = resourceManager.windowGameOver
         facebookBtnImage = if(facebookBtnIsPressed) resourceManager.btnFacebookPressed else
@@ -105,7 +107,7 @@ class GameOverScreen(
             }
             MotionEvent.ACTION_UP -> {
                 when {
-                    replayBtnIsPressed -> game.setScreen(GameScreen(game))
+                    replayBtnIsPressed -> replay()
                 }
                 replayBtnIsPressed = false
                 facebookBtnIsPressed = false
@@ -117,6 +119,11 @@ class GameOverScreen(
     }
 
     override fun onBackPressed() {
+        replay()
+    }
+
+    private fun replay() {
+        (game.getAudio() as SoundManager).playMenuMusic()
         game.setScreen(GameScreen(game))
     }
 
