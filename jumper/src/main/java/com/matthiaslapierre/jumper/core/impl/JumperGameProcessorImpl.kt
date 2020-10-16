@@ -58,6 +58,9 @@ internal class JumperGameProcessorImpl(
     override fun process() {
         if (gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
             return
+        } else if (gameStates.currentStatus == Sprite.Status.STATUS_GAME_OVER
+            && playerSprite.y > screenHeight) {
+            gameListener?.onGameOver(gameStates.candiesCollected)
         }
 
         updateSprites()
@@ -99,7 +102,6 @@ internal class JumperGameProcessorImpl(
 
     override fun gameOver() {
         gameStates.gameOver()
-        gameListener?.onGameOver(gameStates.candiesCollected)
     }
 
     override fun moveX(xAcceleration: Float) {
