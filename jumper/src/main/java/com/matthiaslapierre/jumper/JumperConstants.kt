@@ -3,7 +3,7 @@ package com.matthiaslapierre.jumper
 internal object JumperConstants  {
 
     const val GRAVITY = 0.00078f
-    const val ACCELEROMETER_SENSITIVITY = 250f
+    const val ACCELEROMETER_SENSITIVITY = 180f
     const val CANDIES_ACCELERATION = 0.033f
     const val JUMP_ACCELERATION = 0.025f
     const val ROCKET_SPEED = 0.033f
@@ -59,7 +59,7 @@ internal object JumperConstants  {
     // Generator
     const val GENERATOR_HIGHEST_Y = 2f
     const val SPRITE_SWING_X = .5f
-    const val FIRST_SPRITE_Y = .4f
+    const val FIRST_SPRITE_Y = .45f
     // Outsets
     const val BAT_OUTSET = .14f
     const val CANDY_SPACE_X = .18f
@@ -69,12 +69,14 @@ internal object JumperConstants  {
     // -- Margin top
     const val CANDIES_MIN_MARGIN_TOP = 0.15f
     const val CANDIES_MAX_MARGIN_TOP = 0.3f
+    const val CANDIES_MARGIN_TOP_BEFORE_OBSTACLE = 0.15f
     const val JUMPING_PLATFORM_MIN_MARGIN_TOP = 0.15f
     const val JUMPING_PLATFORM_MAX_MARGIN_TOP = 0.3f
-    const val BAT_MIN_MARGIN_TOP = 0.16f
-    const val BAT_MAX_MARGIN_TOP = 0.20f
+    const val JUMPING_PLATFORM_MARGIN_TOP_BEFORE_OBSTACLE = 0.12f
+    const val BAT_MIN_MARGIN_TOP = 0.15f
+    const val BAT_MAX_MARGIN_TOP = 0.16f
     const val SPIKE_MIN_MARGIN_TOP = 0.14f
-    const val SPIKE_MAX_MARGIN_TOP = 0.18f
+    const val SPIKE_MAX_MARGIN_TOP = 0.15f
     // Jumping platforms
     const val MIN_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS = 1
     const val MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS = 10

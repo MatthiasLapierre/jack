@@ -6,6 +6,7 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.BAT_MAX_MARGIN_TOP
 import com.matthiaslapierre.jumper.JumperConstants.BAT_MIN_MARGIN_TOP
 import com.matthiaslapierre.jumper.JumperConstants.BAT_OUTSET
+import com.matthiaslapierre.jumper.JumperConstants.CANDIES_MARGIN_TOP_BEFORE_OBSTACLE
 import com.matthiaslapierre.jumper.JumperConstants.CANDIES_MAX_MARGIN_TOP
 import com.matthiaslapierre.jumper.JumperConstants.CANDIES_MIN_MARGIN_TOP
 import com.matthiaslapierre.jumper.JumperConstants.CANDY_OUTSET
@@ -18,6 +19,7 @@ import com.matthiaslapierre.jumper.JumperConstants.DRAW_CHANCE_POWER_UP_SHIELD
 import com.matthiaslapierre.jumper.JumperConstants.DRAW_CHANCE_SPIKE
 import com.matthiaslapierre.jumper.JumperConstants.FIRST_SPRITE_Y
 import com.matthiaslapierre.jumper.JumperConstants.GENERATOR_HIGHEST_Y
+import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_MARGIN_TOP_BEFORE_OBSTACLE
 import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_MAX_MARGIN_TOP
 import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_MIN_MARGIN_TOP
 import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_OUTSET
@@ -78,10 +80,11 @@ internal class GameMap(
             if (lastGeneratedSprite != null) {
                 previousPattern = getPattern(lastGeneratedSprite!!)
                 nextSpriteX = getNextSpriteX(lastGeneratedSprite!!.x)
-                nextSpriteY = lastGeneratedSprite!!.y - getSpriteMarginTop(previousPattern)
+                nextSpriteY = lastGeneratedSprite!!.y
             }
+            var nextPattern = getNextPattern(previousPattern)
+            nextSpriteY -= getSpriteMarginTop(previousPattern, nextPattern)
             while (nextSpriteY > -(screenHeight * GENERATOR_HIGHEST_Y)) {
-                val nextPattern = getNextPattern(previousPattern)
                 val sprites = buildSprites(nextSpriteX, nextSpriteY, nextPattern)
                 generatedSprites.addAll(sprites)
                 when (nextPattern) {
@@ -94,14 +97,14 @@ internal class GameMap(
                 } else {
                     sprites.first()
                 }
-                previousPattern = nextPattern
                 lastGeneratedSprite = sprites.last()
                 elevation += abs(lastGeneratedSprite!!.y - previousGeneratedSprite!!.y)
                 nextSpriteY = lastGeneratedSprite!!.y
                 nextSpriteX = getNextSpriteX(lastGeneratedSprite!!.x)
-                nextSpriteY -= getSpriteMarginTop(nextPattern)
+                previousPattern = nextPattern
+                nextPattern = getNextPattern(previousPattern)
+                nextSpriteY -= getSpriteMarginTop(previousPattern, nextPattern)
             }
-
             return generatedSprites
         }
     }
@@ -350,24 +353,33 @@ internal class GameMap(
         }
     }
 
-    private fun getSpriteMarginTop(previousPattern: Int?): Float =
-        when (previousPattern) {
-            PATTERN_CANDIES_LINE, PATTERN_CANDIES_GAP -> Utils.getRandomFloat(
-                screenWidth * CANDIES_MIN_MARGIN_TOP,
-                screenWidth * CANDIES_MAX_MARGIN_TOP
-            )
-            PATTERN_BAT -> Utils.getRandomFloat(
-                screenWidth * BAT_MIN_MARGIN_TOP,
-                screenWidth * BAT_MAX_MARGIN_TOP
-            )
-            PATTERN_SPIKE -> Utils.getRandomFloat(
-                screenWidth * SPIKE_MIN_MARGIN_TOP,
-                screenWidth * SPIKE_MAX_MARGIN_TOP
-            )
-            else -> Utils.getRandomFloat(
-                screenWidth * JUMPING_PLATFORM_MIN_MARGIN_TOP,
-                screenWidth * JUMPING_PLATFORM_MAX_MARGIN_TOP
-            )
+    private fun getSpriteMarginTop(previousPattern: Int?, nextPattern: Int?): Float =
+        if (previousPattern == null) {
+            0f
+        } else if (nextPattern == PATTERN_BAT || nextPattern == PATTERN_SPIKE) {
+            when (previousPattern) {
+                PATTERN_CANDIES_LINE, PATTERN_CANDIES_GAP -> screenWidth * CANDIES_MARGIN_TOP_BEFORE_OBSTACLE
+                else -> screenWidth * JUMPING_PLATFORM_MARGIN_TOP_BEFORE_OBSTACLE
+            }
+        } else {
+            when (previousPattern) {
+                PATTERN_CANDIES_LINE, PATTERN_CANDIES_GAP -> Utils.getRandomFloat(
+                    screenWidth * CANDIES_MIN_MARGIN_TOP,
+                    screenWidth * CANDIES_MAX_MARGIN_TOP
+                )
+                PATTERN_BAT -> Utils.getRandomFloat(
+                    screenWidth * BAT_MIN_MARGIN_TOP,
+                    screenWidth * BAT_MAX_MARGIN_TOP
+                )
+                PATTERN_SPIKE -> Utils.getRandomFloat(
+                    screenWidth * SPIKE_MIN_MARGIN_TOP,
+                    screenWidth * SPIKE_MAX_MARGIN_TOP
+                )
+                else -> Utils.getRandomFloat(
+                    screenWidth * JUMPING_PLATFORM_MIN_MARGIN_TOP,
+                    screenWidth * JUMPING_PLATFORM_MAX_MARGIN_TOP
+                )
+            }
         }
 
     private fun getPattern(sprite: Sprite): Int =
