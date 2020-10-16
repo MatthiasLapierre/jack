@@ -25,10 +25,6 @@ abstract class SoundManager(
 
     abstract fun playGameOverMusic()
 
-    abstract fun resumeMusic()
-
-    abstract fun pauseMusic()
-
     abstract fun stopMusic()
 
     abstract fun enableMusic(enable: Boolean)

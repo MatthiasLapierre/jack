@@ -39,6 +39,14 @@ open class AndroidAudio(
 
     }
 
+    override fun resumeMusic() {
+
+    }
+
+    override fun pauseMusic() {
+
+    }
+
     override fun createMusic(file: String): Music {
         return try {
             val assetDescriptor = mAssets.openFd(file)

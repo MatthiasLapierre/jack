@@ -75,7 +75,9 @@ class JackSoundManager(context: Context): SoundManager(context) {
     override fun playGameOverMusic() = playMusic(gameOverMusic)
 
     override fun resumeMusic() {
-        currentMusic?.play()
+        if (musicEnabled) {
+            currentMusic?.play()
+        }
     }
 
     override fun pauseMusic() {

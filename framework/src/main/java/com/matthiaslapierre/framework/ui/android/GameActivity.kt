@@ -56,11 +56,13 @@ abstract class GameActivity : AppCompatActivity(), Game {
         super.onResume()
         mScreen.resume()
         mGameView.resume()
+        getAudio().resumeMusic()
     }
 
     override fun onPause() {
         mGameView.pause()
         mScreen.pause()
+        getAudio().pauseMusic()
         super.onPause()
     }
 
