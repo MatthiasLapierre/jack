@@ -176,26 +176,30 @@ class GameOverScreen(
         )
 
 
-        val scoreHeight = (screenWidth * SCORE_DIGITS_HEIGHT).toInt()
-        val lastScoreWidth = (scoreHeight * lastScoreBitmap!!.width / lastScoreBitmap!!.height.toFloat()).toInt()
-        val lastScoreX = ((screenWidth - lastScoreWidth) / 2f).toInt()
-        val lastScoreY = (windowY + windowHeight * LAST_SCORE_Y).toInt()
-        lastScoreDstRect = Rect(
-            lastScoreX,
-            lastScoreY,
-            lastScoreX + lastScoreWidth,
-            lastScoreY + scoreHeight
-        )
+        if (lastScoreBitmap != null && highScoreBitmap != null) {
+            val scoreHeight = (screenWidth * SCORE_DIGITS_HEIGHT).toInt()
+            val lastScoreWidth =
+                (scoreHeight * lastScoreBitmap!!.width / lastScoreBitmap!!.height.toFloat()).toInt()
+            val lastScoreX = ((screenWidth - lastScoreWidth) / 2f).toInt()
+            val lastScoreY = (windowY + windowHeight * LAST_SCORE_Y).toInt()
+            lastScoreDstRect = Rect(
+                lastScoreX,
+                lastScoreY,
+                lastScoreX + lastScoreWidth,
+                lastScoreY + scoreHeight
+            )
 
-        val highScoreWidth = (scoreHeight * highScoreBitmap!!.width / highScoreBitmap!!.height.toFloat()).toInt()
-        val highScoreX = ((screenWidth - highScoreWidth) / 2f).toInt()
-        val highScoreY = (windowY + windowHeight * HIGH_SCORE_Y).toInt()
-        highScoreDstRect = Rect(
-            highScoreX,
-            highScoreY,
-            highScoreX + highScoreWidth,
-            highScoreY + scoreHeight
-        )
+            val highScoreWidth =
+                (scoreHeight * highScoreBitmap!!.width / highScoreBitmap!!.height.toFloat()).toInt()
+            val highScoreX = ((screenWidth - highScoreWidth) / 2f).toInt()
+            val highScoreY = (windowY + windowHeight * HIGH_SCORE_Y).toInt()
+            highScoreDstRect = Rect(
+                highScoreX,
+                highScoreY,
+                highScoreX + highScoreWidth,
+                highScoreY + scoreHeight
+            )
+        }
 
         val replayBtnX = ((screenWidth - primaryBtnWidth) / 2f).toInt()
         val replayBtnY = windowDstRect!!.bottom + secondaryBtnSpace
