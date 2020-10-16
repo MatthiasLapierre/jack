@@ -14,10 +14,10 @@ class MenuScreen(
 ): Screen(game) {
 
     companion object {
-        private const val LOGO_RATIO = 0.95f
-        private const val PRIMARY_BTN_RATIO = 0.33f
-        private const val SECONDARY_BTN_RATIO = 0.25f
-        private const val TERNARY_BTN_RATIO = 0.15f
+        private const val LOGO_WIDTH = 0.95f
+        private const val PRIMARY_BTN_WIDTH = 0.33f
+        private const val SECONDARY_BTN_WIDTH = 0.25f
+        private const val TERNARY_BTN_WIDTH = 0.15f
     }
 
     private var topDstRect: Rect? = null
@@ -124,14 +124,14 @@ class MenuScreen(
         var x = 0
         var y = 0
 
-        val titleWidth = (screenWidth * LOGO_RATIO).toInt()
+        val titleWidth = (screenWidth * LOGO_WIDTH).toInt()
         val titleHeight = (titleWidth * logoImage!!.height / logoImage!!.width.toFloat()).toInt()
 
-        val primaryBtnWidth = (screenWidth * PRIMARY_BTN_RATIO).toInt()
+        val primaryBtnWidth = (screenWidth * PRIMARY_BTN_WIDTH).toInt()
         val primaryBtnHeight = (primaryBtnWidth * playBtnImage!!.height / playBtnImage!!.width.toFloat()).toInt()
-        val secondaryBtnWidth = (screenWidth * SECONDARY_BTN_RATIO).toInt()
-        val secondaryBtnHeight = (screenWidth * SECONDARY_BTN_RATIO * scoreBtnImage!!.height / scoreBtnImage!!.width.toFloat()).toInt()
-        val ternaryBtnWidth = (screenWidth * TERNARY_BTN_RATIO).toInt()
+        val secondaryBtnWidth = (screenWidth * SECONDARY_BTN_WIDTH).toInt()
+        val secondaryBtnHeight = (screenWidth * SECONDARY_BTN_WIDTH * scoreBtnImage!!.height / scoreBtnImage!!.width.toFloat()).toInt()
+        val ternaryBtnWidth = (screenWidth * TERNARY_BTN_WIDTH).toInt()
         val ternaryBtnHeight = ternaryBtnWidth * soundBtnImage!!.height / soundBtnImage!!.width
         val ternaryBtnSpace = (ternaryBtnWidth * .1f).toInt()
         val btnContainerHeight = primaryBtnHeight + secondaryBtnHeight
