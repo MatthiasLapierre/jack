@@ -16,12 +16,16 @@ import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.ACCELEROMETER_SENSITIVITY
-import com.matthiaslapierre.jumper.core.GameProcessor
+import com.matthiaslapierre.jumper.core.JumperGameListener
+import com.matthiaslapierre.jumper.core.JumperGameLogic
+import com.matthiaslapierre.jumper.core.JumperScores
+import com.matthiaslapierre.jumper.core.impl.JumperGameLogicFactory
+import com.matthiaslapierre.jumper.core.impl.JumperScoresImpl
 import com.matthiaslapierre.jumper.utils.JumperUtils
 
 class GameScreen(
     game: Game
-): Screen(game), SensorEventListener {
+): Screen(game), SensorEventListener, JumperGameListener {
 
     companion object {
         private const val INDICATOR_WIDTH = 0.40f
@@ -33,10 +37,13 @@ class GameScreen(
         private const val BADGES_Y = .22f
     }
 
-    private val sensorManager: SensorManager = (game as Context).getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private var jumperGameLogic: JumperGameLogic = JumperGameLogicFactory(
+        game.getGameResources() as ResourceManager,
+        this
+    ).create()
+    private var scores: JumperScores = JumperScoresImpl((game as Context).applicationContext)
 
-    private val gameProcessor =
-        GameProcessor(game.getGameResources() as ResourceManager)
+    private val sensorManager: SensorManager = (game as Context).getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
     private var topBgImage: Image? = null
     private var candyIndicatorImage: Image? = null
@@ -52,19 +59,19 @@ class GameScreen(
         candyIndicatorImage = resourceManager.candyIndicator
         pauseBtnImage = if(pauseBtnIsPressed) resourceManager.btnPausePressed else
             resourceManager.btnPause
-        gameProcessor.setFrameRateAdjustFactor(frameRateAdjustFactor)
-        gameProcessor.process()
+        jumperGameLogic.gameProcessor.setFrameRateAdjustFactor(frameRateAdjustFactor)
+        jumperGameLogic.gameProcessor.process()
     }
 
     override fun paint(canvas: Canvas, globalPaint: Paint) {
         screenWidth = canvas.width.toFloat()
-        gameProcessor.paint(canvas, globalPaint)
+        jumperGameLogic.gameProcessor.paint(canvas, globalPaint)
         drawTopBar(canvas, globalPaint)
     }
 
     override fun pause() {
         sensorManager.unregisterListener(this)
-        gameProcessor.pause()
+        jumperGameLogic.gameProcessor.pause()
     }
 
     override fun resume() {
@@ -76,7 +83,7 @@ class GameScreen(
     }
 
     override fun dispose() {
-
+        jumperGameLogic.gameProcessor.dispose()
     }
 
     override fun onTouch(event: MotionEvent) {
@@ -89,15 +96,15 @@ class GameScreen(
             MotionEvent.ACTION_UP -> {
                 pauseBtnIsPressed = false
                 if (touchY > getPauseBtnRect().bottom
-                    && gameProcessor.getGameStatus() == Sprite.Status.STATUS_NOT_STARTED) {
-                    gameProcessor.startGame()
+                    && jumperGameLogic.gameProcessor.getGameStatus() == Sprite.Status.STATUS_NOT_STARTED) {
+                    jumperGameLogic.gameProcessor.startGame()
                 }
             }
         }
     }
 
     override fun onBackPressed() {
-        if(gameProcessor.getGameStatus() != Sprite.Status.STATUS_PLAY) {
+        if(jumperGameLogic.gameProcessor.getGameStatus() != Sprite.Status.STATUS_PLAY) {
             game.setScreen(MenuScreen(game))
         }
     }
@@ -105,12 +112,26 @@ class GameScreen(
     override fun onSensorChanged(event: SensorEvent?) {
         if (Sensor.TYPE_ACCELEROMETER == event?.sensor?.type) {
             val xAcceleration = event.values[0] * ACCELEROMETER_SENSITIVITY * (frameTime / 1000f)
-            gameProcessor.moveX(xAcceleration)
+            jumperGameLogic.gameProcessor.moveX(xAcceleration)
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
+    }
+
+    override fun onGameOver(candiesCollected: Int) {
+        if (scores.isNewBestScore(candiesCollected)) {
+            scores.storeHighScore(candiesCollected)
+        }
+        game.setScreen(
+            GameOverScreen(
+                game,
+                candiesCollected,
+                scores.highScore(),
+                game.takeScreenShot()
+            )
+        )
     }
 
     private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {
@@ -151,7 +172,7 @@ class GameScreen(
 
         val scoreBitmap = JumperUtils.generateScoreBitmap(
             getResourceManager(),
-            gameProcessor.getCandiesCollected()
+            jumperGameLogic.gameProcessor.getCandiesCollected()
         )
         val originalScoreWidth = scoreBitmap.width
         val originalScoreHeight = scoreBitmap.height
@@ -186,7 +207,7 @@ class GameScreen(
     private fun drawBadges(canvas: Canvas, globalPaint: Paint) {
         val badgesBitmap = JumperUtils.generateBadgesBitmap(
             getResourceManager(),
-            gameProcessor.getPowerUps()
+            jumperGameLogic.gameProcessor.getPowerUps()
         )
         val originalWidth = badgesBitmap.width
         val originalHeight = badgesBitmap.height

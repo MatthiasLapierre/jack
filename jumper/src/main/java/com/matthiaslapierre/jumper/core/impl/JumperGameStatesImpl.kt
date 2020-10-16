@@ -1,113 +1,139 @@
-package com.matthiaslapierre.jumper.core
+package com.matthiaslapierre.jumper.core.impl
 
-import com.matthiaslapierre.core.Constants.UNDEFINED
+import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.core.ResourceManager.PlayerState
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.framework.ui.Sprite.Status
 import com.matthiaslapierre.jumper.JumperConstants
-import com.matthiaslapierre.jumper.JumperConstants.BACKGROUND_SPEED_DECELERATION
-import com.matthiaslapierre.jumper.JumperConstants.CLOUD_SPEED_DECELERATION
-import com.matthiaslapierre.jumper.JumperConstants.MAX_FALL_SPEED
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.JumperGameStates.CameraMovement
+import com.matthiaslapierre.jumper.core.JumperGameStates.Companion.POWER_UP_COPTER
+import com.matthiaslapierre.jumper.core.JumperGameStates.Companion.POWER_UP_ROCKET
+import com.matthiaslapierre.jumper.core.JumperGameStates.Direction
 import com.matthiaslapierre.jumper.utils.hasFlag
 import com.matthiaslapierre.jumper.utils.minusFlag
 import com.matthiaslapierre.jumper.utils.withFlag
 
-internal class GameStates  {
-
-    companion object {
-        const val POWER_UP_COPTER = 0x00000001
-        const val POWER_UP_MAGNET = 0x00000010
-        const val POWER_UP_ROCKET = 0x00000100
-        const val POWER_UP_ARMORED = 0x00001000
-    }
-
-    enum class Direction {
-        UP,
-        DOWN,
-        IDLE
-    }
-
-    enum class CameraMovement {
-        UP,
-        DOWN,
-        NONE
-    }
+internal class JumperGameStatesImpl: JumperGameStates  {
 
     /**
      * Current status of the game.
      */
-    var currentStatus: Status = Status.STATUS_NOT_STARTED
+    override var currentStatus: Sprite.Status = Sprite.Status.STATUS_NOT_STARTED
 
     /**
      * Current player state.
      */
-    var playerState: PlayerState = PlayerState.IDLE
+    override var playerState: ResourceManager.PlayerState = ResourceManager.PlayerState.IDLE
 
     /**
      * Current player direction.
      */
-    var direction: Direction = Direction.IDLE
+    override var direction: Direction = Direction.IDLE
 
-    var cameraMovement: CameraMovement = CameraMovement.NONE
+    override var cameraMovement: CameraMovement = CameraMovement.NONE
 
     /**
      * Score.
      */
-    var candiesCollected: Int = 0
+    override var candiesCollected: Int = 0
 
-    var powerUp: Int = 0
+    override var powerUp: Int = 0
 
     /**
      * When the framerate is not steady, compensate every moving element by a factor.
      */
-    var frameRateAdjustFactor: Float = 1f
+    override var frameRateAdjustFactor: Float = 1f
 
-    /**
-     * Current speed on the x-axis.
-     */
-    private var _speedX: Float = 0f
-
-    /**
-     * Current speed on the y-axis.
-     */
-    private var _speedY: Float = 0f
-
-    val speedY: Float
+    override val speedY: Float
         get() = if (cameraMovement != CameraMovement.NONE) {
             globalSpeedY
         } else {
             0f
         }
 
-    val playerSpeedX: Float
+    override val playerSpeedX: Float
         get() = normalizedSpeedX(_speedX)
-    val playerSpeedY: Float
+    override val playerSpeedY: Float
         get() = globalSpeedY
-    val backgroundSpeedY: Float
-        get() = speedY * BACKGROUND_SPEED_DECELERATION
-    val cloudSpeedY: Float
-        get() = speedY * CLOUD_SPEED_DECELERATION
+    override val backgroundSpeedY: Float
+        get() = speedY * JumperConstants.BACKGROUND_SPEED_DECELERATION
+    override val cloudSpeedY: Float
+        get() = speedY * JumperConstants.CLOUD_SPEED_DECELERATION
 
-    val globalSpeedY: Float
+    override val globalSpeedY: Float
         get() = normalizedSpeedY(_speedY)
 
+    /**
+     * Current speed on the x-axis.
+     */
+    private var _speedX: Float = 0f
+    /**
+     * Current speed on the y-axis.
+     */
+    private var _speedY: Float = 0f
     private val gravity: Float
         get() = screenWidth * JumperConstants.GRAVITY * frameRateAdjustFactor
     private var maxSpeedY: Float = 0f
-    private var screenWidth: Float = UNDEFINED
+    private var screenWidth: Float = Constants.UNDEFINED
     private var hasReachedTheTop: Boolean = false
     private var hasReachedTheBottom: Boolean = false
 
-    fun update(playerY: Float, playerLowestY: Float, playerHighestY: Float) {
+    override fun update(playerY: Float, playerLowestY: Float, playerHighestY: Float) {
         updateSpeed()
         updateDirection()
         updatePlayerState()
         updateCameraMovement(playerY, playerLowestY, playerHighestY)
     }
 
+    override fun moveX(xAcceleration: Float) {
+        _speedX = xAcceleration
+    }
+
+    override fun jump() {
+        _speedY = getJumpAcceleration()
+    }
+
+    override fun collectCandies(candies: Int) {
+        candiesCollected += candies
+        if (_speedY < getCandyAcceleration()) {
+            _speedY = getCandyAcceleration()
+        }
+    }
+
+    override fun setScreenSize(screenWidth: Float) {
+        this.screenWidth = screenWidth
+        this.maxSpeedY = screenWidth * JumperConstants.MAX_FALL_SPEED
+    }
+
+    override fun addPowerUp(powerUpFlag: Int) {
+        powerUp = powerUp.withFlag(powerUpFlag)
+        if (powerUpFlag == POWER_UP_COPTER) {
+            playerState = ResourceManager.PlayerState.COPTER
+        }
+    }
+
+    override fun removePowerUp(powerUpFlag: Int) {
+        powerUp = powerUp.minusFlag(powerUpFlag)
+        if (powerUpFlag == POWER_UP_COPTER) {
+            playerState = ResourceManager.PlayerState.JUMP
+        }
+    }
+
+    override fun removeAllPowerUps() {
+        powerUp = 0
+        playerState = ResourceManager.PlayerState.JUMP
+    }
+
+    override fun hasPowerUps(): Boolean = powerUp > 0
+
+    override fun gameOver() {
+        _speedY = 0f
+        playerState = ResourceManager.PlayerState.DEAD
+        currentStatus = Sprite.Status.STATUS_GAME_OVER
+    }
+
     private fun updateCameraMovement(playerY: Float, playerLowestY: Float, playerHighestY: Float) {
-        if (currentStatus == Status.STATUS_PLAY) {
+        if (currentStatus == Sprite.Status.STATUS_PLAY) {
             if (!hasReachedTheTop) {
                 hasReachedTheTop = playerY <= playerHighestY
             }
@@ -142,55 +168,8 @@ internal class GameStates  {
         }
     }
 
-    fun moveX(xAcceleration: Float) {
-        _speedX = xAcceleration
-    }
-
-    fun jump() {
-        _speedY = getJumpAcceleration()
-    }
-
-    fun collectCandies(candies: Int) {
-        candiesCollected += candies
-        if (_speedY < getCandyAcceleration()) {
-            _speedY = getCandyAcceleration()
-        }
-    }
-
-    fun setScreenSize(screenWidth: Float) {
-        this.screenWidth = screenWidth
-        this.maxSpeedY = screenWidth * MAX_FALL_SPEED
-    }
-
-    fun addPowerUp(powerUpFlag: Int) {
-        powerUp = powerUp.withFlag(powerUpFlag)
-        if (powerUpFlag == POWER_UP_COPTER) {
-            playerState = PlayerState.COPTER
-        }
-    }
-
-    fun removePowerUp(powerUpFlag: Int) {
-        powerUp = powerUp.minusFlag(powerUpFlag)
-        if (powerUpFlag == POWER_UP_COPTER) {
-            playerState = PlayerState.JUMP
-        }
-    }
-
-    fun removeAllPowerUps() {
-        powerUp = 0
-        playerState = PlayerState.JUMP
-    }
-
-    fun hasPowerUps(): Boolean = powerUp > 0
-
-    fun gameOver() {
-        _speedY = 0f
-        playerState = PlayerState.DEAD
-        currentStatus = Status.STATUS_GAME_OVER
-    }
-
     private fun updateSpeed() {
-        if (currentStatus == Status.STATUS_PLAY) {
+        if (currentStatus == Sprite.Status.STATUS_PLAY) {
             when {
                 powerUp.hasFlag(POWER_UP_ROCKET) -> {
                     _speedY = getRocketSpeed()
@@ -202,7 +181,7 @@ internal class GameStates  {
                     _speedY -= gravity
                 }
             }
-        } else if(currentStatus == Status.STATUS_GAME_OVER) {
+        } else if(currentStatus == Sprite.Status.STATUS_GAME_OVER) {
             _speedY -= gravity
         }
     }
@@ -217,18 +196,18 @@ internal class GameStates  {
 
     private fun updatePlayerState() {
         playerState = when(playerState) {
-            PlayerState.JUMP -> {
+            ResourceManager.PlayerState.JUMP -> {
                 if (direction == Direction.DOWN) {
-                    PlayerState.FALL
+                    ResourceManager.PlayerState.FALL
                 } else {
-                    PlayerState.JUMP
+                    ResourceManager.PlayerState.JUMP
                 }
             }
-            PlayerState.FALL -> {
+            ResourceManager.PlayerState.FALL -> {
                 if (direction == Direction.UP) {
-                    PlayerState.JUMP
+                    ResourceManager.PlayerState.JUMP
                 } else {
-                    PlayerState.FALL
+                    ResourceManager.PlayerState.FALL
                 }
             }
             else -> playerState

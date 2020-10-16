@@ -1,18 +1,17 @@
-package com.matthiaslapierre.jumper.core.sprites.bg
+package com.matthiaslapierre.jumper.core.impl.sprites.bg
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.JumperGameStates
 
 internal class BgSprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates
+    private val gameStates: JumperGameStates
 ) : Sprite {
 
     override var x: Float = UNDEFINED

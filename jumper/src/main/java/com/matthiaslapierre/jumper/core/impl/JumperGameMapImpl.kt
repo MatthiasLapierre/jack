@@ -1,53 +1,24 @@
-package com.matthiaslapierre.jumper.core
+package com.matthiaslapierre.jumper.core.impl
 
-import com.matthiaslapierre.core.Constants.UNDEFINED
+import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants.BAT_MAX_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.BAT_MIN_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.BAT_OUTSET
-import com.matthiaslapierre.jumper.JumperConstants.CANDIES_MARGIN_TOP_BEFORE_OBSTACLE
-import com.matthiaslapierre.jumper.JumperConstants.CANDIES_MAX_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.CANDIES_MIN_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.CANDY_OUTSET
-import com.matthiaslapierre.jumper.JumperConstants.CANDY_SPACE_X
-import com.matthiaslapierre.jumper.JumperConstants.CANDY_SPACE_Y
-import com.matthiaslapierre.jumper.JumperConstants.DRAW_CHANCE_POWER_UP_COPTER
-import com.matthiaslapierre.jumper.JumperConstants.DRAW_CHANCE_POWER_UP_MAGNET
-import com.matthiaslapierre.jumper.JumperConstants.DRAW_CHANCE_POWER_UP_ROCKET
-import com.matthiaslapierre.jumper.JumperConstants.DRAW_CHANCE_POWER_UP_SHIELD
-import com.matthiaslapierre.jumper.JumperConstants.DRAW_CHANCE_SPIKE
-import com.matthiaslapierre.jumper.JumperConstants.FIRST_SPRITE_Y
-import com.matthiaslapierre.jumper.JumperConstants.GENERATOR_HIGHEST_Y
-import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_MARGIN_TOP_BEFORE_OBSTACLE
-import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_MAX_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_MIN_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_OUTSET
-import com.matthiaslapierre.jumper.JumperConstants.MAX_CANDIES_X_CAPACITY
-import com.matthiaslapierre.jumper.JumperConstants.MAX_CANDIES_Y_CAPACITY
-import com.matthiaslapierre.jumper.JumperConstants.MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
-import com.matthiaslapierre.jumper.JumperConstants.MIN_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
-import com.matthiaslapierre.jumper.JumperConstants.OBSTACLE_INTERVAL_MAX
-import com.matthiaslapierre.jumper.JumperConstants.OBSTACLE_INTERVAL_MIN
-import com.matthiaslapierre.jumper.JumperConstants.POWER_UP_INTERVAL_MAX
-import com.matthiaslapierre.jumper.JumperConstants.POWER_UP_INTERVAL_MIN
-import com.matthiaslapierre.jumper.JumperConstants.SPIKE_FIRST_INTERVAL
-import com.matthiaslapierre.jumper.JumperConstants.SPIKE_MAX_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.SPIKE_MIN_MARGIN_TOP
-import com.matthiaslapierre.jumper.JumperConstants.SPRITE_SWING_X
-import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
-import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
-import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
-import com.matthiaslapierre.jumper.core.sprites.obstacles.SpikeSprite
-import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
+import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.core.JumperGameMap
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.impl.sprites.collectibles.CandySprite
+import com.matthiaslapierre.jumper.core.impl.sprites.collectibles.PowerUpSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.obstacles.BatSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.obstacles.SpikeSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.utils.Utils
 import kotlin.math.abs
 import kotlin.math.floor
 
-internal class GameMap(
-    private val resourceManager: ResourceManager,
-    private val gameStates: GameStates
-) {
+internal class JumperGameMapImpl(
+    override val resourceManager: ResourceManager,
+    override val gameStates: JumperGameStates
+): JumperGameMap {
 
     companion object {
         private const val PATTERN_INITIAL_JUMPING_PLATFORM = 1
@@ -63,18 +34,18 @@ internal class GameMap(
     private var countPowerUpsGenerated: Int = 0
     private var elevation: Float = 0f
 
-    private var screenWidth: Float = UNDEFINED
-    private var screenHeight: Float = UNDEFINED
+    private var screenWidth: Float = Constants.UNDEFINED
+    private var screenHeight: Float = Constants.UNDEFINED
 
-    fun generate(): List<Sprite> {
+    override fun generate(): List<Sprite> {
         synchronized(this) {
             val generatedSprites = mutableListOf<Sprite>()
 
-            if (screenHeight == UNDEFINED) {
+            if (screenHeight == Constants.UNDEFINED) {
                 return generatedSprites
             }
 
-            var nextSpriteY = screenHeight - (screenWidth * FIRST_SPRITE_Y)
+            var nextSpriteY = screenHeight - (screenWidth * JumperConstants.FIRST_SPRITE_Y)
             var nextSpriteX = getNextSpriteX(null)
             var previousPattern: Int? = null
             if (lastGeneratedSprite != null) {
@@ -84,7 +55,7 @@ internal class GameMap(
             }
             var nextPattern = getNextPattern(previousPattern)
             nextSpriteY -= getSpriteMarginTop(previousPattern, nextPattern)
-            while (nextSpriteY > -(screenHeight * GENERATOR_HIGHEST_Y)) {
+            while (nextSpriteY > -(screenHeight * JumperConstants.GENERATOR_HIGHEST_Y)) {
                 val sprites = buildSprites(nextSpriteX, nextSpriteY, nextPattern)
                 generatedSprites.addAll(sprites)
                 when (nextPattern) {
@@ -109,7 +80,7 @@ internal class GameMap(
         }
     }
 
-    fun setScreenSize(screenWidth: Float, screenHeight: Float) {
+    override fun setScreenSize(screenWidth: Float, screenHeight: Float) {
         this.screenWidth = screenWidth
         this.screenHeight = screenHeight
     }
@@ -124,8 +95,8 @@ internal class GameMap(
             )
             patterns[Utils.getRandomInt(0, patterns.size)]
         } else if(obstacleGenerationAllowed()) {
-            if (elevation > screenWidth * SPIKE_FIRST_INTERVAL) {
-                if(Utils.getRandomInt(0, 100) > DRAW_CHANCE_SPIKE) {
+            if (elevation > screenWidth * JumperConstants.SPIKE_FIRST_INTERVAL) {
+                if(Utils.getRandomInt(0, 100) > JumperConstants.DRAW_CHANCE_SPIKE) {
                     PATTERN_SPIKE
                 } else {
                     PATTERN_BAT
@@ -145,21 +116,21 @@ internal class GameMap(
 
     private fun obstacleGenerationAllowed(): Boolean {
         return floor(elevation / Utils.getRandomFloat(
-            screenWidth * OBSTACLE_INTERVAL_MIN,
-            screenWidth * OBSTACLE_INTERVAL_MAX
+            screenWidth * JumperConstants.OBSTACLE_INTERVAL_MIN,
+            screenWidth * JumperConstants.OBSTACLE_INTERVAL_MAX
         )) > countObstaclesGenerated
     }
 
     private fun powerUpGenerationAllowed(): Boolean {
         return floor(elevation / Utils.getRandomFloat(
-            screenWidth * POWER_UP_INTERVAL_MIN,
-            screenWidth * POWER_UP_INTERVAL_MAX
+            screenWidth * JumperConstants.POWER_UP_INTERVAL_MIN,
+            screenWidth * JumperConstants.POWER_UP_INTERVAL_MAX
         )) > countPowerUpsGenerated
     }
 
     private fun getNextSpriteX(x: Float?): Float {
         return if (x != null) {
-            val swing = screenWidth * SPRITE_SWING_X
+            val swing = screenWidth * JumperConstants.SPRITE_SWING_X
             val minX = 0f.coerceAtLeast(x - swing)
             val maxX = screenWidth.coerceAtMost(x + swing)
             Utils.getRandomFloat(minX, maxX)
@@ -173,14 +144,14 @@ internal class GameMap(
             PATTERN_INITIAL_JUMPING_PLATFORM -> buildJumpingPlatformSprites(
                 x,
                 y,
-                MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
+                JumperConstants.MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
             )
             PATTERN_JUMPING_PLATFORM -> buildJumpingPlatformSprites(
                 x,
                 y,
                 Utils.getRandomInt(
-                    MIN_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS,
-                    MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
+                    JumperConstants.MIN_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS,
+                    JumperConstants.MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
                 )
             )
             PATTERN_CANDIES_LINE -> buildCandiesLineSprites(x, y)
@@ -191,8 +162,8 @@ internal class GameMap(
                 x,
                 y,
                 Utils.getRandomInt(
-                    MIN_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS,
-                    MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
+                    JumperConstants.MIN_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS,
+                    JumperConstants.MAX_NUMBER_SUCCESSIVE_JUMPING_PLATFORMS
                 )
             )
         }
@@ -208,8 +179,8 @@ internal class GameMap(
             val jumpingPlatformSprite = buildJumpingPlatformSprite(nextX, nextY)
             nextX = getNextSpriteX(nextX)
             nextY -= Utils.getRandomFloat(
-                screenWidth * JUMPING_PLATFORM_MIN_MARGIN_TOP,
-                screenWidth * JUMPING_PLATFORM_MAX_MARGIN_TOP
+                screenWidth * JumperConstants.JUMPING_PLATFORM_MIN_MARGIN_TOP,
+                screenWidth * JumperConstants.JUMPING_PLATFORM_MAX_MARGIN_TOP
             )
             jumpingPlatformSprite
         }
@@ -220,14 +191,14 @@ internal class GameMap(
         y: Float
     ): List<Sprite> {
         val capacityX = Utils.getRandomInt(1,
-            MAX_CANDIES_X_CAPACITY
+            JumperConstants.MAX_CANDIES_X_CAPACITY
         )
         val capacityY = Utils.getRandomInt(1,
-            MAX_CANDIES_Y_CAPACITY
+            JumperConstants.MAX_CANDIES_Y_CAPACITY
         )
-        val outset = (screenWidth * CANDY_OUTSET)
-        val spaceX = (screenWidth * CANDY_SPACE_X)
-        val spaceY = (screenWidth * CANDY_SPACE_Y)
+        val outset = (screenWidth * JumperConstants.CANDY_OUTSET)
+        val spaceX = (screenWidth * JumperConstants.CANDY_SPACE_X)
+        val spaceY = (screenWidth * JumperConstants.CANDY_SPACE_Y)
         val maxX = screenWidth - ((capacityX - 1) * spaceX) - outset
         val startX = when {
             x > maxX -> {
@@ -265,9 +236,9 @@ internal class GameMap(
     ): List<Sprite> {
         val sprites = mutableListOf<Sprite>()
         val capacityY = Utils.getRandomInt(1,
-            MAX_CANDIES_Y_CAPACITY
+            JumperConstants.MAX_CANDIES_Y_CAPACITY
         )
-        val spaceY = (screenWidth * CANDY_SPACE_Y)
+        val spaceY = (screenWidth * JumperConstants.CANDY_SPACE_Y)
         var spriteY = y
         for (indexY in (1..capacityY)) {
             for (indexX in (1..2)) {
@@ -292,7 +263,7 @@ internal class GameMap(
     }
 
     private fun buildBatSprites(x: Float, y: Float): List<Sprite> {
-        val outset = (screenWidth * BAT_OUTSET)
+        val outset = (screenWidth * JumperConstants.BAT_OUTSET)
         val minX = outset
         val maxX = screenWidth - outset
         val spriteX = when {
@@ -322,7 +293,7 @@ internal class GameMap(
     }
 
     private fun buildJumpingPlatformSprite(x: Float, y: Float): Sprite {
-        val outset = screenWidth * JUMPING_PLATFORM_OUTSET
+        val outset = screenWidth * JumperConstants.JUMPING_PLATFORM_OUTSET
         val maxX = screenWidth - outset
         val spriteX = when {
             x > maxX -> {
@@ -345,11 +316,11 @@ internal class GameMap(
     private fun getRandomPowerUp(): Int {
         val randomInt = Utils.getRandomInt(1, 100)
         return when {
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER -> GameStates.POWER_UP_COPTER
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET -> GameStates.POWER_UP_MAGNET
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET + DRAW_CHANCE_POWER_UP_ROCKET -> GameStates.POWER_UP_ROCKET
-            randomInt <= DRAW_CHANCE_POWER_UP_COPTER + DRAW_CHANCE_POWER_UP_MAGNET + DRAW_CHANCE_POWER_UP_ROCKET + DRAW_CHANCE_POWER_UP_SHIELD -> GameStates.POWER_UP_ARMORED
-            else -> GameStates.POWER_UP_ARMORED
+            randomInt <= JumperConstants.DRAW_CHANCE_POWER_UP_COPTER -> JumperGameStates.POWER_UP_COPTER
+            randomInt <= JumperConstants.DRAW_CHANCE_POWER_UP_COPTER + JumperConstants.DRAW_CHANCE_POWER_UP_MAGNET -> JumperGameStates.POWER_UP_MAGNET
+            randomInt <= JumperConstants.DRAW_CHANCE_POWER_UP_COPTER + JumperConstants.DRAW_CHANCE_POWER_UP_MAGNET + JumperConstants.DRAW_CHANCE_POWER_UP_ROCKET -> JumperGameStates.POWER_UP_ROCKET
+            randomInt <= JumperConstants.DRAW_CHANCE_POWER_UP_COPTER + JumperConstants.DRAW_CHANCE_POWER_UP_MAGNET + JumperConstants.DRAW_CHANCE_POWER_UP_ROCKET + JumperConstants.DRAW_CHANCE_POWER_UP_SHIELD -> JumperGameStates.POWER_UP_ARMORED
+            else -> JumperGameStates.POWER_UP_ARMORED
         }
     }
 
@@ -358,26 +329,26 @@ internal class GameMap(
             0f
         } else if (nextPattern == PATTERN_BAT || nextPattern == PATTERN_SPIKE) {
             when (previousPattern) {
-                PATTERN_CANDIES_LINE, PATTERN_CANDIES_GAP -> screenWidth * CANDIES_MARGIN_TOP_BEFORE_OBSTACLE
-                else -> screenWidth * JUMPING_PLATFORM_MARGIN_TOP_BEFORE_OBSTACLE
+                PATTERN_CANDIES_LINE, PATTERN_CANDIES_GAP -> screenWidth * JumperConstants.CANDIES_MARGIN_TOP_BEFORE_OBSTACLE
+                else -> screenWidth * JumperConstants.JUMPING_PLATFORM_MARGIN_TOP_BEFORE_OBSTACLE
             }
         } else {
             when (previousPattern) {
                 PATTERN_CANDIES_LINE, PATTERN_CANDIES_GAP -> Utils.getRandomFloat(
-                    screenWidth * CANDIES_MIN_MARGIN_TOP,
-                    screenWidth * CANDIES_MAX_MARGIN_TOP
+                    screenWidth * JumperConstants.CANDIES_MIN_MARGIN_TOP,
+                    screenWidth * JumperConstants.CANDIES_MAX_MARGIN_TOP
                 )
                 PATTERN_BAT -> Utils.getRandomFloat(
-                    screenWidth * BAT_MIN_MARGIN_TOP,
-                    screenWidth * BAT_MAX_MARGIN_TOP
+                    screenWidth * JumperConstants.BAT_MIN_MARGIN_TOP,
+                    screenWidth * JumperConstants.BAT_MAX_MARGIN_TOP
                 )
                 PATTERN_SPIKE -> Utils.getRandomFloat(
-                    screenWidth * SPIKE_MIN_MARGIN_TOP,
-                    screenWidth * SPIKE_MAX_MARGIN_TOP
+                    screenWidth * JumperConstants.SPIKE_MIN_MARGIN_TOP,
+                    screenWidth * JumperConstants.SPIKE_MAX_MARGIN_TOP
                 )
                 else -> Utils.getRandomFloat(
-                    screenWidth * JUMPING_PLATFORM_MIN_MARGIN_TOP,
-                    screenWidth * JUMPING_PLATFORM_MAX_MARGIN_TOP
+                    screenWidth * JumperConstants.JUMPING_PLATFORM_MIN_MARGIN_TOP,
+                    screenWidth * JumperConstants.JUMPING_PLATFORM_MAX_MARGIN_TOP
                 )
             }
         }

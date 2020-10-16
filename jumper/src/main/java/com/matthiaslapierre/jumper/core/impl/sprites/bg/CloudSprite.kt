@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jumper.core.sprites.bg
+package com.matthiaslapierre.jumper.core.impl.sprites.bg
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -12,12 +12,12 @@ import com.matthiaslapierre.jumper.JumperConstants.CLOUD_MAX_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_MIN_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.CLOUD_OUTSET
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
-import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.JumperGameStates
 import com.matthiaslapierre.utils.Utils
 
 internal class CloudSprite(
     resourceManager: ResourceManager,
-    private val gameStates: GameStates,
+    private val gameStates: JumperGameStates,
     override var y: Float
 ): Sprite {
 

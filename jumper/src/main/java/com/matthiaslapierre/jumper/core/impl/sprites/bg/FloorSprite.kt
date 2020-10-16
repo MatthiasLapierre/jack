@@ -1,18 +1,17 @@
-package com.matthiaslapierre.jumper.core.sprites.bg
+package com.matthiaslapierre.jumper.core.impl.sprites.bg
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants.FLOOR_HEIGHT
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
-import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.impl.sprites.player.PlayerSprite
 
 internal class FloorSprite(
-    private val gameStates: GameStates
+    private val gameStates: JumperGameStates
 ) : Sprite {
 
     override var x: Float = UNDEFINED

@@ -35,6 +35,12 @@ class JackResourceManager(
     override var btnShop: Image? = null
     override var btnScores: Image? = null
     override var btnScoresPressed: Image? = null
+    override var btnReplay: Image? = null
+    override var btnReplayPressed: Image? = null
+    override var btnResume: Image? = null
+    override var btnResumePressed: Image? = null
+    override var btnExit: Image? = null
+    override var btnExitPressed: Image? = null
 
     override var bgTop: Image? = null
     override var candyIndicator: Image? = null
@@ -58,6 +64,11 @@ class JackResourceManager(
     override var rocket: Array<Image>? = null
 
     override var badges: Hashtable<PowerUp, Image>? = null
+
+    override var windowGameOver: Image? = null
+    override var windowPause: Image? = null
+    override var windowHighScores: Image? = null
+    override var windowScoreItem: Image? = null
 
     override var collectibleExplosion: Array<Image>? = null
     override var smoke: Array<Image>? = null
@@ -83,6 +94,12 @@ class JackResourceManager(
         btnShop = loadImage("images/ui/buttons/btn_shop_normal.png")
         btnScores = loadImage("images/ui/buttons/btn_scores_normal.png")
         btnScoresPressed = loadImage("images/ui/buttons/btn_scores_pressed.png")
+        btnReplay = loadImage("images/ui/buttons/btn_replay_normal.png")
+        btnReplayPressed = loadImage("images/ui/buttons/btn_replay_pressed.png")
+        btnResume = loadImage("images/ui/buttons/btn_resume_normal.png")
+        btnResumePressed = loadImage("images/ui/buttons/btn_resume_pressed.png")
+        btnExit = loadImage("images/ui/buttons/btn_exit_normal.png")
+        btnExitPressed = loadImage("images/ui/buttons/btn_exit_pressed.png")
 
         bgTop = loadImage("images/ui/scores/bg_top.png")
         candyIndicator = loadImage("images/ui/scores/indicator_candy.png")
@@ -110,6 +127,11 @@ class JackResourceManager(
         }.toTypedArray()
 
         badges = loadBadges()
+
+        windowGameOver = loadImage("images/ui/windows/window_game_over.png")
+        windowPause = loadImage("images/ui/windows/window_pause.png")
+        windowHighScores = loadImage("images/ui/windows/window_high_scores.png")
+        windowScoreItem = loadImage("images/ui/windows/window_score_item.png")
 
         collectibleExplosion = (1..8).map { digit ->
             loadImage("images/objects/explosion/collectibles/Collect ($digit).png")!!

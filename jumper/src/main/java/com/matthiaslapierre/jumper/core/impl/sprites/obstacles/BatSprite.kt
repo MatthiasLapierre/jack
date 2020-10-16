@@ -1,76 +1,88 @@
-package com.matthiaslapierre.jumper.core.sprites.collectibles
+package com.matthiaslapierre.jumper.core.impl.sprites.obstacles
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import com.matthiaslapierre.core.Constants
+import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants.POWER_UP_WIDTH
+import com.matthiaslapierre.jumper.JumperConstants.BAT_FRAME_RATE
+import com.matthiaslapierre.jumper.JumperConstants.BAT_SPEED
+import com.matthiaslapierre.jumper.JumperConstants.BAT_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
-import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
-import com.matthiaslapierre.jumper.utils.JumperUtils
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.impl.sprites.player.PlayerSprite
 
-internal class PowerUpSprite(
+internal class BatSprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates,
+    private val gameStates: JumperGameStates,
     override var x: Float,
     override var y: Float,
-    val powerUp: Int
-): Sprite {
+    private var minX: Float,
+    private var maxX: Float
+) : Sprite {
 
-    companion object {
-        private fun getPowerUpImage(resourceManager: ResourceManager, flag: Int): Image {
-            val resId = JumperUtils.getFlagToPowerUp(flag)
-            return resourceManager.powerUps!![resId]!!
-        }
-    }
-
-    var isConsumed: Boolean = false
-
-    private val powerUpImage: Image = getPowerUpImage(resourceManager, powerUp)
-    private var width: Float = Constants.UNDEFINED
-    private var height: Float = Constants.UNDEFINED
+    private var frame: Int = 0
+    private var width: Float = UNDEFINED
+    private var height: Float = UNDEFINED
+    private var speed: Float = UNDEFINED
+    private var lastFrameTimestamp: Long = 0L
     private var isAlive: Boolean = true
+    private var isDestroyed: Boolean = false
     private var explosionFrame: Int = 0
     private var animateExplosionEnded: Boolean = false
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
-        val screenWidth = canvas.width.toFloat()
-        val screenHeight = canvas.height.toFloat()
-
+        val batImages = resourceManager.bat!!
+        val batImage = batImages[frame]
         val explosionImages = resourceManager.collectibleExplosion!!
 
-        if (width == Constants.UNDEFINED) {
-            width = screenWidth * POWER_UP_WIDTH
-            height = width * powerUpImage.height / powerUpImage.width
+        val screenWidth = canvas.width.toFloat()
+        val screenHeight = canvas.height.toFloat()
+        if (width == UNDEFINED) {
+            width = screenWidth * BAT_WIDTH
+            height = width * batImage.height / batImage.width
+            speed = width * BAT_SPEED
         }
 
-        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isConsumed
+        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isDestroyed
                 || !animateExplosionEnded))
+
+        if(maxX - minX > width) {
+            x += speed
+            if (x < minX || x > maxX) {
+                speed = -speed
+            }
+        }
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
-        if (!isConsumed || explosionFrame < explosionImages.size / 2) {
+        if (!isDestroyed || explosionFrame < explosionImages.size / 2) {
             canvas.drawBitmap(
-                powerUpImage.bitmap,
+                batImage.bitmap,
                 Rect(
                     0,
                     0,
-                    powerUpImage.width,
-                    powerUpImage.height
+                    batImage.width,
+                    batImage.height
                 ),
                 getRectF(),
                 globalPaint
             )
+
+            if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RATE) {
+                frame++
+                if (frame >= batImages.size) {
+                    frame = 0
+                }
+                lastFrameTimestamp = System.currentTimeMillis()
+            }
         }
 
-        if (isConsumed) {
+        if (isDestroyed) {
             val explosionImage = explosionImages[explosionFrame]
             canvas.drawBitmap(
                 explosionImage.bitmap,
@@ -100,9 +112,9 @@ internal class PowerUpSprite(
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && sprite.getBodyRectF().intersect(getRectF())
-            && !isConsumed
+            && !isDestroyed
 
-    override fun getScore(): Int = 1
+    override fun getScore(): Int = 0
 
     override fun getRectF(): RectF = RectF(
         x - (width / 2f),
@@ -113,6 +125,10 @@ internal class PowerUpSprite(
 
     override fun onDispose() {
 
+    }
+
+    fun destroy() {
+        isDestroyed = true
     }
 
 }

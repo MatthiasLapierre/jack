@@ -54,6 +54,12 @@ interface ResourceManager: GameResources {
     var btnShop: Image?
     var btnScores: Image?
     var btnScoresPressed: Image?
+    var btnReplay: Image?
+    var btnReplayPressed: Image?
+    var btnResume: Image?
+    var btnResumePressed: Image?
+    var btnExit: Image?
+    var btnExitPressed: Image?
 
     var bgTop: Image?
     var candyIndicator: Image?
@@ -84,6 +90,12 @@ interface ResourceManager: GameResources {
 
     // Badges
     var badges: Hashtable<PowerUp, Image>?
+
+    // Windows
+    var windowGameOver: Image?
+    var windowPause: Image?
+    var windowHighScores: Image?
+    var windowScoreItem: Image?
 
     var collectibleExplosion: Array<Image>?
     var smoke: Array<Image>?

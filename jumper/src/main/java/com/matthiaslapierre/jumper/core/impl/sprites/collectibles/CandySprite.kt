@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jumper.core.sprites.obstacles
+package com.matthiaslapierre.jumper.core.impl.sprites.collectibles
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -6,83 +6,62 @@ import android.graphics.Rect
 import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
+import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants.BAT_FRAME_RATE
-import com.matthiaslapierre.jumper.JumperConstants.BAT_SPEED
-import com.matthiaslapierre.jumper.JumperConstants.BAT_WIDTH
+import com.matthiaslapierre.jumper.JumperConstants.CANDY_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
-import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.impl.sprites.player.PlayerSprite
 
-internal class BatSprite(
+internal class CandySprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates,
+    private val gameStates: JumperGameStates,
     override var x: Float,
-    override var y: Float,
-    private var minX: Float,
-    private var maxX: Float
-) : Sprite {
+    override var y: Float
+): Sprite {
 
-    private var frame: Int = 0
+    var isCollected: Boolean = false
+
+    private val candyImage: Image = resourceManager.getRandomCandy()
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
-    private var speed: Float = UNDEFINED
-    private var lastFrameTimestamp: Long = 0L
     private var isAlive: Boolean = true
-    private var isDestroyed: Boolean = false
     private var explosionFrame: Int = 0
     private var animateExplosionEnded: Boolean = false
 
     override fun onDraw(canvas: Canvas, globalPaint: Paint, status: Sprite.Status) {
-        val batImages = resourceManager.bat!!
-        val batImage = batImages[frame]
-        val explosionImages = resourceManager.collectibleExplosion!!
-
         val screenWidth = canvas.width.toFloat()
         val screenHeight = canvas.height.toFloat()
+
+        val explosionImages = resourceManager.collectibleExplosion!!
+
         if (width == UNDEFINED) {
-            width = screenWidth * BAT_WIDTH
-            height = width * batImage.height / batImage.width
-            speed = width * BAT_SPEED
+            width = screenWidth * CANDY_WIDTH
+            height = width * candyImage.height / candyImage.width
         }
 
-        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isDestroyed
+        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isCollected
                 || !animateExplosionEnded))
-
-        if(maxX - minX > width) {
-            x += speed
-            if (x < minX || x > maxX) {
-                speed = -speed
-            }
-        }
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
-        if (!isDestroyed || explosionFrame < explosionImages.size / 2) {
+        if (!isCollected || explosionFrame < explosionImages.size / 2) {
             canvas.drawBitmap(
-                batImage.bitmap,
+                candyImage.bitmap,
                 Rect(
                     0,
                     0,
-                    batImage.width,
-                    batImage.height
+                    candyImage.width,
+                    candyImage.height
                 ),
                 getRectF(),
                 globalPaint
             )
-
-            if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RATE) {
-                frame++
-                if (frame >= batImages.size) {
-                    frame = 0
-                }
-                lastFrameTimestamp = System.currentTimeMillis()
-            }
         }
 
-        if (isDestroyed) {
+        if (isCollected) {
             val explosionImage = explosionImages[explosionFrame]
             canvas.drawBitmap(
                 explosionImage.bitmap,
@@ -112,9 +91,9 @@ internal class BatSprite(
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && sprite.getBodyRectF().intersect(getRectF())
-            && !isDestroyed
+            && !isCollected
 
-    override fun getScore(): Int = 0
+    override fun getScore(): Int = 1
 
     override fun getRectF(): RectF = RectF(
         x - (width / 2f),
@@ -125,10 +104,6 @@ internal class BatSprite(
 
     override fun onDispose() {
 
-    }
-
-    fun destroy() {
-        isDestroyed = true
     }
 
 }

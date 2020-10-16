@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jumper.core.sprites.player
+package com.matthiaslapierre.jumper.core.impl.sprites.player
 
 import android.graphics.*
 import com.matthiaslapierre.core.Constants.UNDEFINED
@@ -13,12 +13,12 @@ import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INITIAL_POSITION
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INSET_X
 import com.matthiaslapierre.jumper.JumperConstants.PLAYER_INSET_Y
 import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TOP
-import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.JumperGameStates
 import com.matthiaslapierre.jumper.utils.hasFlag
 
 internal class PlayerSprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates
+    private val gameStates: JumperGameStates
 ): Sprite {
 
     override var x: Float = UNDEFINED
@@ -68,7 +68,7 @@ internal class PlayerSprite(
         }
 
         // Draw the rocket power-up
-        if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_ROCKET)) {
+        if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ROCKET)) {
             val rocketImages = resourceManager.rocket!!
             val rocketImage = rocketImages[rocketFrame]
             val rocketWidth = width
@@ -111,7 +111,7 @@ internal class PlayerSprite(
         )
 
         // Draw power-ups
-        if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_MAGNET)) {
+        if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_MAGNET)) {
             val magnetImage = resourceManager.magnet!!
             val magnetWidth = width
             val magnetHeight = magnetWidth * magnetImage.height / magnetImage.width
@@ -131,7 +131,7 @@ internal class PlayerSprite(
                 ),
                 globalPaint
             )
-        } else if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)) {
+        } else if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ARMORED)) {
             val armorImage = resourceManager.armor!!
             val armorWidth = width
             val armorHeight = armorWidth * armorImage.height / armorImage.width

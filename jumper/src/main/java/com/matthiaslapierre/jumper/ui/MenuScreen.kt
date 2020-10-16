@@ -103,11 +103,7 @@ class MenuScreen(
             }
             MotionEvent.ACTION_UP -> {
                 when {
-                    playBtnIsPressed -> game.setScreen(
-                        GameScreen(
-                            game
-                        )
-                    )
+                    playBtnIsPressed -> game.setScreen(GameScreen(game))
                 }
                 soundBtnIsPressed = false
                 musicBtnIsPressed = false

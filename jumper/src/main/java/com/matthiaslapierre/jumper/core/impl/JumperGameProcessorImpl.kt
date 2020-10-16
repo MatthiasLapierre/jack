@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jumper.core
+package com.matthiaslapierre.jumper.core.impl
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -7,30 +7,30 @@ import android.os.Looper
 import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants.CLOUD_INTERVAL
-import com.matthiaslapierre.jumper.JumperConstants.COPTER_TIMER
-import com.matthiaslapierre.jumper.JumperConstants.FIRST_CLOUD_Y
-import com.matthiaslapierre.jumper.JumperConstants.FREE_FALL_MAX
-import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_X
-import com.matthiaslapierre.jumper.JumperConstants.MAGNET_RANGE_Y
-import com.matthiaslapierre.jumper.JumperConstants.MAGNET_TIMER
-import com.matthiaslapierre.jumper.JumperConstants.ROCKET_TIMER
-import com.matthiaslapierre.jumper.core.sprites.bg.BgSprite
-import com.matthiaslapierre.jumper.core.sprites.bg.CloudSprite
-import com.matthiaslapierre.jumper.core.sprites.bg.FloorSprite
-import com.matthiaslapierre.jumper.core.sprites.collectibles.CandySprite
-import com.matthiaslapierre.jumper.core.sprites.collectibles.PowerUpSprite
-import com.matthiaslapierre.jumper.core.sprites.obstacles.BatSprite
-import com.matthiaslapierre.jumper.core.sprites.obstacles.SpikeSprite
-import com.matthiaslapierre.jumper.core.sprites.platforms.JumpingPlatformSprite
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
-import com.matthiaslapierre.jumper.core.sprites.text.TapToLaunchSprite
+import com.matthiaslapierre.jumper.JumperConstants
+import com.matthiaslapierre.jumper.core.JumperGameListener
+import com.matthiaslapierre.jumper.core.JumperGameMap
+import com.matthiaslapierre.jumper.core.JumperGameProcessor
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.impl.sprites.bg.BgSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.bg.CloudSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.bg.FloorSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.collectibles.CandySprite
+import com.matthiaslapierre.jumper.core.impl.sprites.collectibles.PowerUpSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.obstacles.BatSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.obstacles.SpikeSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.platforms.JumpingPlatformSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.core.impl.sprites.text.TapToLaunchSprite
 import com.matthiaslapierre.jumper.utils.hasFlag
 import java.util.*
 
-class GameProcessor(
-    private val resourceManager: ResourceManager
-) {
+internal class JumperGameProcessorImpl(
+    override val resourceManager: ResourceManager,
+    override val gameStates: JumperGameStates,
+    override val gameMap: JumperGameMap,
+    override var gameListener: JumperGameListener?
+): JumperGameProcessor {
 
     companion object {
         private const val MIN_CLOUDS = 20
@@ -38,7 +38,7 @@ class GameProcessor(
 
     private val backgroundSprites: MutableList<Sprite> = mutableListOf()
     private val foregroundSprites: MutableList<Sprite> = mutableListOf()
-    private val playerSprite: PlayerSprite
+    private val playerSprite: PlayerSprite = PlayerSprite(resourceManager, gameStates)
 
     private var tapToLaunchSprite: TapToLaunchSprite? = null
     private var bgSprite: BgSprite? = null
@@ -51,20 +51,13 @@ class GameProcessor(
     private var screenWidth: Float = 0f
     private var screenHeight: Float = 0f
 
-    private val gameState: GameStates = GameStates()
-    private val gameMap: GameMap = GameMap(resourceManager, gameState)
-
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var powerUpTimersRunnable: Runnable? = null
     private var powerUpTimers: Hashtable<Int, Int> = Hashtable()
 
-    init {
-        playerSprite = PlayerSprite(resourceManager, gameState)
-    }
-
-    fun process() {
+    override fun process() {
         updateSprites()
-        if(gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if(gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             checkCollisions()
             catchFreeFall()
         }
@@ -72,41 +65,46 @@ class GameProcessor(
         updateStates()
     }
 
-    fun pause() {
+    override fun pause() {
         stopPowerUpTimers()
     }
 
-    fun paint(canvas: Canvas, globalPaint: Paint) {
+    override fun dispose() {
+        gameListener = null
+    }
+
+    override fun paint(canvas: Canvas, globalPaint: Paint) {
         screenWidth = canvas.width.toFloat()
         screenHeight = canvas.height.toFloat()
-        gameState.setScreenSize(screenWidth)
+        gameStates.setScreenSize(screenWidth)
         gameMap.setScreenSize(screenWidth, screenHeight)
-        cloudInterval = screenWidth * CLOUD_INTERVAL
+        cloudInterval = screenWidth * JumperConstants.CLOUD_INTERVAL
         drawSprites(canvas, globalPaint)
     }
 
-    fun startGame() {
-        gameState.currentStatus = Sprite.Status.STATUS_PLAY
-        gameState.playerState = ResourceManager.PlayerState.JUMP
-        gameState.jump()
+    override fun startGame() {
+        gameStates.currentStatus = Sprite.Status.STATUS_PLAY
+        gameStates.playerState = ResourceManager.PlayerState.JUMP
+        gameStates.jump()
     }
 
-    fun gameOver() {
-        gameState.gameOver()
+    override fun gameOver() {
+        gameStates.gameOver()
+        gameListener?.onGameOver(gameStates.candiesCollected)
     }
 
-    fun moveX(xAcceleration: Float) {
-        gameState.moveX(xAcceleration)
+    override fun moveX(xAcceleration: Float) {
+        gameStates.moveX(xAcceleration)
     }
 
-    fun getGameStatus(): Sprite.Status = gameState.currentStatus
+    override fun getGameStatus(): Sprite.Status = gameStates.currentStatus
 
-    fun getCandiesCollected(): Int = gameState.candiesCollected
+    override fun getCandiesCollected(): Int = gameStates.candiesCollected
 
-    fun getPowerUps(): Int = gameState.powerUp
+    override fun getPowerUps(): Int = gameStates.powerUp
 
-    fun setFrameRateAdjustFactor(frameRateAdjustFactor: Float) {
-        gameState.frameRateAdjustFactor = frameRateAdjustFactor
+    override fun setFrameRateAdjustFactor(frameRateAdjustFactor: Float) {
+        gameStates.frameRateAdjustFactor = frameRateAdjustFactor
     }
 
     private fun updateSprites() {
@@ -120,13 +118,13 @@ class GameProcessor(
     }
 
     private fun updateStates() {
-        gameState.update(playerSprite.y, playerSprite.lowestY, playerSprite.highestY)
+        gameStates.update(playerSprite.y, playerSprite.lowestY, playerSprite.highestY)
     }
 
     private fun catchFreeFall() {
-        freeFall = if (gameState.direction == GameStates.Direction.DOWN) {
+        freeFall = if (gameStates.direction == JumperGameStates.Direction.DOWN) {
             if (freeFall != null) {
-                freeFall!! - gameState.globalSpeedY
+                freeFall!! - gameStates.globalSpeedY
             } else {
                 0f
             }
@@ -134,23 +132,23 @@ class GameProcessor(
             null
         }
 
-        val freeFallMax = screenWidth * FREE_FALL_MAX
+        val freeFallMax = screenWidth * JumperConstants.FREE_FALL_MAX
         if (freeFall != null && freeFall!! > freeFallMax) {
             gameOver()
         }
     }
 
     private fun addPowerUp(powerUp: Int) {
-        gameState.addPowerUp(powerUp)
+        gameStates.addPowerUp(powerUp)
         val timer = when (powerUp) {
-            GameStates.POWER_UP_ROCKET -> {
-                ROCKET_TIMER
+            JumperGameStates.POWER_UP_ROCKET -> {
+                JumperConstants.ROCKET_TIMER
             }
-            GameStates.POWER_UP_MAGNET -> {
-                MAGNET_TIMER
+            JumperGameStates.POWER_UP_MAGNET -> {
+                JumperConstants.MAGNET_TIMER
             }
-            GameStates.POWER_UP_COPTER -> {
-                COPTER_TIMER
+            JumperGameStates.POWER_UP_COPTER -> {
+                JumperConstants.COPTER_TIMER
             }
             else -> {
                 -1
@@ -165,17 +163,17 @@ class GameProcessor(
         }
 
         if (bgSprite == null) {
-            bgSprite = BgSprite(resourceManager, gameState)
+            bgSprite = BgSprite(resourceManager, gameStates)
             backgroundSprites.add(bgSprite!!)
         }
 
-        var nextCloudY = -(screenWidth * FIRST_CLOUD_Y)
+        var nextCloudY = -(screenWidth * JumperConstants.FIRST_CLOUD_Y)
         if(backgroundSprites.size > 1) {
             val lastCloudSprite = backgroundSprites.last()
             nextCloudY = lastCloudSprite.y - cloudInterval
         }
         while(countClouds < MIN_CLOUDS) {
-            backgroundSprites.add(CloudSprite(resourceManager, gameState, nextCloudY))
+            backgroundSprites.add(CloudSprite(resourceManager, gameStates, nextCloudY))
             nextCloudY -= cloudInterval
             countClouds++
         }
@@ -188,53 +186,54 @@ class GameProcessor(
             if (sprite.isHit(playerSprite)) {
                 when(sprite) {
                     is CandySprite -> {
-                        gameState.collectCandies(sprite.getScore())
+                        gameStates.collectCandies(sprite.getScore())
                         sprite.isCollected = true
                     }
                     is PowerUpSprite -> {
-                        gameState.collectCandies(sprite.getScore())
+                        gameStates.collectCandies(sprite.getScore())
                         addPowerUp(sprite.powerUp)
                         sprite.isConsumed = true
                     }
                     is JumpingPlatformSprite -> {
-                        gameState.jump()
+                        gameStates.jump()
                         sprite.bounce()
                     }
                     is BatSprite, is SpikeSprite -> {
-                        if (gameState.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)
-                            || gameState.powerUp.hasFlag(GameStates.POWER_UP_ROCKET)) {
+                        if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ARMORED)
+                            || gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ROCKET)) {
                             // Shield will be lost if damage is taken.
                             if (sprite is BatSprite) {
                                 sprite.destroy()
                             } else if (sprite is SpikeSprite) {
                                 sprite.destroy()
                             }
-                            gameState.removeAllPowerUps()
+                            gameStates.removeAllPowerUps()
                         } else {
                             gameOver()
                         }
                     }
                     is FloorSprite -> {
-                        gameState.jump()
+                        gameStates.jump()
                     }
                 }
-            } else if (gameState.powerUp.hasFlag(GameStates.POWER_UP_MAGNET)
-                && sprite is CandySprite) {
-                val minX = playerSprite.x - (screenWidth * MAGNET_RANGE_X)
-                val maxX = playerSprite.x + (screenWidth * MAGNET_RANGE_X)
-                val minY = playerSprite.y - (screenWidth * MAGNET_RANGE_Y)
-                val maxY = playerSprite.y + (screenWidth * MAGNET_RANGE_Y)
-                 if (sprite.x in minX..maxX && sprite.y in minY..maxY && !sprite.isCollected) {
-                     gameState.collectCandies(sprite.getScore())
-                     sprite.isCollected = true
-                 }
+            } else if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_MAGNET)
+                && sprite is CandySprite
+            ) {
+                val minX = playerSprite.x - (screenWidth * JumperConstants.MAGNET_RANGE_X)
+                val maxX = playerSprite.x + (screenWidth * JumperConstants.MAGNET_RANGE_X)
+                val minY = playerSprite.y - (screenWidth * JumperConstants.MAGNET_RANGE_Y)
+                val maxY = playerSprite.y + (screenWidth * JumperConstants.MAGNET_RANGE_Y)
+                if (sprite.x in minX..maxX && sprite.y in minY..maxY && !sprite.isCollected) {
+                    gameStates.collectCandies(sprite.getScore())
+                    sprite.isCollected = true
+                }
             }
         }
     }
 
     private fun setFloor() {
         if (floorSprite == null) {
-            floorSprite = FloorSprite(gameState)
+            floorSprite = FloorSprite(gameStates)
             foregroundSprites.add(floorSprite!!)
         }
     }
@@ -249,7 +248,7 @@ class GameProcessor(
     private fun drawSprites(canvas: Canvas, globalPaint: Paint) {
         drawSprites(canvas, globalPaint, backgroundSprites)
         drawSprites(canvas, globalPaint, foregroundSprites)
-        playerSprite.onDraw(canvas, globalPaint, gameState.currentStatus)
+        playerSprite.onDraw(canvas, globalPaint, gameStates.currentStatus)
     }
 
     private fun drawSprites(canvas: Canvas, globalPaint: Paint, sprites: MutableList<Sprite>) {
@@ -257,7 +256,7 @@ class GameProcessor(
         while (iterator.hasNext()) {
             val sprite = iterator.next()
             if (sprite.isAlive()) {
-                sprite.onDraw(canvas, globalPaint, gameState.currentStatus)
+                sprite.onDraw(canvas, globalPaint, gameStates.currentStatus)
             } else {
                 when (sprite) {
                     is CloudSprite -> countClouds--
@@ -269,7 +268,7 @@ class GameProcessor(
     }
 
     private fun updatePowerUpTimers() {
-        if (gameState.hasPowerUps() && gameState.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (gameStates.hasPowerUps() && gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             startPowerUpTimers()
         } else {
             stopPowerUpTimers()
@@ -280,21 +279,21 @@ class GameProcessor(
         if (powerUpTimersRunnable == null) {
             powerUpTimersRunnable = Runnable {
                 val powerUpFlags = arrayOf(
-                    GameStates.POWER_UP_ROCKET,
-                    GameStates.POWER_UP_MAGNET,
-                    GameStates.POWER_UP_ARMORED,
-                    GameStates.POWER_UP_COPTER
+                    JumperGameStates.POWER_UP_ROCKET,
+                    JumperGameStates.POWER_UP_MAGNET,
+                    JumperGameStates.POWER_UP_ARMORED,
+                    JumperGameStates.POWER_UP_COPTER
                 )
                 for (flag in powerUpFlags) {
                     powerUpTimers[flag]?.let { timer ->
                         if (timer == 0) {
-                            gameState.removePowerUp(flag)
+                            gameStates.removePowerUp(flag)
                         } else if (timer > 0) {
                             powerUpTimers[flag] = timer - 1
                         }
                     }
                 }
-                if (gameState.hasPowerUps()) {
+                if (gameStates.hasPowerUps()) {
                     handler.postDelayed(powerUpTimersRunnable!!, 1000)
                 }
             }

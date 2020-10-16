@@ -2,7 +2,7 @@ package com.matthiaslapierre.jumper.utils
 
 import android.graphics.*
 import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.jumper.core.GameStates
+import com.matthiaslapierre.jumper.core.JumperGameStates
 import com.matthiaslapierre.utils.toDigits
 
 object JumperUtils  {
@@ -52,10 +52,10 @@ object JumperUtils  {
         var y = 0f
 
         val powerUpFlags = arrayOf(
-            GameStates.POWER_UP_ROCKET,
-            GameStates.POWER_UP_MAGNET,
-            GameStates.POWER_UP_ARMORED,
-            GameStates.POWER_UP_COPTER
+            JumperGameStates.POWER_UP_ROCKET,
+            JumperGameStates.POWER_UP_MAGNET,
+            JumperGameStates.POWER_UP_ARMORED,
+            JumperGameStates.POWER_UP_COPTER
         )
 
         for (flag in powerUpFlags) {
@@ -75,10 +75,10 @@ object JumperUtils  {
 
     fun getFlagToPowerUp(flag: Int): ResourceManager.PowerUp =
         when (flag) {
-            GameStates.POWER_UP_MAGNET -> ResourceManager.PowerUp.MAGNET
-            GameStates.POWER_UP_ROCKET -> ResourceManager.PowerUp.ROCKET
-            GameStates.POWER_UP_COPTER -> ResourceManager.PowerUp.COPTER
-            GameStates.POWER_UP_ARMORED -> ResourceManager.PowerUp.ARMORED
+            JumperGameStates.POWER_UP_MAGNET -> ResourceManager.PowerUp.MAGNET
+            JumperGameStates.POWER_UP_ROCKET -> ResourceManager.PowerUp.ROCKET
+            JumperGameStates.POWER_UP_COPTER -> ResourceManager.PowerUp.COPTER
+            JumperGameStates.POWER_UP_ARMORED -> ResourceManager.PowerUp.ARMORED
             else -> ResourceManager.PowerUp.ARMORED
         }
 

@@ -18,9 +18,7 @@ import com.matthiaslapierre.core.impl.JackTypefaceManager
 class AppContainer(
     context: Context
 ) {
-
     val soundManager: SoundManager = JackSoundManager(context)
     val resourceManager: ResourceManager = JackResourceManager(context)
     val typefaceManager: TypefaceManager = JackTypefaceManager(context)
-
 }

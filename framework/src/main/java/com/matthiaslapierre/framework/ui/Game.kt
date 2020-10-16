@@ -1,5 +1,6 @@
 package com.matthiaslapierre.framework.ui
 
+import android.graphics.Bitmap
 import com.matthiaslapierre.framework.files.FileIO
 import com.matthiaslapierre.framework.resources.GameResources
 import com.matthiaslapierre.framework.resources.Typefaces
@@ -13,4 +14,5 @@ interface Game {
     fun getCurrentScreen(): Screen
     fun getInitScreen(): Screen
     fun setScreen(screen: Screen)
+    fun takeScreenShot(): Bitmap
 }

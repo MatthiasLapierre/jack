@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jumper.core.sprites.platforms
+package com.matthiaslapierre.jumper.core.impl.sprites.platforms
 
 import android.graphics.*
 import com.matthiaslapierre.core.Constants.UNDEFINED
@@ -10,15 +10,15 @@ import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_BOUNCE_AREA_
 import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_BOUNCE_AREA_OUTSET
 import com.matthiaslapierre.jumper.JumperConstants.JUMPING_PLATFORM_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
-import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.core.GameStates.Direction
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.JumperGameStates.Direction
+import com.matthiaslapierre.jumper.core.impl.sprites.player.PlayerSprite
 import com.matthiaslapierre.utils.Utils
 import java.util.*
 
 internal class JumpingPlatformSprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates,
+    private val gameStates: JumperGameStates,
     override var x: Float,
     override var y: Float
 ): Sprite {

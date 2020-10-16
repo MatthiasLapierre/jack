@@ -1,5 +1,6 @@
 package com.matthiaslapierre.framework.ui.android
 
+import android.graphics.Bitmap
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -91,5 +92,7 @@ abstract class GameActivity : AppCompatActivity(), Game {
         screen.update()
         this.mScreen = screen
     }
+
+    override fun takeScreenShot(): Bitmap = mGameView.capture()
 
 }

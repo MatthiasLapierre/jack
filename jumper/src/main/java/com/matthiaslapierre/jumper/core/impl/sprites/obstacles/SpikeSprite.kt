@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jumper.core.sprites.obstacles
+package com.matthiaslapierre.jumper.core.impl.sprites.obstacles
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -11,13 +11,13 @@ import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.JumperConstants
 import com.matthiaslapierre.jumper.JumperConstants.SPIKE_HIGHEST_Y
 import com.matthiaslapierre.jumper.JumperConstants.SPIKE_WRAITH_DURATION
-import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.impl.sprites.player.PlayerSprite
 import com.matthiaslapierre.utils.Utils
 
 internal class SpikeSprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates,
+    private val gameStates: JumperGameStates,
     override var y: Float
 ): Sprite {
 

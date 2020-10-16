@@ -1,31 +1,39 @@
-package com.matthiaslapierre.jumper.core.sprites.collectibles
+package com.matthiaslapierre.jumper.core.impl.sprites.collectibles
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
-import com.matthiaslapierre.core.Constants.UNDEFINED
+import com.matthiaslapierre.core.Constants
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jumper.JumperConstants.CANDY_WIDTH
+import com.matthiaslapierre.jumper.JumperConstants.POWER_UP_WIDTH
 import com.matthiaslapierre.jumper.JumperConstants.SPRITE_LIFE_LOWEST_Y
-import com.matthiaslapierre.jumper.core.GameStates
-import com.matthiaslapierre.jumper.core.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.jumper.core.impl.sprites.player.PlayerSprite
+import com.matthiaslapierre.jumper.utils.JumperUtils
 
-internal class CandySprite(
+internal class PowerUpSprite(
     private val resourceManager: ResourceManager,
-    private val gameStates: GameStates,
+    private val gameStates: JumperGameStates,
     override var x: Float,
-    override var y: Float
+    override var y: Float,
+    val powerUp: Int
 ): Sprite {
 
-    var isCollected: Boolean = false
+    companion object {
+        private fun getPowerUpImage(resourceManager: ResourceManager, flag: Int): Image {
+            val resId = JumperUtils.getFlagToPowerUp(flag)
+            return resourceManager.powerUps!![resId]!!
+        }
+    }
 
-    private val candyImage: Image = resourceManager.getRandomCandy()
-    private var width: Float = UNDEFINED
-    private var height: Float = UNDEFINED
+    var isConsumed: Boolean = false
+
+    private val powerUpImage: Image = getPowerUpImage(resourceManager, powerUp)
+    private var width: Float = Constants.UNDEFINED
+    private var height: Float = Constants.UNDEFINED
     private var isAlive: Boolean = true
     private var explosionFrame: Int = 0
     private var animateExplosionEnded: Boolean = false
@@ -36,33 +44,33 @@ internal class CandySprite(
 
         val explosionImages = resourceManager.collectibleExplosion!!
 
-        if (width == UNDEFINED) {
-            width = screenWidth * CANDY_WIDTH
-            height = width * candyImage.height / candyImage.width
+        if (width == Constants.UNDEFINED) {
+            width = screenWidth * POWER_UP_WIDTH
+            height = width * powerUpImage.height / powerUpImage.width
         }
 
-        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isCollected
+        isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isConsumed
                 || !animateExplosionEnded))
 
         if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
-        if (!isCollected || explosionFrame < explosionImages.size / 2) {
+        if (!isConsumed || explosionFrame < explosionImages.size / 2) {
             canvas.drawBitmap(
-                candyImage.bitmap,
+                powerUpImage.bitmap,
                 Rect(
                     0,
                     0,
-                    candyImage.width,
-                    candyImage.height
+                    powerUpImage.width,
+                    powerUpImage.height
                 ),
                 getRectF(),
                 globalPaint
             )
         }
 
-        if (isCollected) {
+        if (isConsumed) {
             val explosionImage = explosionImages[explosionFrame]
             canvas.drawBitmap(
                 explosionImage.bitmap,
@@ -92,7 +100,7 @@ internal class CandySprite(
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
             && sprite.getBodyRectF().intersect(getRectF())
-            && !isCollected
+            && !isConsumed
 
     override fun getScore(): Int = 1
 

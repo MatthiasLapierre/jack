@@ -1,10 +1,7 @@
 package com.matthiaslapierre.framework.ui.android
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PixelFormat
-import android.graphics.PorterDuff
+import android.graphics.*
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -108,6 +105,14 @@ class GameView(
 
     fun pause() {
         mIsRunning = false
+    }
+
+    fun capture(): Bitmap {
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+        val frameCanvas = Canvas(bitmap)
+        game.getCurrentScreen().paint(frameCanvas, mGlobalPaint)
+        return bitmap
+
     }
 
     private fun startGameThread() {

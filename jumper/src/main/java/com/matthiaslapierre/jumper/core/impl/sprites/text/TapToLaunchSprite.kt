@@ -1,4 +1,4 @@
-package com.matthiaslapierre.jumper.core.sprites.text
+package com.matthiaslapierre.jumper.core.impl.sprites.text
 
 import android.graphics.Canvas
 import android.graphics.Paint

@@ -3,7 +3,7 @@ package com.matthiaslapierre.jumper
 internal object JumperConstants  {
 
     const val GRAVITY = 0.00078f
-    const val ACCELEROMETER_SENSITIVITY = 180f
+    const val ACCELEROMETER_SENSITIVITY = 120f
     const val CANDIES_ACCELERATION = 0.033f
     const val JUMP_ACCELERATION = 0.025f
     const val ROCKET_SPEED = 0.033f
@@ -54,7 +54,7 @@ internal object JumperConstants  {
     const val COPTER_TIMER = 10
 
     const val MAGNET_RANGE_X = .5f
-    const val MAGNET_RANGE_Y = .05f
+    const val MAGNET_RANGE_Y = .01f
 
     // Generator
     const val GENERATOR_HIGHEST_Y = 2f
