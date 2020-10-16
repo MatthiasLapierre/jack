@@ -53,7 +53,6 @@ class GameOverScreen(
     private var highScoreDstRect: Rect? = null
 
     override fun update() {
-        (game.getAudio() as SoundManager).playGameOverMusic()
         val resourceManager = (game.getGameResources() as ResourceManager)
         windowImage = resourceManager.windowGameOver
         facebookBtnImage = if(facebookBtnIsPressed) resourceManager.btnFacebookPressed else

@@ -126,6 +126,7 @@ class GameScreen(
         if (scores.isNewBestScore(candiesCollected)) {
             scores.storeHighScore(candiesCollected)
         }
+        (game.getAudio() as SoundManager).playGameOverMusic()
         game.setScreen(
             GameOverScreen(
                 game,
@@ -134,6 +135,18 @@ class GameScreen(
                 game.takeScreenShot()
             )
         )
+    }
+
+    override fun onDie() {
+        (game.getAudio() as SoundManager).playDieSound()
+    }
+
+    override fun onCollectCandies() {
+
+    }
+
+    override fun onRocketSpeed() {
+
     }
 
     private fun startGame() {

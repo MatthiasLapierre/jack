@@ -102,6 +102,7 @@ internal class JumperGameProcessorImpl(
 
     override fun gameOver() {
         gameStates.gameOver()
+        gameListener?.onDie()
     }
 
     override fun moveX(xAcceleration: Float) {
@@ -197,11 +198,11 @@ internal class JumperGameProcessorImpl(
             if (sprite.isHit(playerSprite)) {
                 when(sprite) {
                     is CandySprite -> {
-                        gameStates.collectCandies(sprite.getScore())
+                        collectCandies(sprite.getScore())
                         sprite.isCollected = true
                     }
                     is PowerUpSprite -> {
-                        gameStates.collectCandies(sprite.getScore())
+                        collectCandies(sprite.getScore())
                         addPowerUp(sprite.powerUp)
                         sprite.isConsumed = true
                     }
@@ -235,7 +236,7 @@ internal class JumperGameProcessorImpl(
                 val minY = playerSprite.y - (screenWidth * JumperConstants.MAGNET_RANGE_Y)
                 val maxY = playerSprite.y + (screenWidth * JumperConstants.MAGNET_RANGE_Y)
                 if (sprite.x in minX..maxX && sprite.y in minY..maxY && !sprite.isCollected) {
-                    gameStates.collectCandies(sprite.getScore())
+                    collectCandies(sprite.getScore())
                     sprite.isCollected = true
                 }
             }
@@ -276,6 +277,11 @@ internal class JumperGameProcessorImpl(
                 sprite.onDispose()
             }
         }
+    }
+
+    private fun collectCandies(candies: Int) {
+        gameStates.collectCandies(candies)
+        gameListener?.onCollectCandies()
     }
 
     private fun updatePowerUpTimers() {

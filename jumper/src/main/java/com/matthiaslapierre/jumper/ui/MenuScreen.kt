@@ -51,7 +51,6 @@ class MenuScreen(
     private var scoreGamesBtnIsPressed: Boolean = false
 
     override fun update() {
-        (game.getAudio() as SoundManager).playMenuMusic()
         val resourceManager = (game.getGameResources() as ResourceManager)
         bgImage = resourceManager.bgJump
         logoImage = resourceManager.logoJumperJack

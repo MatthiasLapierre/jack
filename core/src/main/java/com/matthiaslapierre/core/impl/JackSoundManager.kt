@@ -27,6 +27,7 @@ class JackSoundManager(context: Context): SoundManager(context) {
     private var currentMusic: Music? = null
 
     override fun load() {
+        dieSound = createSound("sounds/die.mp3")
         menuMusic = createMusic("musics/soundtrack.mp3")
         gameMusic = createMusic("musics/game.mp3")
         gameOverMusic = createMusic("musics/game_over.mp3")

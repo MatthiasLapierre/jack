@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
+import com.matthiaslapierre.core.SoundManager
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.jack.R
@@ -22,6 +23,7 @@ class SplashScreen(
         game.getAudio().load()
         game.getTypefaces().load()
         game.getGameResources().load()
+        (game.getAudio() as SoundManager).playMenuMusic()
         game.setScreen(MenuScreen(game))
     }
 
