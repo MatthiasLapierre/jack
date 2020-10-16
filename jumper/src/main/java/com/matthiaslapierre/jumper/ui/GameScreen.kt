@@ -57,8 +57,7 @@ class GameScreen(
         val resourceManager = getResourceManager()
         topBgImage = resourceManager.bgTop
         candyIndicatorImage = resourceManager.candyIndicator
-        pauseBtnImage = if(pauseBtnIsPressed) resourceManager.btnPausePressed else
-            resourceManager.btnPause
+        pauseBtnImage = getPauseBtnImage()
         jumperGameLogic.gameProcessor.setFrameRateAdjustFactor(frameRateAdjustFactor)
         jumperGameLogic.gameProcessor.process()
     }
@@ -94,11 +93,13 @@ class GameScreen(
                 pauseBtnIsPressed = btnIsPressed(getPauseBtnRect(), touchX, touchY)
             }
             MotionEvent.ACTION_UP -> {
-                pauseBtnIsPressed = false
-                if (touchY > getPauseBtnRect().bottom
+                if (pauseBtnIsPressed) {
+                    togglePauseResume()
+                } else if (touchY > getPauseBtnRect().bottom
                     && jumperGameLogic.gameProcessor.getGameStatus() == Sprite.Status.STATUS_NOT_STARTED) {
-                    jumperGameLogic.gameProcessor.startGame()
+                    startGame()
                 }
+                pauseBtnIsPressed = false
             }
         }
     }
@@ -132,6 +133,35 @@ class GameScreen(
                 game.takeScreenShot()
             )
         )
+    }
+
+    private fun startGame() {
+        jumperGameLogic.gameProcessor.startGame()
+    }
+
+    private fun togglePauseResume() {
+        if (jumperGameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+            jumperGameLogic.gameProcessor.pause()
+        } else if (jumperGameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
+            jumperGameLogic.gameProcessor.resume()
+        }
+    }
+
+    private fun getPauseBtnImage(): Image {
+        val resourceManager = getResourceManager()
+        return if (jumperGameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
+            if (pauseBtnIsPressed) {
+                resourceManager.btnPlayPressed!!
+            } else {
+                resourceManager.btnPlay!!
+            }
+        } else {
+            if (pauseBtnIsPressed) {
+                resourceManager.btnPausePressed!!
+            } else {
+                resourceManager.btnPause!!
+            }
+        }
     }
 
     private fun drawTopBar(canvas: Canvas, globalPaint: Paint) {

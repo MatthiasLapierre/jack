@@ -14,6 +14,8 @@ internal interface JumperGameProcessor{
 
     fun process()
 
+    fun resume()
+
     fun pause()
 
     fun dispose()

@@ -56,6 +56,10 @@ internal class JumperGameProcessorImpl(
     private var powerUpTimers: Hashtable<Int, Int> = Hashtable()
 
     override fun process() {
+        if (gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
+            return
+        }
+
         updateSprites()
         if(gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             checkCollisions()
@@ -65,7 +69,12 @@ internal class JumperGameProcessorImpl(
         updateStates()
     }
 
+    override fun resume() {
+        gameStates.currentStatus = Sprite.Status.STATUS_PLAY
+    }
+
     override fun pause() {
+        gameStates.currentStatus = Sprite.Status.STATUS_PAUSE
         stopPowerUpTimers()
     }
 
