@@ -64,7 +64,7 @@ internal class JumperGameProcessorImpl(
         }
 
         updateSprites()
-        if(gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             checkCollisions()
             catchFreeFall()
         }
@@ -144,7 +144,7 @@ internal class JumperGameProcessorImpl(
             null
         }
 
-        val freeFallMax = screenWidth * JumperConstants.FREE_FALL_MAX
+        val freeFallMax = screenHeight * JumperConstants.FREE_FALL_MAX
         if (freeFall != null && freeFall!! > freeFallMax) {
             gameOver()
         }
@@ -154,6 +154,7 @@ internal class JumperGameProcessorImpl(
         gameStates.addPowerUp(powerUp)
         val timer = when (powerUp) {
             JumperGameStates.POWER_UP_ROCKET -> {
+                gameListener?.onRocketSpeed()
                 JumperConstants.ROCKET_TIMER
             }
             JumperGameStates.POWER_UP_MAGNET -> {
@@ -231,11 +232,8 @@ internal class JumperGameProcessorImpl(
             } else if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_MAGNET)
                 && sprite is CandySprite
             ) {
-                val minX = playerSprite.x - (screenWidth * JumperConstants.MAGNET_RANGE_X)
-                val maxX = playerSprite.x + (screenWidth * JumperConstants.MAGNET_RANGE_X)
-                val minY = playerSprite.y - (screenWidth * JumperConstants.MAGNET_RANGE_Y)
-                val maxY = playerSprite.y + (screenWidth * JumperConstants.MAGNET_RANGE_Y)
-                if (sprite.x in minX..maxX && sprite.y in minY..maxY && !sprite.isCollected) {
+                if (playerSprite.getMagnetRangeRectF().intersect(sprite.getRectF())
+                    && !sprite.isCollected) {
                     collectCandies(sprite.getScore())
                     sprite.isCollected = true
                 }

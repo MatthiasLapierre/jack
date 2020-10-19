@@ -23,7 +23,7 @@ internal object JumperConstants  {
     const val PLAYER_FEET_BOTTOM = .1f
 
     const val SPRITE_LIFE_LOWEST_Y = 1.2f
-    const val FREE_FALL_MAX = 1.4f
+    const val FREE_FALL_MAX = .70f
 
     const val CLOUD_INTERVAL = 0.6f
     const val FIRST_CLOUD_Y = 4.5f
@@ -54,7 +54,6 @@ internal object JumperConstants  {
     const val COPTER_TIMER = 10
 
     const val MAGNET_RANGE_X = .5f
-    const val MAGNET_RANGE_Y = .01f
 
     // Generator
     const val GENERATOR_HIGHEST_Y = 2f

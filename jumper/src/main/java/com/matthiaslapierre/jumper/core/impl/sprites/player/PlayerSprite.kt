@@ -31,6 +31,7 @@ internal class PlayerSprite(
     private var rocketFrame: Int = 0
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
+    private var screenWidth: Float = UNDEFINED
     private var screenHeight: Float = UNDEFINED
     private var previousState: PlayerState = PlayerState.IDLE
 
@@ -40,7 +41,7 @@ internal class PlayerSprite(
         previousState = gameStates.playerState
         val image = getImage(frame, playerState)
 
-        val screenWidth = canvas.width.toFloat()
+        screenWidth = canvas.width.toFloat()
         screenHeight = canvas.height.toFloat()
         if (x == UNDEFINED) {
             width = screenWidth * JumperConstants.PLAYER_WIDTH
@@ -202,6 +203,15 @@ internal class PlayerSprite(
             top + (height * PLAYER_INSET_Y),
             right - (width * PLAYER_INSET_X),
             bottom - (height * PLAYER_INSET_Y)
+        )
+    }
+
+    fun getMagnetRangeRectF(): RectF = getBodyRectF().run {
+        RectF(
+            left - (screenWidth * JumperConstants.MAGNET_RANGE_X),
+            top,
+            right + (screenWidth * JumperConstants.MAGNET_RANGE_X),
+            top + ((bottom - top) / 2f)
         )
     }
 

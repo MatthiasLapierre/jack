@@ -175,7 +175,12 @@ internal class JumperGameStatesImpl: JumperGameStates  {
                     _speedY = getRocketSpeed()
                 }
                 powerUp.hasFlag(POWER_UP_COPTER) -> {
-                    _speedY = getCopterSpeed()
+                    val minSpeed = getCopterSpeed()
+                    if (_speedY < minSpeed) {
+                        _speedY = minSpeed
+                    } else if (_speedY > minSpeed) {
+                        _speedY -= gravity
+                    }
                 }
                 else -> {
                     _speedY -= gravity

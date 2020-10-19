@@ -104,6 +104,12 @@ internal class JumperGameMapImpl(
             } else {
                 PATTERN_BAT
             }
+        } else if (powerUpGenerationAllowed()) {
+            val patterns = arrayOf(
+                PATTERN_CANDIES_GAP,
+                PATTERN_CANDIES_LINE
+            )
+            patterns[Utils.getRandomInt(0, patterns.size)]
         } else {
             val patterns = arrayOf(
                 PATTERN_CANDIES_GAP,

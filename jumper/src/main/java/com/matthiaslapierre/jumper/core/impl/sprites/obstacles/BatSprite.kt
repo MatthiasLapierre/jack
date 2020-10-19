@@ -111,7 +111,7 @@ internal class BatSprite(
     override fun isAlive(): Boolean = isAlive
 
     override fun isHit(sprite: Sprite): Boolean = sprite is PlayerSprite
-            && sprite.getBodyRectF().intersect(getRectF())
+            && sprite.getBodyRectF().intersect(getBodyRectF())
             && !isDestroyed
 
     override fun getScore(): Int = 0
@@ -125,6 +125,15 @@ internal class BatSprite(
 
     override fun onDispose() {
 
+    }
+
+    fun getBodyRectF(): RectF = getRectF().apply {
+        RectF(
+            left + (width * .1f),
+            top + (height * .2f),
+            right - (width * .1f),
+            bottom - (height * .2f)
+        )
     }
 
     fun destroy() {
