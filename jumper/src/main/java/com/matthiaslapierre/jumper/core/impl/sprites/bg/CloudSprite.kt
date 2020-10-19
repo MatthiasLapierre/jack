@@ -42,22 +42,14 @@ internal class CloudSprite(
 
         isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
-        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (status == Sprite.Status.STATUS_PLAY) {
             y += speed
         }
 
-        val srcRect = Rect(
-            0,
-            0,
-            cloudImage.width,
-            cloudImage.height
-        )
-        val dstRect = getRectF()
-
         canvas.drawBitmap(
             cloudImage.bitmap,
-            srcRect,
-            dstRect,
+            cloudImage.rect,
+            getRectF(),
             globalPaint
         )
     }

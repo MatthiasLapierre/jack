@@ -76,12 +76,7 @@ internal class PlayerSprite(
             val rocketHeight = rocketWidth * rocketImage.height / rocketImage.width
             canvas.drawBitmap(
                 rocketImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    rocketImage.width,
-                    rocketImage.height
-                ),
+                rocketImage.rect,
                 RectF(
                     (x + width / 2f) - (rocketWidth / 2f),
                     y - (rocketHeight * ROCKET_TOP),
@@ -90,24 +85,20 @@ internal class PlayerSprite(
                 ),
                 globalPaint
             )
-            if (rocketFrame < rocketImages.size - 2) {
-                rocketFrame++
-            } else {
-                rocketFrame = 0
+            if (status != Sprite.Status.STATUS_PAUSE) {
+                if (rocketFrame < rocketImages.size - 2) {
+                    rocketFrame++
+                } else {
+                    rocketFrame = 0
+                }
             }
         }
 
         // Draw the main character.
-        val dstRect = getRectF()
         canvas.drawBitmap(
             image.bitmap,
-            Rect(
-                0,
-                0,
-                image.width,
-                image.height
-            ),
-            dstRect,
+            image.rect,
+            getRectF(),
             globalPaint
         )
 
@@ -118,12 +109,7 @@ internal class PlayerSprite(
             val magnetHeight = magnetWidth * magnetImage.height / magnetImage.width
             canvas.drawBitmap(
                 magnetImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    magnetImage.width,
-                    magnetImage.height
-                ),
+                magnetImage.rect,
                 RectF(
                     (x + width / 2f) - (magnetWidth / 2f),
                     y,
@@ -138,12 +124,7 @@ internal class PlayerSprite(
             val armorHeight = armorWidth * armorImage.height / armorImage.width
             canvas.drawBitmap(
                 armorImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    armorImage.width,
-                    armorImage.height
-                ),
+                armorImage.rect,
                 RectF(
                     (x + width / 2f) - (armorWidth / 2f),
                     y,
@@ -154,21 +135,9 @@ internal class PlayerSprite(
             )
         }
 
-        frame = getNextFrameIndex(frame, playerState)
-
-        //DEBUG
-        /*canvas.drawRect(RectF(0f, highestY, screenWidth, highestY+1), Paint().apply {
-            style = Paint.Style.FILL
-            color = Color.RED
-        })
-        canvas.drawRect(RectF(0f, lowestY, screenWidth, lowestY+1), Paint().apply {
-            style = Paint.Style.FILL
-            color = Color.BLUE
-        })
-        canvas.drawRect(getFeetRectF(), Paint().apply {
-            style = Paint.Style.FILL
-            color = Color.RED
-        })*/
+        if (status != Sprite.Status.STATUS_PAUSE) {
+            frame = getNextFrameIndex(frame, playerState)
+        }
     }
 
     override fun isAlive(): Boolean = true

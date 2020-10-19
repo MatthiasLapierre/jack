@@ -48,31 +48,26 @@ internal class BatSprite(
         isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isDestroyed
                 || !animateExplosionEnded))
 
-        if(maxX - minX > width) {
-            x += speed
-            if (x < minX || x > maxX) {
-                speed = -speed
+        if (status == Sprite.Status.STATUS_PLAY) {
+            if(maxX - minX > width) {
+                x += speed
+                if (x < minX || x > maxX) {
+                    speed = -speed
+                }
             }
-        }
-
-        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
         if (!isDestroyed || explosionFrame < explosionImages.size / 2) {
             canvas.drawBitmap(
                 batImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    batImage.width,
-                    batImage.height
-                ),
+                batImage.rect,
                 getRectF(),
                 globalPaint
             )
 
-            if(System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RATE) {
+            if(status != Sprite.Status.STATUS_PAUSE
+                && System.currentTimeMillis() - lastFrameTimestamp > BAT_FRAME_RATE) {
                 frame++
                 if (frame >= batImages.size) {
                     frame = 0
@@ -85,12 +80,7 @@ internal class BatSprite(
             val explosionImage = explosionImages[explosionFrame]
             canvas.drawBitmap(
                 explosionImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    explosionImage.width,
-                    explosionImage.height
-                ),
+                explosionImage.rect,
                 RectF(
                     x - (width / 2f),
                     y - (width / 2f),
@@ -99,10 +89,12 @@ internal class BatSprite(
                 ),
                 globalPaint
             )
-            if(explosionFrame == explosionImages.size - 1) {
-                animateExplosionEnded = true
-            } else {
-                explosionFrame++
+            if (status != Sprite.Status.STATUS_PAUSE) {
+                if (explosionFrame == explosionImages.size - 1) {
+                    animateExplosionEnded = true
+                } else {
+                    explosionFrame++
+                }
             }
         }
     }

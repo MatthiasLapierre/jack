@@ -40,18 +40,10 @@ internal class TapToLaunchSprite(
             y = screenHeight * Y_RATIO
         }
 
-        val srcRect = Rect(
-            0,
-            0,
-            image.bitmap.width,
-            image.bitmap.height
-        )
-        val dstRect = getRectF()
-
         canvas.drawBitmap(
             image.bitmap,
-            srcRect,
-            dstRect,
+            image.rect,
+            getRectF(),
             globalPaint
         )
     }

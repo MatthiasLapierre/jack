@@ -2,7 +2,6 @@ package com.matthiaslapierre.jumper.core.impl.sprites.obstacles
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
@@ -57,7 +56,7 @@ internal class SpikeSprite(
         isAlive = y <= (screenHeight * JumperConstants.SPRITE_LIFE_LOWEST_Y)
                 && (!isDestroyed || smokeFrame < smokeImages.size - 1)
 
-        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (status == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
@@ -81,12 +80,7 @@ internal class SpikeSprite(
             val smokeImage = smokeImages[smokeFrame]
             canvas.drawBitmap(
                 smokeImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    smokeImage.width,
-                    smokeImage.height
-                ),
+                smokeImage.rect,
                 RectF(
                     x - (width / 2f),
                     y - (width / 2f),
@@ -95,10 +89,12 @@ internal class SpikeSprite(
                 ),
                 globalPaint
             )
-            smokeFrame++
+            if (status != Sprite.Status.STATUS_PAUSE) {
+                smokeFrame++
+            }
         }
 
-        if (state == State.SHOW && !isDestroyed) {
+        if (state == State.SHOW && !isDestroyed && status != Sprite.Status.STATUS_PAUSE) {
             val now = System.currentTimeMillis()
             if (lastShowingTimestamp != 0L) {
                 val interval = now - lastShowingTimestamp
@@ -151,12 +147,7 @@ internal class SpikeSprite(
     private fun drawSpike(canvas: Canvas, globalPaint: Paint, spikeImage: Image) {
         canvas.drawBitmap(
             spikeImage.bitmap,
-            Rect(
-                0,
-                0,
-                spikeImage.width,
-                spikeImage.height
-            ),
+            spikeImage.rect,
             getRectF(),
             globalPaint
         )

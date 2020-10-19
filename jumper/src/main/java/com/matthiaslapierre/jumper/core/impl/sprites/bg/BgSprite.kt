@@ -8,6 +8,7 @@ import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jumper.core.JumperGameStates
+import com.matthiaslapierre.utils.getRect
 
 internal class BgSprite(
     private val resourceManager: ResourceManager,
@@ -50,18 +51,10 @@ internal class BgSprite(
             }
         }
 
-        val srcRect = Rect(
-            0,
-            0,
-            bitmap.width,
-            bitmap.height
-        )
-        val dstRect = getRectF()
-
         canvas.drawBitmap(
             bitmap,
-            srcRect,
-            dstRect,
+            bitmap.getRect(),
+            getRectF(),
             globalPaint
         )
     }

@@ -58,7 +58,7 @@ internal object JumperConstants  {
     const val MAGNET_RANGE_X = .5f
 
     // Generator
-    const val GENERATOR_HIGHEST_Y = 2f
+    const val GENERATOR_HIGHEST_Y = 1.2f
     const val SPRITE_SWING_X = .5f
     const val FIRST_SPRITE_Y = .45f
     // Outsets

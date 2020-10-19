@@ -2,7 +2,6 @@ package com.matthiaslapierre.jumper.core.impl.sprites.collectibles
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.RectF
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
@@ -43,19 +42,14 @@ internal class CandySprite(
         isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isCollected
                 || !animateExplosionEnded))
 
-        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (status == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
         if (!isCollected || explosionFrame < explosionImages.size / 2) {
             canvas.drawBitmap(
                 candyImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    candyImage.width,
-                    candyImage.height
-                ),
+                candyImage.rect,
                 getRectF(),
                 globalPaint
             )
@@ -65,12 +59,7 @@ internal class CandySprite(
             val explosionImage = explosionImages[explosionFrame]
             canvas.drawBitmap(
                 explosionImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    explosionImage.width,
-                    explosionImage.height
-                ),
+                explosionImage.rect,
                 RectF(
                     x - (width / 2f),
                     y - (width / 2f),
@@ -79,10 +68,13 @@ internal class CandySprite(
                 ),
                 globalPaint
             )
-            if(explosionFrame == explosionImages.size - 1) {
-                animateExplosionEnded = true
-            } else {
-                explosionFrame++
+
+            if (status != Sprite.Status.STATUS_PAUSE) {
+                if (explosionFrame == explosionImages.size - 1) {
+                    animateExplosionEnded = true
+                } else {
+                    explosionFrame++
+                }
             }
         }
     }

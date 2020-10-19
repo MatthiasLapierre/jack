@@ -43,39 +43,28 @@ internal class JumpingPlatformSprite(
 
         isAlive = y <= (screenHeight * SPRITE_LIFE_LOWEST_Y)
 
-        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (status == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
         val firstFrame = platformImages!![state]!![frame]
-        val srcRect = Rect(
-            0,
-            0,
-            firstFrame.width,
-            firstFrame.height
-        )
-        val dstRect = getRectF()
         canvas.drawBitmap(
             firstFrame.bitmap,
-            srcRect,
-            dstRect,
+            firstFrame.rect,
+            getRectF(),
             globalPaint
         )
 
-        if (state == JumpPlatformState.BOUNCE) {
-            if (frame < 4) {
-                frame++
-            } else {
-                state = JumpPlatformState.IDLE
-                frame = 0
+        if (status != Sprite.Status.STATUS_PAUSE) {
+            if (state == JumpPlatformState.BOUNCE) {
+                if (frame < 4) {
+                    frame++
+                } else {
+                    state = JumpPlatformState.IDLE
+                    frame = 0
+                }
             }
         }
-
-        //DEBUG
-        /*canvas.drawRect(getBounceArea(), Paint().apply {
-            style = Paint.Style.FILL
-            color = Color.WHITE
-        })*/
     }
 
     override fun isAlive(): Boolean = isAlive

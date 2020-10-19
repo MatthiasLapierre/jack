@@ -1,6 +1,8 @@
 package com.matthiaslapierre.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Rect
 import androidx.annotation.DimenRes
 import kotlin.random.Random
 
@@ -41,3 +43,5 @@ fun Int.toDigits(): Array<Int> {
     }
     return digits.toTypedArray()
 }
+
+fun Bitmap.getRect(): Rect = Rect(0, 0, width, height)

@@ -36,17 +36,12 @@ internal class FloorSprite(
 
         isAlive = y <= (screenWith * SPRITE_LIFE_LOWEST_Y)
 
-        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (status == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
             if (y < highestY) {
                 y = highestY
             }
         }
-
-        /*canvas.drawRect(getRectF(), Paint().apply {
-            style = Paint.Style.FILL
-            color = Color.BLACK
-        })*/
     }
 
     override fun isAlive(): Boolean = true

@@ -52,19 +52,14 @@ internal class PowerUpSprite(
         isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isConsumed
                 || !animateExplosionEnded))
 
-        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+        if (status == Sprite.Status.STATUS_PLAY) {
             y += gameStates.speedY
         }
 
         if (!isConsumed || explosionFrame < explosionImages.size / 2) {
             canvas.drawBitmap(
                 powerUpImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    powerUpImage.width,
-                    powerUpImage.height
-                ),
+                powerUpImage.rect,
                 getRectF(),
                 globalPaint
             )
@@ -74,12 +69,7 @@ internal class PowerUpSprite(
             val explosionImage = explosionImages[explosionFrame]
             canvas.drawBitmap(
                 explosionImage.bitmap,
-                Rect(
-                    0,
-                    0,
-                    explosionImage.width,
-                    explosionImage.height
-                ),
+                explosionImage.rect,
                 RectF(
                     x - (width / 2f),
                     y - (width / 2f),
@@ -88,10 +78,13 @@ internal class PowerUpSprite(
                 ),
                 globalPaint
             )
-            if(explosionFrame == explosionImages.size - 1) {
-                animateExplosionEnded = true
-            } else {
-                explosionFrame++
+
+            if (status != Sprite.Status.STATUS_PAUSE) {
+                if (explosionFrame == explosionImages.size - 1) {
+                    animateExplosionEnded = true
+                } else {
+                    explosionFrame++
+                }
             }
         }
     }
