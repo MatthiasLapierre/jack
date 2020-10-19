@@ -1,8 +1,10 @@
 package com.matthiaslapierre.jumper.core
 
 interface JumperGameListener {
+    fun onJump()
     fun onGameOver(candiesCollected: Int)
     fun onDie()
     fun onCollectCandies()
-    fun onRocketSpeed()
+    fun onHit()
+    fun onDestroyEnemy()
 }

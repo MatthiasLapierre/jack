@@ -3,10 +3,8 @@ package com.matthiaslapierre.jumper.ui
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import android.media.AudioManager
 import android.view.MotionEvent
 import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.core.SoundManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen

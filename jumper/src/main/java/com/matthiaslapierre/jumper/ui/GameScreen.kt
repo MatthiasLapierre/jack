@@ -122,6 +122,10 @@ class GameScreen(
 
     }
 
+    override fun onJump() {
+        (game.getAudio() as SoundManager).playJumpSound()
+    }
+
     override fun onGameOver(candiesCollected: Int) {
         if (scores.isNewBestScore(candiesCollected)) {
             scores.storeHighScore(candiesCollected)
@@ -142,11 +146,15 @@ class GameScreen(
     }
 
     override fun onCollectCandies() {
-
+        (game.getAudio() as SoundManager).playGetCoinSound()
     }
 
-    override fun onRocketSpeed() {
+    override fun onHit() {
+        (game.getAudio() as SoundManager).playHitSound()
+    }
 
+    override fun onDestroyEnemy() {
+        (game.getAudio() as SoundManager).playDestroyEnemy()
     }
 
     private fun startGame() {

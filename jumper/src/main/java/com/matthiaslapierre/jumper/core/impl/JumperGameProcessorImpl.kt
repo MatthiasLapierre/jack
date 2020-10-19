@@ -154,7 +154,6 @@ internal class JumperGameProcessorImpl(
         gameStates.addPowerUp(powerUp)
         val timer = when (powerUp) {
             JumperGameStates.POWER_UP_ROCKET -> {
-                gameListener?.onRocketSpeed()
                 JumperConstants.ROCKET_TIMER
             }
             JumperGameStates.POWER_UP_MAGNET -> {
@@ -208,6 +207,7 @@ internal class JumperGameProcessorImpl(
                         sprite.isConsumed = true
                     }
                     is JumpingPlatformSprite -> {
+                        gameListener?.onJump()
                         gameStates.jump()
                         sprite.bounce()
                     }
@@ -217,10 +217,13 @@ internal class JumperGameProcessorImpl(
                             // Power-ups will be lost if damage is taken.
                             sprite.destroy()
                             gameStates.removeAllPowerUps()
+                            gameListener?.onDestroyEnemy()
                         } else if (sprite.blowOnTheHead(playerSprite)) {
                             sprite.destroy()
                             gameStates.jump()
+                            gameListener?.onDestroyEnemy()
                         } else {
+                            gameListener?.onHit()
                             gameOver()
                         }
                     }
@@ -231,6 +234,7 @@ internal class JumperGameProcessorImpl(
                             sprite.destroy()
                             gameStates.removeAllPowerUps()
                         } else {
+                            gameListener?.onHit()
                             gameOver()
                         }
                     }

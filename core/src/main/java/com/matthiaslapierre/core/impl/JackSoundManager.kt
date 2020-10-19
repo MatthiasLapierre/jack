@@ -20,6 +20,8 @@ class JackSoundManager(context: Context): SoundManager(context) {
     private var stageEnterSound: Sound? = null
     private var stageClearSound: Sound? = null
     private var jumpSound: Sound? = null
+    private var destroyEnemySound: Sound? = null
+    private var hitSound: Sound? = null
     private var getBonusPointSound: Sound? = null
     private var getCoinSound: Sound? = null
     private var dieSound: Sound? = null
@@ -27,7 +29,11 @@ class JackSoundManager(context: Context): SoundManager(context) {
     private var currentMusic: Music? = null
 
     override fun load() {
+        getCoinSound = createSound("sounds/get_coin.mp3")
         dieSound = createSound("sounds/die.mp3")
+        jumpSound = createSound("sounds/jump.wav")
+        destroyEnemySound = createSound("sounds/destroy_enemy.mp3")
+        hitSound = createSound("sounds/hit.ogg")
         menuMusic = createMusic("musics/soundtrack.mp3")
         gameMusic = createMusic("musics/game.mp3")
         gameOverMusic = createMusic("musics/game_over.mp3")
@@ -51,6 +57,12 @@ class JackSoundManager(context: Context): SoundManager(context) {
         }
     }
 
+    override fun playDestroyEnemy() {
+        if(soundEnabled) {
+            destroyEnemySound?.play(soundVolume)
+        }
+    }
+
     override fun playGetBonusPointsSound() {
         if(soundEnabled) {
             getBonusPointSound?.play(soundVolume)
@@ -66,6 +78,12 @@ class JackSoundManager(context: Context): SoundManager(context) {
     override fun playDieSound() {
         if(soundEnabled) {
             dieSound?.play(soundVolume)
+        }
+    }
+
+    override fun playHitSound() {
+        if(soundEnabled) {
+            hitSound?.play(soundVolume)
         }
     }
 

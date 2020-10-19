@@ -13,11 +13,15 @@ abstract class SoundManager(
 
     abstract fun playJumpSound()
 
+    abstract fun playDestroyEnemy()
+
     abstract fun playGetBonusPointsSound()
 
     abstract fun playGetCoinSound()
 
     abstract fun playDieSound()
+
+    abstract fun playHitSound()
 
     abstract fun playMenuMusic()
 
