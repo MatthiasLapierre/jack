@@ -262,7 +262,7 @@ internal class JumperGameMapImpl(
         if (powerUpGenerationAllowed()) {
             val powerUpX = screenWidth*.5f
             val powerUpY = Utils.getRandomFloat(y, spriteY + spaceY)
-            sprites.add(buildPowerUpSprite(powerUpX, powerUpY))
+            sprites.add(0, buildPowerUpSprite(powerUpX, powerUpY))
         }
 
         return sprites
