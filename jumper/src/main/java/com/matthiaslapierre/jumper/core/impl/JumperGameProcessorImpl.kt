@@ -211,15 +211,24 @@ internal class JumperGameProcessorImpl(
                         gameStates.jump()
                         sprite.bounce()
                     }
-                    is BatSprite, is SpikeSprite -> {
+                    is BatSprite -> {
                         if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ARMORED)
                             || gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ROCKET)) {
-                            // Shield will be lost if damage is taken.
-                            if (sprite is BatSprite) {
-                                sprite.destroy()
-                            } else if (sprite is SpikeSprite) {
-                                sprite.destroy()
-                            }
+                            // Power-ups will be lost if damage is taken.
+                            sprite.destroy()
+                            gameStates.removeAllPowerUps()
+                        } else if (sprite.blowOnTheHead(playerSprite)) {
+                            sprite.destroy()
+                            gameStates.jump()
+                        } else {
+                            gameOver()
+                        }
+                    }
+                    is SpikeSprite -> {
+                        if (gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ARMORED)
+                            || gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ROCKET)) {
+                            // Power-ups will be lost if damage is taken.
+                            sprite.destroy()
                             gameStates.removeAllPowerUps()
                         } else {
                             gameOver()

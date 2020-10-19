@@ -88,11 +88,12 @@ abstract class GameActivity : AppCompatActivity(), Game {
     override fun getInitScreen(): Screen = mScreen
 
     override fun setScreen(screen: Screen) {
-        this.mScreen.pause()
-        this.mScreen.dispose()
+        val previousScreen = mScreen
+        previousScreen.pause()
         screen.resume()
         screen.update()
         this.mScreen = screen
+        previousScreen.dispose()
     }
 
     override fun takeScreenShot(): Bitmap = mGameView.capture()

@@ -1,12 +1,11 @@
 package com.matthiaslapierre.jumper.core.impl.sprites.obstacles
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 import com.matthiaslapierre.core.Constants.UNDEFINED
 import com.matthiaslapierre.core.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
+import com.matthiaslapierre.jumper.JumperConstants.BAT_BODY_INSET_X
+import com.matthiaslapierre.jumper.JumperConstants.BAT_BODY_INSET_Y
 import com.matthiaslapierre.jumper.JumperConstants.BAT_FRAME_RATE
 import com.matthiaslapierre.jumper.JumperConstants.BAT_SPEED
 import com.matthiaslapierre.jumper.JumperConstants.BAT_WIDTH
@@ -127,12 +126,16 @@ internal class BatSprite(
 
     }
 
-    fun getBodyRectF(): RectF = getRectF().apply {
-        RectF(
-            left + (width * .1f),
-            top + (height * .2f),
-            right - (width * .1f),
-            bottom - (height * .2f)
+    fun blowOnTheHead(sprite: Sprite): Boolean = sprite is PlayerSprite
+            && gameStates.direction == JumperGameStates.Direction.DOWN
+            && sprite.getFeetRectF().intersect(getBodyRectF())
+
+    private fun getBodyRectF(): RectF = getRectF().run {
+        return RectF(
+            left + (width * BAT_BODY_INSET_X),
+            top + (height * BAT_BODY_INSET_Y),
+            right - (width * BAT_BODY_INSET_X),
+            bottom - (height * BAT_BODY_INSET_Y)
         )
     }
 

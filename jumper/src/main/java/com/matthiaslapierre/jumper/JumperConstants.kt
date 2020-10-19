@@ -37,6 +37,8 @@ internal object JumperConstants  {
     const val BAT_WIDTH = .27f
     const val BAT_SPEED = .02f
     const val BAT_FRAME_RATE = 120
+    const val BAT_BODY_INSET_X = .1f
+    const val BAT_BODY_INSET_Y = .2f
 
     const val SPIKE_WIDTH = .15f
     const val SPIKE_WRAITH_DURATION = 3
