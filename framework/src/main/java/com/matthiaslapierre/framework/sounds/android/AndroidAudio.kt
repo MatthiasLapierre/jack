@@ -39,11 +39,11 @@ open class AndroidAudio(
 
     }
 
-    override fun resumeMusic() {
+    override fun resume() {
 
     }
 
-    override fun pauseMusic() {
+    override fun pause() {
 
     }
 

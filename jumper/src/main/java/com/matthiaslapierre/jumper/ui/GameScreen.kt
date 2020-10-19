@@ -130,6 +130,7 @@ class GameScreen(
         if (scores.isNewBestScore(candiesCollected)) {
             scores.storeHighScore(candiesCollected)
         }
+        (game.getAudio() as SoundManager).stopFlightSound()
         (game.getAudio() as SoundManager).playGameOverMusic()
         game.setScreen(
             GameOverScreen(
@@ -157,6 +158,18 @@ class GameScreen(
         (game.getAudio() as SoundManager).playDestroyEnemy()
     }
 
+    override fun onRocketFlight() {
+        (game.getAudio() as SoundManager).playRocketFlightSound()
+    }
+
+    override fun onCopterFlight() {
+        (game.getAudio() as SoundManager).playCopterFlightSound()
+    }
+
+    override fun onNoFlight() {
+        (game.getAudio() as SoundManager).stopFlightSound()
+    }
+
     private fun startGame() {
         (game.getAudio() as SoundManager).playGameMusic()
         jumperGameLogic.gameProcessor.startGame()
@@ -165,8 +178,10 @@ class GameScreen(
     private fun togglePauseResume() {
         if (jumperGameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             jumperGameLogic.gameProcessor.pause()
+            (game.getAudio() as SoundManager).pause()
         } else if (jumperGameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
             jumperGameLogic.gameProcessor.resume()
+            (game.getAudio() as SoundManager).resume()
         }
     }
 

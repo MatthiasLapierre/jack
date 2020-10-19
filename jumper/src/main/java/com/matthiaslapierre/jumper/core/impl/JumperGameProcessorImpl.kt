@@ -68,7 +68,7 @@ internal class JumperGameProcessorImpl(
             checkCollisions()
             catchFreeFall()
         }
-        updatePowerUpTimers()
+        updatePowerUps()
         updateStates()
     }
 
@@ -295,11 +295,22 @@ internal class JumperGameProcessorImpl(
         gameListener?.onCollectCandies()
     }
 
-    private fun updatePowerUpTimers() {
+    private fun updatePowerUps() {
         if (gameStates.hasPowerUps() && gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
             startPowerUpTimers()
         } else {
             stopPowerUpTimers()
+        }
+        when {
+            gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_ROCKET) -> {
+                gameListener?.onRocketFlight()
+            }
+            gameStates.powerUp.hasFlag(JumperGameStates.POWER_UP_COPTER) -> {
+                gameListener?.onCopterFlight()
+            }
+            else -> {
+                gameListener?.onNoFlight()
+            }
         }
     }
 

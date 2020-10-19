@@ -7,4 +7,7 @@ interface JumperGameListener {
     fun onCollectCandies()
     fun onHit()
     fun onDestroyEnemy()
+    fun onRocketFlight()
+    fun onCopterFlight()
+    fun onNoFlight()
 }

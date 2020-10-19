@@ -23,13 +23,19 @@ abstract class SoundManager(
 
     abstract fun playHitSound()
 
+    abstract fun playRocketFlightSound()
+
+    abstract fun playCopterFlightSound()
+
     abstract fun playMenuMusic()
 
     abstract fun playGameMusic()
 
     abstract fun playGameOverMusic()
 
-    abstract fun stopMusic()
+    abstract fun stopFlightSound()
+
+    abstract fun stop()
 
     abstract fun enableMusic(enable: Boolean)
 
