@@ -1,5 +1,6 @@
 package com.matthiaslapierre.jack.ui.screens
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
@@ -8,6 +9,9 @@ import com.matthiaslapierre.jack.core.resources.ResourceManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
+import com.matthiaslapierre.jack.JackApp
+import com.matthiaslapierre.jack.core.resources.SoundManager
+import com.matthiaslapierre.jack.core.settings.Settings
 
 /**
  * Shows the menu.
@@ -22,6 +26,9 @@ class MenuScreen(
         private const val SECONDARY_BTN_WIDTH = 0.25f
         private const val TERNARY_BTN_WIDTH = 0.15f
     }
+
+    private var settings: Settings = ((game as Context).applicationContext as JackApp)
+        .appContainer.settings
 
     // Coordinates of the views.
     private var topDstRect: Rect? = null
@@ -58,10 +65,8 @@ class MenuScreen(
         val resourceManager = (game.getGameResources() as ResourceManager)
         bgImage = resourceManager.bgJump
         logoImage = resourceManager.logoJumperJack
-        soundBtnImage = if(soundBtnIsPressed) resourceManager.btnSoundPressed else
-            resourceManager.btnSound
-        musicBtnImage = if(musicBtnIsPressed) resourceManager.btnMusicPressed else
-            resourceManager.btnMusic
+        soundBtnImage = getSoundBtnImage()
+        musicBtnImage = getMusicBtnImage()
         facebookBtnImage = if(facebookBtnIsPressed) resourceManager.btnFacebookPressed else
             resourceManager.btnFacebook
         twitterBtnImage = if(twitterBtnIsPressed) resourceManager.btnTwitterPressed else
@@ -111,6 +116,8 @@ class MenuScreen(
             MotionEvent.ACTION_UP -> {
                 when {
                     playBtnIsPressed -> playGame()
+                    musicBtnIsPressed -> toggleMusic()
+                    soundBtnIsPressed -> toggleSound()
                 }
                 soundBtnIsPressed = false
                 musicBtnIsPressed = false
@@ -132,6 +139,22 @@ class MenuScreen(
      */
     private fun playGame() {
         game.setScreen(GameScreen(game))
+    }
+
+    /**
+     * Enables / Disables music.
+     */
+    private fun toggleMusic() {
+        settings.musicEnabled = !settings.musicEnabled
+        (game.getAudio() as SoundManager).enableMusic(settings.musicEnabled)
+    }
+
+    /**
+     * Enables / Disables sounds.
+     */
+    private fun toggleSound() {
+        settings.soundEnabled = !settings.soundEnabled
+        (game.getAudio() as SoundManager).enableSounds(settings.soundEnabled)
     }
 
     /**
@@ -342,5 +365,41 @@ class MenuScreen(
      */
     private fun btnIsPressed(rect: Rect?, touchX: Int, touchY: Int): Boolean =
             rect != null && rect.contains(touchX, touchY)
+
+    /**
+     * Gets the image to display in the sound button.
+     */
+    private fun getSoundBtnImage(): Image {
+        val resourceManager = (game.getGameResources() as ResourceManager)
+        return when {
+            soundBtnIsPressed -> {
+                resourceManager.btnSoundPressed!!
+            }
+            settings.soundEnabled -> {
+                resourceManager.btnSound!!
+            }
+            else -> {
+                resourceManager.btnSoundDisabled!!
+            }
+        }
+    }
+
+    /**
+     * Gets the image to display in the music button.
+     */
+    private fun getMusicBtnImage(): Image {
+        val resourceManager = (game.getGameResources() as ResourceManager)
+        return when {
+            musicBtnIsPressed -> {
+                resourceManager.btnMusicPressed!!
+            }
+            settings.musicEnabled -> {
+                resourceManager.btnMusic!!
+            }
+            else -> {
+                resourceManager.btnMusicDisabled!!
+            }
+        }
+    }
 
 }

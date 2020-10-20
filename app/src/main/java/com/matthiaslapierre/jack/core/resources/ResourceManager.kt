@@ -35,8 +35,10 @@ interface ResourceManager: GameResources {
     // Buttons
     var btnSound: Image?
     var btnSoundPressed: Image?
+    var btnSoundDisabled: Image?
     var btnMusic: Image?
     var btnMusicPressed: Image?
+    var btnMusicDisabled: Image?
     var btnFacebook: Image?
     var btnFacebookPressed: Image?
     var btnTwitter: Image?

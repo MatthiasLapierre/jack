@@ -23,8 +23,10 @@ class JackResourceManager(
 
     override var btnSound: Image? = null
     override var btnSoundPressed: Image? = null
+    override var btnSoundDisabled: Image? = null
     override var btnMusic: Image? = null
     override var btnMusicPressed: Image? = null
+    override var btnMusicDisabled: Image? = null
     override var btnFacebook: Image? = null
     override var btnFacebookPressed: Image? = null
     override var btnTwitter: Image? = null
@@ -82,8 +84,10 @@ class JackResourceManager(
 
         btnSound = loadImage("images/ui/buttons/btn_sound_normal.png")
         btnSoundPressed = loadImage("images/ui/buttons/btn_sound_pressed.png")
+        btnSoundDisabled = loadImage("images/ui/buttons/btn_sound_disabled.png")
         btnMusic = loadImage("images/ui/buttons/btn_music_normal.png")
         btnMusicPressed = loadImage("images/ui/buttons/btn_music_pressed.png")
+        btnMusicDisabled = loadImage("images/ui/buttons/btn_music_disabled.png")
         btnFacebook = loadImage("images/ui/buttons/btn_facebook_normal.png")
         btnFacebookPressed = loadImage("images/ui/buttons/btn_facebook_pressed.png")
         btnTwitter = loadImage("images/ui/buttons/btn_twitter_normal.png")
