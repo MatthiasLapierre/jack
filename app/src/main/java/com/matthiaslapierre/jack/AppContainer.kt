@@ -1,12 +1,23 @@
 package com.matthiaslapierre.jack
 
 import android.content.Context
-import com.matthiaslapierre.core.ResourceManager
-import com.matthiaslapierre.core.SoundManager
-import com.matthiaslapierre.core.TypefaceManager
-import com.matthiaslapierre.core.impl.JackResourceManager
-import com.matthiaslapierre.core.impl.JackSoundManager
-import com.matthiaslapierre.core.impl.JackTypefaceManager
+import com.matthiaslapierre.jack.core.resources.impl.JackResourceManager
+import com.matthiaslapierre.jack.core.game.GameLogic
+import com.matthiaslapierre.jack.core.game.GameListener
+import com.matthiaslapierre.jack.core.game.impl.JackGameLogic
+import com.matthiaslapierre.jack.core.game.impl.JackGameMap
+import com.matthiaslapierre.jack.core.game.impl.JackGameProcessor
+import com.matthiaslapierre.jack.core.game.impl.JackGameStates
+import com.matthiaslapierre.jack.core.resources.ResourceManager
+import com.matthiaslapierre.jack.core.resources.SoundManager
+import com.matthiaslapierre.jack.core.resources.TypefaceManager
+import com.matthiaslapierre.jack.core.resources.impl.JackSoundManager
+import com.matthiaslapierre.jack.core.resources.impl.JackTypefaceManager
+import com.matthiaslapierre.jack.core.scores.JackScores
+import com.matthiaslapierre.jack.core.scores.Scores
+import com.matthiaslapierre.jack.core.settings.JackSettings
+import com.matthiaslapierre.jack.core.settings.Settings
+import com.matthiaslapierre.jack.utils.Factory
 
 /**
  * To solve the issue of reusing objects, you can create your own dependencies container class
@@ -18,7 +29,46 @@ import com.matthiaslapierre.core.impl.JackTypefaceManager
 class AppContainer(
     context: Context
 ) {
-    val soundManager: SoundManager = JackSoundManager(context)
+    val soundManager: SoundManager =
+        JackSoundManager(context)
     val resourceManager: ResourceManager = JackResourceManager(context)
-    val typefaceManager: TypefaceManager = JackTypefaceManager(context)
+    val typefaceManager: TypefaceManager =
+        JackTypefaceManager(context)
+    val gameLogicFactory: GameLogicFactory = GameLogicFactory(resourceManager)
+    val scores: Scores =
+        JackScores(context)
+    val settings: Settings =
+        JackSettings(context)
+}
+
+class GameLogicFactory(
+    private val resourceManager: ResourceManager
+): Factory<GameLogic> {
+
+    private var gameListener: GameListener? = null
+
+    fun gameListener(gameListener: GameListener?): GameLogicFactory {
+        this.gameListener = gameListener
+        return this
+    }
+
+    override fun create(): GameLogic {
+        val states = JackGameStates()
+        val map = JackGameMap(
+            resourceManager,
+            states
+        )
+        val processor =
+            JackGameProcessor(
+                resourceManager,
+                states,
+                map,
+                gameListener
+            )
+        return JackGameLogic(
+            processor,
+            map,
+            states
+        )
+    }
 }

@@ -6,24 +6,40 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
-import com.matthiaslapierre.core.SoundManager
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
+import com.matthiaslapierre.jack.JackApp
 import com.matthiaslapierre.jack.R
-import com.matthiaslapierre.jumper.ui.MenuScreen
+import com.matthiaslapierre.jack.core.settings.Settings
+import com.matthiaslapierre.jack.core.resources.SoundManager
 
+/**
+ * Splash Screen. Resources loading.
+ */
 class SplashScreen(
     game: Game
 ) : Screen(game) {
+
+    private var settings: Settings = ((game as Context).applicationContext as JackApp)
+        .appContainer.settings
 
     private var drawnOnce = false
 
     override fun update() {
         if(!drawnOnce) return
+        // Load audio files
         game.getAudio().load()
+        // Load typefaces
         game.getTypefaces().load()
+        // Load images
         game.getGameResources().load()
-        (game.getAudio() as SoundManager).playMenuMusic()
+        // Initialize the SoundManager.
+        val soundManager = game.getAudio() as SoundManager
+        soundManager.enableMusic(settings.musicEnabled)
+        soundManager.enableSounds(settings.soundEnabled)
+        // Play the menu theme music.
+        soundManager.playMenuMusic()
+        // Show the menu.
         game.setScreen(MenuScreen(game))
     }
 
@@ -54,6 +70,9 @@ class SplashScreen(
 
     }
 
+    /**
+     * Draw the loading background image.
+     */
     private fun drawBackground(context: Context, canvas: Canvas) {
         val bgLoadingDrawable = ContextCompat.getDrawable(context, R.drawable.bg_jump)!!
         val screenWidth = canvas.width
