@@ -29,7 +29,8 @@ object Constants {
     const val PLAYER_WIDTH = .27f
     const val PLAYER_HIGHEST_Y = 0.5f
     const val PLAYER_INITIAL_POSITION = .18f
-    const val PLAYER_INSET_X = .3f
+    const val PLAYER_INSET_X = .2f
+    const val PLAYER_FEET_INSET_X = .3f
     const val PLAYER_INSET_Y = .1f
     const val PLAYER_FEET_TOP = .2f
     const val PLAYER_FEET_BOTTOM = .1f

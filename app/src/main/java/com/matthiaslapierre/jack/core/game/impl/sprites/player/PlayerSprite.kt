@@ -7,6 +7,7 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.Constants
 import com.matthiaslapierre.jack.Constants.PLAYER_FEET_BOTTOM
+import com.matthiaslapierre.jack.Constants.PLAYER_FEET_INSET_X
 import com.matthiaslapierre.jack.Constants.PLAYER_FEET_TOP
 import com.matthiaslapierre.jack.Constants.PLAYER_INITIAL_POSITION
 import com.matthiaslapierre.jack.Constants.PLAYER_INSET_X
@@ -59,10 +60,12 @@ class PlayerSprite(
             || (status == Sprite.Status.STATUS_GAME_OVER && y < screenHeight)) {
             x -= gameStates.playerSpeedX
             y -= gameStates.playerSpeedY
-            if (x > screenWidth) {
-                x = -width
-            } else if(x < -width) {
-                x = screenWidth
+            val minX = (width * PLAYER_INSET_X) - width
+            val maxX = screenWidth - (width * PLAYER_INSET_X)
+            if (x > maxX) {
+                x = minX
+            } else if(x < minX) {
+                x = maxX
             }
             if (y < highestY) {
                 y = highestY
@@ -186,9 +189,9 @@ class PlayerSprite(
      */
     fun getFeetRectF(): RectF = getRectF().run {
         RectF(
-            left + (width * PLAYER_INSET_X),
+            left + (width * PLAYER_FEET_INSET_X),
             bottom - (height * PLAYER_FEET_TOP),
-            right - (width * PLAYER_INSET_X),
+            right - (width * PLAYER_FEET_INSET_X),
             bottom - (height * PLAYER_FEET_BOTTOM)
         )
     }
