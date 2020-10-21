@@ -91,9 +91,15 @@ class GameScreen(
     override fun pause() {
         sensorManager.unregisterListener(this)
         gameLogic.gameProcessor.pause()
+        if (gameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
+            game.getAudio().pause()
+        }
     }
 
     override fun resume() {
+        if (gameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
+            game.getAudio().pause()
+        }
         sensorManager.registerListener(
             this,
             sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -116,6 +122,7 @@ class GameScreen(
             MotionEvent.ACTION_UP -> {
                 if (pauseBtnIsPressed) {
                     togglePauseResume()
+                    (game.getAudio() as SoundManager).playButtonPressedSound()
                 } else if (touchY > getPauseBtnRect().bottom
                     && gameLogic.gameProcessor.getGameStatus() == Sprite.Status.STATUS_NOT_STARTED) {
                     startGame()
@@ -175,6 +182,10 @@ class GameScreen(
 
     override fun onCollectCandies() {
         (game.getAudio() as SoundManager).playCollectCandySound()
+    }
+
+    override fun onGetPowerUp() {
+        (game.getAudio() as SoundManager).playGetPowerUpSound()
     }
 
     override fun onHit() {

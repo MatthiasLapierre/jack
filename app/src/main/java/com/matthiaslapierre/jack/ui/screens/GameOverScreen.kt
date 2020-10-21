@@ -108,6 +108,13 @@ class GameOverScreen(
                 when {
                     replayBtnIsPressed -> replay()
                 }
+                if (replayBtnIsPressed
+                    || facebookBtnIsPressed
+                    || twitterBtnIsPressed
+                    || moreGamesBtnIsPressed
+                    || highScoresBtnIsPressed) {
+                    (game.getAudio() as SoundManager).playButtonPressedSound()
+                }
                 replayBtnIsPressed = false
                 facebookBtnIsPressed = false
                 twitterBtnIsPressed = false

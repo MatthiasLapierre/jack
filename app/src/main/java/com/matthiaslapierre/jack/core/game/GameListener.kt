@@ -23,6 +23,11 @@ interface GameListener {
     fun onCollectCandies()
 
     /**
+     * The user has just gotten power-up.
+     */
+    fun onGetPowerUp()
+
+    /**
      * The main character has just hit an obstacle.
      */
     fun onHit()

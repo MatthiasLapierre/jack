@@ -1,5 +1,6 @@
 package com.matthiaslapierre.jack.ui.screens
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -119,6 +120,15 @@ class MenuScreen(
                     musicBtnIsPressed -> toggleMusic()
                     soundBtnIsPressed -> toggleSound()
                 }
+                if (playBtnIsPressed
+                    || musicBtnIsPressed
+                    || soundBtnIsPressed
+                    || moreGamesBtnIsPressed
+                    || scoreGamesBtnIsPressed
+                    || facebookBtnIsPressed
+                    || twitterBtnIsPressed) {
+                    (game.getAudio() as SoundManager).playButtonPressedSound()
+                }
                 soundBtnIsPressed = false
                 musicBtnIsPressed = false
                 facebookBtnIsPressed = false
@@ -131,7 +141,7 @@ class MenuScreen(
     }
 
     override fun onBackPressed() {
-
+        (game as Activity).finish()
     }
 
     /**

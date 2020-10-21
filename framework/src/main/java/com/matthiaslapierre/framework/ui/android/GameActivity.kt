@@ -54,9 +54,9 @@ abstract class GameActivity : AppCompatActivity(), Game {
 
     override fun onResume() {
         super.onResume()
+        getAudio().resume()
         mScreen.resume()
         mGameView.resume()
-        getAudio().resume()
     }
 
     override fun onPause() {

@@ -5,6 +5,7 @@ import com.matthiaslapierre.jack.Constants
 import com.matthiaslapierre.jack.core.resources.SoundManager
 import com.matthiaslapierre.framework.sounds.Music
 import com.matthiaslapierre.framework.sounds.Sound
+import com.matthiaslapierre.jack.utils.Utils
 
 class JackSoundManager(context: Context): SoundManager(context) {
 
@@ -25,6 +26,9 @@ class JackSoundManager(context: Context): SoundManager(context) {
     private var getBonusPointSound: Sound? = null
     private var getCoinSound: Sound? = null
     private var dieSound: Sound? = null
+    private var getPowerUpSound: Sound? = null
+    private var buttonPressedSound: Sound? = null
+    private var buttonPressed2Sound: Sound? = null
 
     private var currentPowerUpSound: Music? = null
     private var currentMusic: Music? = null
@@ -32,11 +36,14 @@ class JackSoundManager(context: Context): SoundManager(context) {
     override fun load() {
         getCoinSound = createSound("sounds/get_coin.mp3")
         dieSound = createSound("sounds/die.mp3")
-        jumpSound = createSound("sounds/jump.wav")
+        jumpSound = createSound("sounds/jump.mp3")
         destroyEnemySound = createSound("sounds/destroy_enemy.mp3")
         hitSound = createSound("sounds/hit.ogg")
         rocketSound = createMusic("sounds/rocket.mp3")
         copterSound = createMusic("sounds/copter.mp3")
+        getPowerUpSound = createSound("sounds/power_up.mp3")
+        buttonPressedSound = createSound("sounds/ui.mp3")
+        buttonPressed2Sound = createSound("sounds/ui2.mp3")
 
         menuMusic = createMusic("musics/soundtrack.mp3")
         gameMusic = createMusic("musics/game.mp3")
@@ -88,6 +95,23 @@ class JackSoundManager(context: Context): SoundManager(context) {
     override fun playCopterFlightSound() {
         if(soundEnabled) {
             playPowerUpSound(copterSound)
+        }
+    }
+
+    override fun playGetPowerUpSound() {
+        if (soundEnabled) {
+            getPowerUpSound?.play(soundVolume)
+        }
+    }
+
+    override fun playButtonPressedSound() {
+        if (soundEnabled) {
+            val random = Utils.getRandomInt(1, 3)
+            if (random == 1) {
+                buttonPressedSound?.play(soundVolume)
+            } else {
+                buttonPressed2Sound?.play(soundVolume)
+            }
         }
     }
 

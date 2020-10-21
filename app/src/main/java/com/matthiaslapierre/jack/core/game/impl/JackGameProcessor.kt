@@ -73,12 +73,16 @@ internal class JackGameProcessor(
     }
 
     override fun resume() {
-        gameStates.currentStatus = Sprite.Status.STATUS_PLAY
+        if (gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
+            gameStates.currentStatus = Sprite.Status.STATUS_PLAY
+        }
     }
 
     override fun pause() {
-        gameStates.currentStatus = Sprite.Status.STATUS_PAUSE
-        stopPowerUpTimers()
+        if (gameStates.currentStatus == Sprite.Status.STATUS_PLAY) {
+            gameStates.currentStatus = Sprite.Status.STATUS_PAUSE
+            stopPowerUpTimers()
+        }
     }
 
     override fun dispose() {
@@ -164,6 +168,7 @@ internal class JackGameProcessor(
      * Enables a power-up. Updates timers.
      */
     private fun addPowerUp(powerUp: Int) {
+        gameListener?.onGetPowerUp()
         gameStates.addPowerUp(powerUp)
         val timer = when (powerUp) {
             GameStates.POWER_UP_ROCKET -> {

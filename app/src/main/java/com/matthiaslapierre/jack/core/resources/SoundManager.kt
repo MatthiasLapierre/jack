@@ -51,6 +51,16 @@ abstract class SoundManager(
     abstract fun playCopterFlightSound()
 
     /**
+     * Plays magic sound after getting power-up.
+     */
+    abstract fun playGetPowerUpSound()
+
+    /**
+     * Plays magic sound after pressing button.
+     */
+    abstract fun playButtonPressedSound()
+
+    /**
      * Plays the menu theme music.
      */
     abstract fun playMenuMusic()
