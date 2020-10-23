@@ -90,7 +90,9 @@ class GameScreen(
 
     override fun pause() {
         sensorManager.unregisterListener(this)
+        // Pause the game logic.
         gameLogic.gameProcessor.pause()
+        // Pause the music.
         if (gameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
             game.getAudio().pause()
         }
@@ -98,6 +100,7 @@ class GameScreen(
 
     override fun resume() {
         if (gameLogic.gameStates.currentStatus == Sprite.Status.STATUS_PAUSE) {
+            // If the game is paused, pauses the music.
             game.getAudio().pause()
         }
         sensorManager.registerListener(

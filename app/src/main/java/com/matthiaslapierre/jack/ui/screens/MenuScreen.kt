@@ -11,8 +11,10 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.jack.JackApp
+import com.matthiaslapierre.jack.R
 import com.matthiaslapierre.jack.core.resources.SoundManager
 import com.matthiaslapierre.jack.core.settings.Settings
+import com.matthiaslapierre.jack.utils.Utils
 
 /**
  * Shows the menu.
@@ -119,6 +121,9 @@ class MenuScreen(
                     playBtnIsPressed -> playGame()
                     musicBtnIsPressed -> toggleMusic()
                     soundBtnIsPressed -> toggleSound()
+                    facebookBtnIsPressed -> shareFacebook()
+                    twitterBtnIsPressed -> shareTwitter()
+                    moreGamesBtnIsPressed -> showMoreGames()
                 }
                 if (playBtnIsPressed
                     || musicBtnIsPressed
@@ -165,6 +170,36 @@ class MenuScreen(
     private fun toggleSound() {
         settings.soundEnabled = !settings.soundEnabled
         (game.getAudio() as SoundManager).enableSounds(settings.soundEnabled)
+    }
+
+    /**
+     * Shares on Facebook.
+     */
+    private fun shareFacebook() {
+        val activity = (game as Activity)
+        val text = activity.getString(R.string.share_text)
+        val url = activity.getString(R.string.share_url)
+        Utils.shareFacebook(activity, text, url)
+    }
+
+    /**
+     * Shares on Twitter.
+     */
+    private fun shareTwitter() {
+        val activity = (game as Activity)
+        val text = activity.getString(R.string.share_text)
+        val url = activity.getString(R.string.share_url)
+        val hashTags = activity.getString(R.string.share_hash_tags)
+        Utils.shareTwitter(activity, text, url, null, hashTags)
+    }
+
+    /**
+     * Shows more games from the author.
+     */
+    private fun showMoreGames() {
+        val activity = (game as Activity)
+        val url = activity.getString(R.string.url_more_games)
+        Utils.openUrl(activity, url)
     }
 
     /**

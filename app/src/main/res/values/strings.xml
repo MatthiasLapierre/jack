@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">Jack O\'Lantern</string>
+    <string name="app_name">Jumper Jack</string>
 
-    <string name="loading_game">LOADING GAME&#8230;</string>
+    <string name="share_text">Jumper Jack - Help Jack-o\'-lantern to collect many candies as many as possible. Watch out for obstacles and especially the dangerous Spike.</string>
+    <string name="share_url">https://matthiaslapierre.github.io/jack</string>
+    <string name="share_hash_tags">#JumperJack #Halloween #Game</string>
+
+    <string name="url_more_games">https://matthiaslapierre.github.io</string>
 </resources>

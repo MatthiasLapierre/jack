@@ -1,5 +1,6 @@
 package com.matthiaslapierre.jack.ui.screens
 
+import android.app.Activity
 import android.graphics.*
 import android.view.MotionEvent
 import com.matthiaslapierre.jack.core.resources.ResourceManager
@@ -7,6 +8,7 @@ import com.matthiaslapierre.jack.core.resources.SoundManager
 import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
+import com.matthiaslapierre.jack.R
 import com.matthiaslapierre.jack.utils.Utils
 
 class GameOverScreen(
@@ -107,6 +109,9 @@ class GameOverScreen(
             MotionEvent.ACTION_UP -> {
                 when {
                     replayBtnIsPressed -> replay()
+                    facebookBtnIsPressed -> shareFacebook()
+                    twitterBtnIsPressed -> shareTwitter()
+                    moreGamesBtnIsPressed -> showMoreGames()
                 }
                 if (replayBtnIsPressed
                     || facebookBtnIsPressed
@@ -128,11 +133,47 @@ class GameOverScreen(
         replay()
     }
 
+    /**
+     * Returns to the game scene.
+     */
     private fun replay() {
         (game.getAudio() as SoundManager).playMenuMusic()
         game.setScreen(GameScreen(game))
     }
 
+    /**
+     * Shares on Facebook.
+     */
+    private fun shareFacebook() {
+        val activity = (game as Activity)
+        val text = activity.getString(R.string.share_text)
+        val url = activity.getString(R.string.share_url)
+        Utils.shareFacebook(activity, text, url)
+    }
+
+    /**
+     * Shares on Twitter.
+     */
+    private fun shareTwitter() {
+        val activity = (game as Activity)
+        val text = activity.getString(R.string.share_text)
+        val url = activity.getString(R.string.share_url)
+        val hashTags = activity.getString(R.string.share_hash_tags)
+        Utils.shareTwitter(activity, text, url, null, hashTags)
+    }
+
+    /**
+     * Shows more games from the author.
+     */
+    private fun showMoreGames() {
+        val activity = (game as Activity)
+        val url = activity.getString(R.string.url_more_games)
+        Utils.openUrl(activity, url)
+    }
+
+    /**
+     * Gets locations of the subviews.
+     */
     private fun computeDrawingRects(screenWidth: Int, screenHeight: Int) {
         val windowWidth = (screenWidth * WINDOW_WIDTH).toInt()
         val windowHeight = (windowWidth * windowImage!!.height / windowImage!!.width.toFloat()).toInt()
@@ -225,6 +266,9 @@ class GameOverScreen(
 
     }
 
+    /**
+     * Draws the background image (a screenshot of the game scene).
+     */
     private fun drawBackground(canvas: Canvas, globalPaint: Paint) {
         if (!screenShotBitmap.isRecycled) {
             canvas.drawBitmap(screenShotBitmap, 0f, 0f, globalPaint)
@@ -232,6 +276,9 @@ class GameOverScreen(
         canvas.drawARGB(150,0,0,0)
     }
 
+    /**
+     * Draws the window background with the last score and the high score.
+     */
     private fun drawWindow(canvas: Canvas, globalPaint: Paint) {
         canvas.drawBitmap(
             windowImage!!.bitmap,
@@ -268,6 +315,9 @@ class GameOverScreen(
         }
     }
 
+    /**
+     * Draws the replay button.
+     */
     private fun drawReplayBtn(canvas: Canvas, globalPaint: Paint) {
         canvas.drawBitmap(
             replayBtnImage!!.bitmap,
@@ -277,6 +327,9 @@ class GameOverScreen(
         )
     }
 
+    /**
+     * Draws footer buttons.
+     */
     private fun drawFooterBtns(canvas: Canvas, globalPaint: Paint) {
         canvas.drawBitmap(
             moreGamesBtnImage!!.bitmap,
@@ -307,6 +360,9 @@ class GameOverScreen(
         )
     }
 
+    /**
+     * Checks if a specified location is pressed.
+     */
     private fun btnIsPressed(rect: Rect?, touchX: Int, touchY: Int): Boolean =
         rect != null && rect.contains(touchX, touchY)
 
