@@ -1,10 +1,7 @@
 package com.matthiaslapierre.jack.ui.screens
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import com.matthiaslapierre.framework.ui.Game
@@ -47,7 +44,6 @@ class SplashScreen(
     override fun paint(canvas: Canvas, globalPaint: Paint) {
         val context = game as Context
         drawBackground(context, canvas)
-        //drawLoadingText(context, graphics)
         drawnOnce = true
     }
 
@@ -72,20 +68,22 @@ class SplashScreen(
     }
 
     /**
-     * Draw the loading background image.
+     * Draws the loading background image.
      */
     private fun drawBackground(context: Context, canvas: Canvas) {
-        val bgLoadingDrawable = ContextCompat.getDrawable(context, R.drawable.bg_jump)!!
+        canvas.drawColor(ContextCompat.getColor(context, R.color.colorSplash))
+        val bgLoadingDrawable = ContextCompat.getDrawable(context, R.drawable.bg_splash)!!
         val screenWidth = canvas.width
         val screenHeight = canvas.height
         val originalHeight = bgLoadingDrawable.intrinsicHeight
         val scale = screenWidth / bgLoadingDrawable.intrinsicWidth.toFloat()
         val finalHeight = (originalHeight * scale).toInt()
+        val y = ((screenHeight - finalHeight) / 2f).toInt()
         bgLoadingDrawable.bounds = Rect(
             0,
-            screenHeight - finalHeight,
+            y,
             screenWidth,
-            screenHeight
+            y + finalHeight
         )
         bgLoadingDrawable.draw(canvas)
     }
