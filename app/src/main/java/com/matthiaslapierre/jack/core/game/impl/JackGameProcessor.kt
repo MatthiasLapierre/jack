@@ -241,18 +241,18 @@ internal class JackGameProcessor(
                         sprite.bounce()
                     }
                     is BatSprite -> {
-                        if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)
+                        if (sprite.blowOnTheHead(playerSprite)) {
+                            // The player jumped on the head of the bat.
+                            // Destroy the bat.
+                            sprite.destroy()
+                            gameStates.jump()
+                            gameListener?.onDestroyEnemy()
+                        } else if (gameStates.powerUp.hasFlag(GameStates.POWER_UP_ARMORED)
                             || gameStates.powerUp.hasFlag(GameStates.POWER_UP_ROCKET)) {
                             // Power-ups will be lost if damage is taken.
                             sprite.destroy()
                             // Destroy the enemy.
                             gameStates.removeAllPowerUps()
-                            gameListener?.onDestroyEnemy()
-                        } else if (sprite.blowOnTheHead(playerSprite)) {
-                            // The player jumped on the head of the bat.
-                            // Destroy the bat.
-                            sprite.destroy()
-                            gameStates.jump()
                             gameListener?.onDestroyEnemy()
                         } else {
                             // Game Over.
