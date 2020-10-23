@@ -19,14 +19,17 @@ import com.matthiaslapierre.framework.sounds.android.AndroidAudio
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 
+/**
+ * Game parent Activity.
+ */
 abstract class GameActivity : AppCompatActivity(), Game {
 
-    private lateinit var mGameView: GameView
-    private lateinit var mAudio: Audio
-    private lateinit var mGameResources: GameResources
-    private lateinit var mTypefaces: Typefaces
-    private lateinit var mFileIO: FileIO
-    private lateinit var mScreen: Screen
+    private lateinit var gameView: GameView
+    private lateinit var audio: Audio
+    private lateinit var gameResources: GameResources
+    private lateinit var typefaces: Typefaces
+    private lateinit var fileIO: FileIO
+    private lateinit var currentScreen: Screen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,33 +46,33 @@ abstract class GameActivity : AppCompatActivity(), Game {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        mScreen = getInitScreen()
-        mGameView = GameView(applicationContext, this)
-        mFileIO = AndroidFileIO(this)
-        mAudio = AndroidAudio(this)
-        mGameResources = AndroidGameResources()
-        mTypefaces = AndroidTypefaces()
-        setContentView(mGameView)
+        currentScreen = getInitScreen()
+        gameView = GameView(applicationContext, this)
+        fileIO = AndroidFileIO(this)
+        audio = AndroidAudio(this)
+        gameResources = AndroidGameResources()
+        typefaces = AndroidTypefaces()
+        setContentView(gameView)
     }
 
     override fun onResume() {
         super.onResume()
         getAudio().resume()
-        mScreen.resume()
-        mGameView.resume()
+        currentScreen.resume()
+        gameView.resume()
     }
 
     override fun onPause() {
-        mGameView.pause()
-        mScreen.pause()
+        gameView.pause()
+        currentScreen.pause()
         getAudio().pause()
         super.onPause()
     }
 
     override fun onDestroy() {
-        mScreen.dispose()
-        mAudio.dispose()
-        mGameResources.dispose()
+        currentScreen.dispose()
+        audio.dispose()
+        gameResources.dispose()
         super.onDestroy()
     }
 
@@ -77,27 +80,27 @@ abstract class GameActivity : AppCompatActivity(), Game {
         getCurrentScreen().onBackPressed()
     }
 
-    override fun getAudio(): Audio = mAudio
+    override fun getAudio(): Audio = audio
 
-    override fun getGameResources(): GameResources = mGameResources
+    override fun getGameResources(): GameResources = gameResources
 
-    override fun getTypefaces(): Typefaces = mTypefaces
+    override fun getTypefaces(): Typefaces = typefaces
 
-    override fun getFileIO(): FileIO = mFileIO
+    override fun getFileIO(): FileIO = fileIO
 
-    override fun getCurrentScreen(): Screen = mScreen
+    override fun getCurrentScreen(): Screen = currentScreen
 
-    override fun getInitScreen(): Screen = mScreen
+    override fun getInitScreen(): Screen = currentScreen
 
     override fun setScreen(screen: Screen) {
-        val previousScreen = mScreen
+        val previousScreen = currentScreen
         previousScreen.pause()
         screen.resume()
         screen.update()
-        this.mScreen = screen
+        this.currentScreen = screen
         previousScreen.dispose()
     }
 
-    override fun takeScreenShot(): Bitmap = mGameView.capture()
+    override fun takeScreenShot(): Bitmap = gameView.capture()
 
 }

@@ -11,13 +11,16 @@ import com.matthiaslapierre.framework.sounds.Audio
 import com.matthiaslapierre.framework.sounds.Music
 import com.matthiaslapierre.framework.sounds.Sound
 import java.io.IOException
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 open class AndroidAudio(
     context: Context
 ) : Audio {
 
-    private val mAssets: AssetManager = context.assets
-    private val mSoundPool: SoundPool = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    private val executor: Executor = Executors.newFixedThreadPool(2)
+    private val assets: AssetManager = context.assets
+    private val soundPool: SoundPool = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         val audioAttributes = AudioAttributes
             .Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
@@ -53,7 +56,7 @@ open class AndroidAudio(
 
     override fun createMusic(file: String): Music {
         return try {
-            val assetDescriptor = mAssets.openFd(file)
+            val assetDescriptor = assets.openFd(file)
             AndroidMusic(assetDescriptor)
         } catch (e: IOException) {
             throw RuntimeException("Couldn't load music '$file'")
@@ -62,9 +65,9 @@ open class AndroidAudio(
 
     override fun createSound(file: String): Sound {
         return try {
-            val assetDescriptor = mAssets.openFd(file)
-            val soundId = mSoundPool.load(assetDescriptor, 0)
-            AndroidSound(mSoundPool, soundId)
+            val assetDescriptor = assets.openFd(file)
+            val soundId = soundPool.load(assetDescriptor, 0)
+            AndroidSound(soundPool, soundId, executor)
         } catch (e: IOException) {
             throw RuntimeException("Couldn't load sound '$file'")
         }

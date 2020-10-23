@@ -42,7 +42,7 @@ class MenuScreen(
     private var logoDstRect: Rect? = null
     private var playBtnDstRect: Rect? = null
     private var moreGamesBtnDstRect: Rect? = null
-    private var scoreBtnDstRect: Rect? = null
+    private var aboutMeBtnDstRect: Rect? = null
 
     // Images to display.
     private var soundBtnImage: Image? = null
@@ -53,7 +53,7 @@ class MenuScreen(
     private var logoImage: Image? = null
     private var playBtnImage: Image? = null
     private var moreGamesBtnImage: Image? = null
-    private var scoreBtnImage: Image? = null
+    private var aboutMeBtnImage: Image? = null
 
     // Determines which button has been pressed.
     private var soundBtnIsPressed: Boolean = false
@@ -62,7 +62,7 @@ class MenuScreen(
     private var twitterBtnIsPressed: Boolean = false
     private var playBtnIsPressed: Boolean = false
     private var moreGamesBtnIsPressed: Boolean = false
-    private var scoreGamesBtnIsPressed: Boolean = false
+    private var aboutMeBtnIsPressed: Boolean = false
 
     override fun update() {
         val resourceManager = (game.getGameResources() as ResourceManager)
@@ -78,7 +78,7 @@ class MenuScreen(
             resourceManager.btnPlay
         moreGamesBtnImage = if(moreGamesBtnIsPressed) resourceManager.btnMoreGamesPressed else
             resourceManager.btnMoreGames
-        scoreBtnImage = if(scoreGamesBtnIsPressed) resourceManager.btnScoresPressed else
+        aboutMeBtnImage = if(aboutMeBtnIsPressed) resourceManager.btnScoresPressed else
             resourceManager.btnScores
     }
 
@@ -114,7 +114,7 @@ class MenuScreen(
                 twitterBtnIsPressed = btnIsPressed(twitterBtnDstRect, touchX, touchY)
                 playBtnIsPressed = btnIsPressed(playBtnDstRect, touchX, touchY)
                 moreGamesBtnIsPressed = btnIsPressed(moreGamesBtnDstRect, touchX, touchY)
-                scoreGamesBtnIsPressed = btnIsPressed(scoreBtnDstRect, touchX, touchY)
+                aboutMeBtnIsPressed = btnIsPressed(aboutMeBtnDstRect, touchX, touchY)
             }
             MotionEvent.ACTION_UP -> {
                 when {
@@ -124,12 +124,13 @@ class MenuScreen(
                     facebookBtnIsPressed -> shareFacebook()
                     twitterBtnIsPressed -> shareTwitter()
                     moreGamesBtnIsPressed -> showMoreGames()
+                    aboutMeBtnIsPressed -> showMyLinkedInProfile()
                 }
                 if (playBtnIsPressed
                     || musicBtnIsPressed
                     || soundBtnIsPressed
                     || moreGamesBtnIsPressed
-                    || scoreGamesBtnIsPressed
+                    || aboutMeBtnIsPressed
                     || facebookBtnIsPressed
                     || twitterBtnIsPressed) {
                     (game.getAudio() as SoundManager).playButtonPressedSound()
@@ -140,7 +141,7 @@ class MenuScreen(
                 twitterBtnIsPressed = false
                 playBtnIsPressed = false
                 moreGamesBtnIsPressed = false
-                scoreGamesBtnIsPressed = false
+                aboutMeBtnIsPressed = false
             }
         }
     }
@@ -203,6 +204,15 @@ class MenuScreen(
     }
 
     /**
+     * Shows my LinkedIn profile.
+     */
+    private fun showMyLinkedInProfile() {
+        val activity = (game as Activity)
+        val url = activity.getString(R.string.url_about_me)
+        Utils.openUrl(activity, url)
+    }
+
+    /**
      * Gets coordinates of the views.
      */
     private fun computeDrawingRects(screenWidth: Int, screenHeight: Int) {
@@ -215,7 +225,7 @@ class MenuScreen(
         val primaryBtnWidth = (screenWidth * PRIMARY_BTN_WIDTH).toInt()
         val primaryBtnHeight = (primaryBtnWidth * playBtnImage!!.height / playBtnImage!!.width.toFloat()).toInt()
         val secondaryBtnWidth = (screenWidth * SECONDARY_BTN_WIDTH).toInt()
-        val secondaryBtnHeight = (screenWidth * SECONDARY_BTN_WIDTH * scoreBtnImage!!.height / scoreBtnImage!!.width.toFloat()).toInt()
+        val secondaryBtnHeight = (screenWidth * SECONDARY_BTN_WIDTH * aboutMeBtnImage!!.height / aboutMeBtnImage!!.width.toFloat()).toInt()
         val ternaryBtnWidth = (screenWidth * TERNARY_BTN_WIDTH).toInt()
         val ternaryBtnHeight = ternaryBtnWidth * soundBtnImage!!.height / soundBtnImage!!.width
         val ternaryBtnSpace = (ternaryBtnWidth * .1f).toInt()
@@ -285,7 +295,7 @@ class MenuScreen(
         )
 
         x = ((screenWidth + (secondaryBtnWidth)) / 2f).toInt()
-        scoreBtnDstRect = Rect(
+        aboutMeBtnDstRect = Rect(
             x,
             y,
             x + secondaryBtnWidth,
@@ -383,8 +393,8 @@ class MenuScreen(
         drawImage(
             canvas,
             globalPaint,
-            scoreBtnImage!!,
-            scoreBtnDstRect!!
+            aboutMeBtnImage!!,
+            aboutMeBtnDstRect!!
         )
     }
 

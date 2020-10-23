@@ -2,16 +2,18 @@ package com.matthiaslapierre.framework.sounds.android
 
 import android.media.SoundPool
 import com.matthiaslapierre.framework.sounds.Sound
+import java.util.concurrent.Executor
 
 open class AndroidSound(
-    var soundPool: SoundPool,
-    var soundId: Int
+    private val soundPool: SoundPool,
+    private val soundId: Int,
+    private val executor: Executor
 ): Sound {
 
     override fun play(volume: Float) {
-        Thread(Runnable {
+        executor.execute {
             soundPool.play(soundId, volume, volume, 0, 0, 1f)
-        }).start()
+        }
     }
 
     override fun dispose() {

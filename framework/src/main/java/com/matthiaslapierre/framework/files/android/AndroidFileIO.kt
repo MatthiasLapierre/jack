@@ -12,6 +12,12 @@ class AndroidFileIO(
 
     private val assets: AssetManager = mContext.assets
 
+    override val preferences: SharedPreferences
+        get() = mContext.getSharedPreferences(
+            mContext.packageName+ "_preferences",
+            Context.MODE_PRIVATE
+        )
+
     @Throws(IOException::class)
     override fun readAsset(fileName: String): InputStream {
         return assets.open(fileName)
@@ -27,9 +33,4 @@ class AndroidFileIO(
         return FileOutputStream(File(mContext.filesDir, fileName))
     }
 
-    override val preferences: SharedPreferences
-        get() = mContext.getSharedPreferences(
-            mContext.packageName+ "_preferences",
-            Context.MODE_PRIVATE
-        )
 }

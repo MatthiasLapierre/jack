@@ -11,6 +11,9 @@ import com.matthiaslapierre.framework.BuildConfig
 import com.matthiaslapierre.framework.FrameworkConstants
 import com.matthiaslapierre.framework.ui.Game
 
+/**
+ * [android.view.SurfaceView] showing the game screens.
+ */
 class GameView(
     context: Context,
     private var game: Game
@@ -20,12 +23,19 @@ class GameView(
         private const val TAG = "GameView"
     }
 
-    private val mGlobalPaint: Paint by lazy {
+    private val globalPaint: Paint by lazy {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint
     }
-    private var mRenderThread: Thread? = null
-    private var mIsRunning: Boolean = true
+    /**
+     * The game loop.
+     */
+    private var renderThread: Thread? = null
+
+    /**
+     * false if the game is paused.
+     */
+    private var isRunning: Boolean = true
 
     init {
         keepScreenOn = true
@@ -38,7 +48,7 @@ class GameView(
 
     override fun run() {
         while (!Thread.interrupted()) {
-            if(!mIsRunning) continue
+            if(!isRunning) continue
 
             val startTime = System.currentTimeMillis()
 
@@ -48,7 +58,7 @@ class GameView(
             try {
                 cleanCanvas(canvas)
 
-                game.getCurrentScreen().paint(canvas, mGlobalPaint)
+                game.getCurrentScreen().paint(canvas, globalPaint)
             } finally {
                 holder.unlockCanvasAndPost(canvas)
             }
@@ -89,7 +99,7 @@ class GameView(
     }
 
     override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
-       mIsRunning = hasWindowFocus
+       isRunning = hasWindowFocus
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -99,36 +109,51 @@ class GameView(
         return true
     }
 
+    /**
+     * Resumes the game.
+     */
     fun resume() {
-        mIsRunning = true
+        isRunning = true
     }
 
+    /**
+     * Pauses the game.
+     */
     fun pause() {
-        mIsRunning = false
+        isRunning = false
     }
 
+    /**
+     * Takes a screenshot of the current scene.
+     */
     fun capture(): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
         val frameCanvas = Canvas(bitmap)
-        game.getCurrentScreen().paint(frameCanvas, mGlobalPaint)
+        game.getCurrentScreen().paint(frameCanvas, globalPaint)
         return bitmap
 
     }
 
+    /**
+     * Starts the game loop.
+     */
     private fun startGameThread() {
         stopGameThread()
-        mRenderThread = Thread(this)
-        mRenderThread!!.start()
+        renderThread = Thread(this)
+        renderThread!!.start()
     }
 
+    /**
+     * Stops the game loop.
+     */
     private fun stopGameThread() {
-        mRenderThread?.interrupt()
+        renderThread?.interrupt()
         try {
-            mRenderThread?.join()
+            renderThread?.join()
         } catch (e: InterruptedException) {
             Log.e(TAG, "Failed to interrupt the drawing thread")
         }
-        mRenderThread = null
+        renderThread = null
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.matthiaslapierre.framework.ui.android
+package com.matthiaslapierre.framework.resources.impl
 
 import android.graphics.Bitmap
 import android.graphics.Rect

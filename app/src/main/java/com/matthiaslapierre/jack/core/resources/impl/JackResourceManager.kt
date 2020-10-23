@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.BitmapFactory
 import com.matthiaslapierre.framework.resources.Image
-import com.matthiaslapierre.framework.ui.android.AndroidImage
+import com.matthiaslapierre.framework.resources.impl.AndroidImage
 import com.matthiaslapierre.jack.core.JumpPlatformState
 import com.matthiaslapierre.jack.core.PlayerState
 import com.matthiaslapierre.jack.core.resources.ResourceManager
@@ -287,7 +287,9 @@ class JackResourceManager(
             }
         }
         return if(bitmapResult.isSuccess) {
-            AndroidImage(bitmapResult.getOrNull()!!)
+            AndroidImage(
+                bitmapResult.getOrNull()!!
+            )
         } else {
             null
         }

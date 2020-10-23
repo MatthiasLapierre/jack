@@ -19,21 +19,21 @@ class GameOverScreen(
 ): Screen(game) {
 
     companion object {
-        private const val WINDOW_WIDTH = 0.90f
+        private const val WINDOW_MAX_WIDTH = 0.90f
         private const val PRIMARY_BTN_WIDTH = 0.5f
         private const val PRIMARY_BTN_MARGIN_TOP = 0.04f
         private const val SECONDARY_BTN_WIDTH = 0.20f
         private const val SECONDARY_BTN_SPACE = 0.02f
         private const val SECONDARY_BTN_BOTTOM = 0.05f
         private const val SCORE_DIGITS_HEIGHT = 0.1f
-        private const val LAST_SCORE_Y = .56f
-        private const val HIGH_SCORE_Y = .783f
+        private const val LAST_SCORE_Y = .55f
+        private const val HIGH_SCORE_Y = .775f
     }
 
     private var windowImage: Image? = null
     private var replayBtnImage: Image? = null
     private var moreGamesBtnImage: Image? = null
-    private var highScoresBtnImage: Image? = null
+    private var aboutMeBtnImage: Image? = null
     private var facebookBtnImage: Image? = null
     private var twitterBtnImage: Image? = null
     private var lastScoreBitmap: Bitmap? = null
@@ -43,14 +43,14 @@ class GameOverScreen(
     private var twitterBtnIsPressed: Boolean = false
     private var replayBtnIsPressed: Boolean = false
     private var moreGamesBtnIsPressed: Boolean = false
-    private var highScoresBtnIsPressed: Boolean = false
+    private var aboutMeBtnIsPressed: Boolean = false
 
     private var windowDstRect: Rect? = null
     private var replayBtnDstRect: Rect? = null
     private var facebookBtnDstRect: Rect? = null
     private var twitterBtnDstRect: Rect? = null
     private var moreGamesBtnDstRect: Rect? = null
-    private var highScoresBtnDstRect: Rect? = null
+    private var aboutMeBtnDstRect: Rect? = null
     private var lastScoreDstRect: Rect? = null
     private var highScoreDstRect: Rect? = null
 
@@ -65,7 +65,7 @@ class GameOverScreen(
             resourceManager.btnReplay
         moreGamesBtnImage = if(moreGamesBtnIsPressed) resourceManager.btnMoreGamesPressed else
             resourceManager.btnMoreGames
-        highScoresBtnImage = if(highScoresBtnIsPressed) resourceManager.btnScoresPressed else
+        aboutMeBtnImage = if(aboutMeBtnIsPressed) resourceManager.btnScoresPressed else
             resourceManager.btnScores
         lastScoreBitmap = Utils.generateScoreBitmap(resourceManager, lastScore)
         highScoreBitmap = Utils.generateScoreBitmap(resourceManager, highScore)
@@ -104,7 +104,7 @@ class GameOverScreen(
                 facebookBtnIsPressed = btnIsPressed(facebookBtnDstRect, touchX, touchY)
                 twitterBtnIsPressed = btnIsPressed(twitterBtnDstRect, touchX, touchY)
                 moreGamesBtnIsPressed = btnIsPressed(moreGamesBtnDstRect, touchX, touchY)
-                highScoresBtnIsPressed = btnIsPressed(highScoresBtnDstRect, touchX, touchY)
+                aboutMeBtnIsPressed = btnIsPressed(aboutMeBtnDstRect, touchX, touchY)
             }
             MotionEvent.ACTION_UP -> {
                 when {
@@ -112,19 +112,20 @@ class GameOverScreen(
                     facebookBtnIsPressed -> shareFacebook()
                     twitterBtnIsPressed -> shareTwitter()
                     moreGamesBtnIsPressed -> showMoreGames()
+                    aboutMeBtnIsPressed -> showMyLinkedInProfile()
                 }
                 if (replayBtnIsPressed
                     || facebookBtnIsPressed
                     || twitterBtnIsPressed
                     || moreGamesBtnIsPressed
-                    || highScoresBtnIsPressed) {
+                    || aboutMeBtnIsPressed) {
                     (game.getAudio() as SoundManager).playButtonPressedSound()
                 }
                 replayBtnIsPressed = false
                 facebookBtnIsPressed = false
                 twitterBtnIsPressed = false
                 moreGamesBtnIsPressed = false
-                highScoresBtnIsPressed = false
+                aboutMeBtnIsPressed = false
             }
         }
     }
@@ -172,11 +173,20 @@ class GameOverScreen(
     }
 
     /**
+     * Shows my LinkedIn profile.
+     */
+    private fun showMyLinkedInProfile() {
+        val activity = (game as Activity)
+        val url = activity.getString(R.string.url_about_me)
+        Utils.openUrl(activity, url)
+    }
+
+    /**
      * Gets locations of the subviews.
      */
     private fun computeDrawingRects(screenWidth: Int, screenHeight: Int) {
-        val windowWidth = (screenWidth * WINDOW_WIDTH).toInt()
-        val windowHeight = (windowWidth * windowImage!!.height / windowImage!!.width.toFloat()).toInt()
+        var windowWidth = (screenWidth * WINDOW_MAX_WIDTH).toInt()
+        var windowHeight = (windowWidth * windowImage!!.height / windowImage!!.width.toFloat()).toInt()
 
         val primaryBtnWidth = (screenWidth * PRIMARY_BTN_WIDTH).toInt()
         val primaryBtnHeight = (primaryBtnWidth * replayBtnImage!!.height / replayBtnImage!!.width.toFloat()).toInt()
@@ -186,6 +196,12 @@ class GameOverScreen(
         val secondaryBtnHeight = (secondaryBtnWidth * facebookBtnImage!!.height / facebookBtnImage!!.width.toFloat()).toInt()
         val secondaryBtnSpace = (screenWidth * SECONDARY_BTN_SPACE).toInt()
         val secondaryBtnBottom = (screenWidth * SECONDARY_BTN_BOTTOM).toInt()
+
+        val maxWindowHeight = screenHeight - (secondaryBtnBottom + secondaryBtnHeight + primaryBtnMarginTop + primaryBtnHeight)
+        if (windowHeight > maxWindowHeight) {
+            windowHeight = (maxWindowHeight * .9f).toInt()
+            windowWidth = (windowHeight * windowImage!!.width / windowImage!!.height.toFloat()).toInt()
+        }
 
         val footerX = ((screenWidth - ((secondaryBtnWidth * 4) + (secondaryBtnSpace * 4))) / 2f).toInt()
         val footerY = screenHeight - secondaryBtnBottom - secondaryBtnHeight
@@ -197,7 +213,7 @@ class GameOverScreen(
             footerY + secondaryBtnHeight
         )
         secondaryBtnX += secondaryBtnWidth + secondaryBtnSpace
-        highScoresBtnDstRect = Rect(
+        aboutMeBtnDstRect = Rect(
             secondaryBtnX,
             footerY,
             secondaryBtnX + secondaryBtnWidth,
@@ -231,7 +247,7 @@ class GameOverScreen(
 
 
         if (lastScoreBitmap != null && highScoreBitmap != null) {
-            val scoreHeight = (screenWidth * SCORE_DIGITS_HEIGHT).toInt()
+            val scoreHeight = (windowHeight * SCORE_DIGITS_HEIGHT).toInt()
             val lastScoreWidth =
                 (scoreHeight * lastScoreBitmap!!.width / lastScoreBitmap!!.height.toFloat()).toInt()
             val lastScoreX = ((screenWidth - lastScoreWidth) / 2f).toInt()
@@ -339,9 +355,9 @@ class GameOverScreen(
         )
 
         canvas.drawBitmap(
-            highScoresBtnImage!!.bitmap,
-            highScoresBtnImage!!.rect,
-            highScoresBtnDstRect!!,
+            aboutMeBtnImage!!.bitmap,
+            aboutMeBtnImage!!.rect,
+            aboutMeBtnDstRect!!,
             globalPaint
         )
 

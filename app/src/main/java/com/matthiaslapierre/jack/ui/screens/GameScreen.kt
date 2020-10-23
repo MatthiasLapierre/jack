@@ -180,6 +180,7 @@ class GameScreen(
     }
 
     override fun onDie() {
+        (game.getAudio() as SoundManager).stopFlightSound()
         (game.getAudio() as SoundManager).playDieSound()
     }
 

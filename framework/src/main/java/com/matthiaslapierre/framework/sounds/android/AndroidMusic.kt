@@ -10,8 +10,7 @@ class AndroidMusic(
     assetDescriptor: AssetFileDescriptor
 ) : Music, OnCompletionListener, OnPreparedListener {
 
-    private var mIsPrepared = false
-
+    private var isPrepared = false
     private val mediaPlayer: MediaPlayer = MediaPlayer().apply {
         try {
             setDataSource(
@@ -20,7 +19,7 @@ class AndroidMusic(
                 assetDescriptor.length
             )
             prepare()
-            mIsPrepared = true
+            isPrepared = true
             isLooping = true
             setOnCompletionListener(this@AndroidMusic)
             setOnPreparedListener(this@AndroidMusic)
@@ -57,7 +56,7 @@ class AndroidMusic(
     override fun play() {
         if (mediaPlayer.isPlaying) return
         try {
-            if (!mIsPrepared) {
+            if (!isPrepared) {
                 mediaPlayer.prepare()
             }
             mediaPlayer.start()
@@ -75,18 +74,18 @@ class AndroidMusic(
     override fun stop() {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.stop()
-            mIsPrepared = false
+            isPrepared = false
         }
     }
 
     override fun onCompletion(player: MediaPlayer) {
         synchronized(this) {
-            mIsPrepared = false
+            isPrepared = false
         }
     }
 
     override fun onPrepared(player: MediaPlayer) {
-        mIsPrepared = true
+        isPrepared = true
     }
 
 }
