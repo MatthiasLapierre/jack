@@ -15,7 +15,7 @@ object Constants {
     // Game constants
 
     const val GRAVITY = 0.00078f
-    const val ACCELEROMETER_SENSITIVITY = 180f
+    const val ACCELEROMETER_CALIBRATION = 340
     const val CANDIES_ACCELERATION = 0.033f
     const val JUMP_ACCELERATION = 0.025f
     const val ROCKET_SPEED = 0.033f
