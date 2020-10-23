@@ -38,8 +38,8 @@ class JackResourceManager(
     override var btnMoreGames: Image? = null
     override var btnMoreGamesPressed: Image? = null
     override var btnShop: Image? = null
-    override var btnScores: Image? = null
-    override var btnScoresPressed: Image? = null
+    override var btnAboutMe: Image? = null
+    override var btnAboutMePressed: Image? = null
     override var btnReplay: Image? = null
     override var btnReplayPressed: Image? = null
     override var btnResume: Image? = null
@@ -99,8 +99,8 @@ class JackResourceManager(
         btnMoreGames = loadImage("images/ui/buttons/btn_more_games_normal.png")
         btnMoreGamesPressed = loadImage("images/ui/buttons/btn_more_games_pressed.png")
         btnShop = loadImage("images/ui/buttons/btn_shop_normal.png")
-        btnScores = loadImage("images/ui/buttons/btn_scores_normal.png")
-        btnScoresPressed = loadImage("images/ui/buttons/btn_scores_pressed.png")
+        btnAboutMe = loadImage("images/ui/buttons/btn_about_me_normal.png")
+        btnAboutMePressed = loadImage("images/ui/buttons/btn_about_me_pressed.png")
         btnReplay = loadImage("images/ui/buttons/btn_replay_normal.png")
         btnReplayPressed = loadImage("images/ui/buttons/btn_replay_pressed.png")
         btnResume = loadImage("images/ui/buttons/btn_resume_normal.png")
@@ -169,8 +169,8 @@ class JackResourceManager(
         btnMoreGames?.dispose()
         btnMoreGamesPressed?.dispose()
         btnShop?.dispose()
-        btnScores?.dispose()
-        btnScoresPressed?.dispose()
+        btnAboutMe?.dispose()
+        btnAboutMePressed?.dispose()
         btnReplay?.dispose()
         btnReplayPressed?.dispose()
         btnResume?.dispose()

@@ -50,8 +50,8 @@ interface ResourceManager: GameResources {
     var btnMoreGames: Image?
     var btnMoreGamesPressed: Image?
     var btnShop: Image?
-    var btnScores: Image?
-    var btnScoresPressed: Image?
+    var btnAboutMe: Image?
+    var btnAboutMePressed: Image?
     var btnReplay: Image?
     var btnReplayPressed: Image?
     var btnResume: Image?

@@ -78,8 +78,8 @@ class MenuScreen(
             resourceManager.btnPlay
         moreGamesBtnImage = if(moreGamesBtnIsPressed) resourceManager.btnMoreGamesPressed else
             resourceManager.btnMoreGames
-        aboutMeBtnImage = if(aboutMeBtnIsPressed) resourceManager.btnScoresPressed else
-            resourceManager.btnScores
+        aboutMeBtnImage = if(aboutMeBtnIsPressed) resourceManager.btnAboutMePressed else
+            resourceManager.btnAboutMe
     }
 
     override fun paint(canvas: Canvas, globalPaint: Paint) {

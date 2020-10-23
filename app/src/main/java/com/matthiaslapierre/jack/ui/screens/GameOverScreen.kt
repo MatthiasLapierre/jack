@@ -65,8 +65,8 @@ class GameOverScreen(
             resourceManager.btnReplay
         moreGamesBtnImage = if(moreGamesBtnIsPressed) resourceManager.btnMoreGamesPressed else
             resourceManager.btnMoreGames
-        aboutMeBtnImage = if(aboutMeBtnIsPressed) resourceManager.btnScoresPressed else
-            resourceManager.btnScores
+        aboutMeBtnImage = if(aboutMeBtnIsPressed) resourceManager.btnAboutMePressed else
+            resourceManager.btnAboutMe
         lastScoreBitmap = Utils.generateScoreBitmap(resourceManager, lastScore)
         highScoreBitmap = Utils.generateScoreBitmap(resourceManager, highScore)
     }
