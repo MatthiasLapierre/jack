@@ -47,6 +47,10 @@ open class AndroidAudio(
 
     }
 
+    override fun stop() {
+
+    }
+
     override fun createMusic(file: String): Music {
         return try {
             val assetDescriptor = mAssets.openFd(file)
@@ -64,6 +68,10 @@ open class AndroidAudio(
         } catch (e: IOException) {
             throw RuntimeException("Couldn't load sound '$file'")
         }
+    }
+
+    override fun dispose() {
+
     }
 
 }

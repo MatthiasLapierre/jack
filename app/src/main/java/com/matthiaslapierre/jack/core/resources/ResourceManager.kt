@@ -62,7 +62,7 @@ interface ResourceManager: GameResources {
     // Top bar
     var bgTop: Image?
     var candyIndicator: Image?
-    var digits: Array<Image?>?
+    var digits: Array<Image>?
 
     // Background
     var bgJump: Image?
@@ -80,7 +80,7 @@ interface ResourceManager: GameResources {
     var spike: Image?
 
     // Player
-    var player: Hashtable<PlayerState, Array<Image?>>?
+    var player: Hashtable<PlayerState, Array<Image>>?
 
     // Power-up
     var armor: Image?

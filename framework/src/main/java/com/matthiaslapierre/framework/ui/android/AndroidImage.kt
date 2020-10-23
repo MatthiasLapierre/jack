@@ -5,11 +5,11 @@ import android.graphics.Rect
 import com.matthiaslapierre.framework.resources.Image
 
 class AndroidImage(
-    private val mBitmap: Bitmap
+    private val _bitmap: Bitmap
 ) : Image {
 
     override val bitmap: Bitmap
-        get() = mBitmap
+        get() = _bitmap
 
     override val width: Int
         get() = bitmap.width

@@ -9,7 +9,9 @@ open class AndroidSound(
 ): Sound {
 
     override fun play(volume: Float) {
-        soundPool.play(soundId, volume, volume, 0, 0, 1f)
+        Thread(Runnable {
+            soundPool.play(soundId, volume, volume, 0, 0, 1f)
+        }).start()
     }
 
     override fun dispose() {

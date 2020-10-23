@@ -68,6 +68,8 @@ abstract class GameActivity : AppCompatActivity(), Game {
 
     override fun onDestroy() {
         mScreen.dispose()
+        mAudio.dispose()
+        mGameResources.dispose()
         super.onDestroy()
     }
 

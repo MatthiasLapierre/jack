@@ -49,7 +49,7 @@ class JackResourceManager(
 
     override var bgTop: Image? = null
     override var candyIndicator: Image? = null
-    override var digits: Array<Image?>? = null
+    override var digits: Array<Image>? = null
 
     override var bgJump: Image? = null
     override var clouds: Array<Image>? = null
@@ -62,7 +62,7 @@ class JackResourceManager(
     override var bat: Array<Image>? = null
     override var spike: Image? = null
 
-    override var player: Hashtable<PlayerState, Array<Image?>>? = null
+    override var player: Hashtable<PlayerState, Array<Image>>? = null
 
     override var armor: Image? = null
     override var magnet: Image? = null
@@ -111,7 +111,7 @@ class JackResourceManager(
         bgTop = loadImage("images/ui/scores/bg_top.png")
         candyIndicator = loadImage("images/ui/scores/indicator_candy.png")
         digits = (0..9).map { digit ->
-            loadImage("images/ui/numbers/$digit.png")
+            loadImage("images/ui/numbers/$digit.png")!!
         }.toTypedArray()
 
         bgJump = loadImage("images/bg/jump/bg.png")
@@ -146,6 +146,58 @@ class JackResourceManager(
         smoke = (1..8).map { digit ->
             loadImage("images/objects/explosion/smoke/Smoke ($digit).png")!!
         }.toTypedArray()
+    }
+
+    override fun dispose() {
+        logoJumperJack?.dispose()
+        logoJumperJack?.dispose()
+        textTapToLaunch?.dispose()
+        btnSound?.dispose()
+        btnSoundPressed?.dispose()
+        btnSoundDisabled?.dispose()
+        btnMusic?.dispose()
+        btnMusicPressed?.dispose()
+        btnMusicDisabled?.dispose()
+        btnFacebook?.dispose()
+        btnFacebookPressed?.dispose()
+        btnTwitter?.dispose()
+        btnTwitterPressed?.dispose()
+        btnPlay?.dispose()
+        btnPlayPressed?.dispose()
+        btnPause?.dispose()
+        btnPausePressed?.dispose()
+        btnMoreGames?.dispose()
+        btnMoreGamesPressed?.dispose()
+        btnShop?.dispose()
+        btnScores?.dispose()
+        btnScoresPressed?.dispose()
+        btnReplay?.dispose()
+        btnReplayPressed?.dispose()
+        btnResume?.dispose()
+        btnResumePressed?.dispose()
+        btnExit?.dispose()
+        btnExitPressed?.dispose()
+        bgTop?.dispose()
+        candyIndicator?.dispose()
+        digits?.map { it.dispose() }
+        bgJump?.dispose()
+        clouds?.map { it.dispose() }
+        jumpingPlatforms?.map { statesFrames -> statesFrames.map { stateFrames -> stateFrames.value.map { frame -> frame.dispose() } } }
+        candies?.map { it.dispose() }
+        powerUpsResId?.map { it.value.dispose() }
+        bat?.map { it.dispose() }
+        spike?.dispose()
+        player?.map { stateFrames -> stateFrames.value.map { frame -> frame.dispose() } }
+        armor?.dispose()
+        magnet?.dispose()
+        rocket?.map { it.dispose() }
+        badges?.map { it.value.dispose() }
+        windowGameOver?.dispose()
+        windowPause?.dispose()
+        windowHighScores?.dispose()
+        windowScoreItem?.dispose()
+        collectibleExplosion?.map { it.dispose() }
+        smoke?.map { it.dispose() }
     }
 
     override fun getRandomCandy(): Image {
@@ -196,21 +248,21 @@ class JackResourceManager(
         loadImage("images/objects/obstacles/bat/Bat ($index).png")!!
     }.toTypedArray()
 
-    private fun loadPlayer(characterResId: CharacterResId): Hashtable<PlayerState, Array<Image?>> {
-        val cache: Hashtable<PlayerState, Array<Image?>> = Hashtable()
+    private fun loadPlayer(characterResId: CharacterResId): Hashtable<PlayerState, Array<Image>> {
+        val cache: Hashtable<PlayerState, Array<Image>> = Hashtable()
         cache.run {
             put(PlayerState.DEAD, (1..8).map {
-                loadImage("images/player/$characterResId/Dead ($it).png")
+                loadImage("images/player/$characterResId/Dead ($it).png")!!
             }.toTypedArray())
             put(PlayerState.FALL, (1..4).map {
-                loadImage("images/player/$characterResId/Fall ($it).png")
+                loadImage("images/player/$characterResId/Fall ($it).png")!!
             }.toTypedArray())
-            put(PlayerState.IDLE, arrayOf(loadImage("images/player/$characterResId/Idle (1).png")))
+            put(PlayerState.IDLE, arrayOf(loadImage("images/player/$characterResId/Idle (1).png")!!))
             put(PlayerState.JUMP, (1..4).map {
-                loadImage("images/player/$characterResId/Jump ($it).png")
+                loadImage("images/player/$characterResId/Jump ($it).png")!!
             }.toTypedArray())
             put(PlayerState.COPTER, (1..5).map {
-                loadImage("images/player/$characterResId/Copter ($it).png")
+                loadImage("images/player/$characterResId/Copter ($it).png")!!
             }.toTypedArray())
         }
         return cache

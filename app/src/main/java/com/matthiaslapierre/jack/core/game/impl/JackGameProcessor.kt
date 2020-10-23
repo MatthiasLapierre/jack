@@ -4,9 +4,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Handler
 import android.os.Looper
-import com.matthiaslapierre.jack.Constants
-import com.matthiaslapierre.jack.core.resources.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
+import com.matthiaslapierre.jack.Constants
 import com.matthiaslapierre.jack.core.PlayerState
 import com.matthiaslapierre.jack.core.game.GameListener
 import com.matthiaslapierre.jack.core.game.GameMap
@@ -22,6 +21,7 @@ import com.matthiaslapierre.jack.core.game.impl.sprites.obstacles.SpikeSprite
 import com.matthiaslapierre.jack.core.game.impl.sprites.platforms.JumpingPlatformSprite
 import com.matthiaslapierre.jack.core.game.impl.sprites.player.PlayerSprite
 import com.matthiaslapierre.jack.core.game.impl.sprites.text.TapToLaunchSprite
+import com.matthiaslapierre.jack.core.resources.ResourceManager
 import com.matthiaslapierre.jack.utils.hasFlag
 import java.util.*
 

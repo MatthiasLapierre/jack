@@ -14,6 +14,7 @@ import com.matthiaslapierre.jack.core.game.GameStates
 import com.matthiaslapierre.jack.core.resources.ResourceManager
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
+import java.util.*
 import kotlin.random.Random
 
 
@@ -39,7 +40,7 @@ object Utils {
         var width = 0
         var height = 0
         val digitBitmaps: List<Bitmap> = digits.reversedArray().map { digit ->
-            val bitmap = resourceManager.digits!![digit]!!.bitmap
+            val bitmap = resourceManager.digits!![digit].bitmap
             width += bitmap.width
             if(bitmap.height > height) {
                 height = bitmap.height
@@ -175,7 +176,8 @@ object Utils {
         val matches =
             activity.packageManager.queryIntentActivities(intent, 0)
         for (info in matches) {
-            if (info.activityInfo.packageName.toLowerCase().startsWith("com.twitter")) {
+            if (info.activityInfo.packageName.toLowerCase(Locale.getDefault())
+                    .startsWith("com.twitter")) {
                 intent.setPackage(info.activityInfo.packageName)
             }
         }
@@ -196,7 +198,7 @@ object Utils {
      * @param s text to be converted
      * @return text on UTF-8 format
      */
-    fun urlEncode(s: String): String? {
+    private fun urlEncode(s: String): String? {
         return try {
             URLEncoder.encode(s, "UTF-8")
         } catch (e: UnsupportedEncodingException) {

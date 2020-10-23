@@ -50,6 +50,34 @@ class JackSoundManager(context: Context): SoundManager(context) {
         gameOverMusic = createMusic("musics/game_over.mp3")
     }
 
+    override fun pause() {
+        currentMusic?.pause()
+        currentPowerUpSound?.pause()
+    }
+
+    override fun stop() {
+        currentMusic?.stop()
+        currentPowerUpSound?.stop()
+        currentMusic = null
+        currentPowerUpSound = null
+    }
+
+    override fun dispose() {
+        getCoinSound?.dispose()
+        dieSound?.dispose()
+        jumpSound?.dispose()
+        destroyEnemySound?.dispose()
+        hitSound?.dispose()
+        rocketSound?.dispose()
+        copterSound?.dispose()
+        getPowerUpSound?.dispose()
+        buttonPressedSound?.dispose()
+        buttonPressed2Sound?.dispose()
+        menuMusic?.dispose()
+        gameMusic?.dispose()
+        gameOverMusic?.dispose()
+    }
+
     override fun playJumpSound() {
         if(soundEnabled) {
             jumpSound?.play(soundVolume)
@@ -133,18 +161,6 @@ class JackSoundManager(context: Context): SoundManager(context) {
         if (soundEnabled) {
             currentPowerUpSound?.play()
         }
-    }
-
-    override fun pause() {
-        currentMusic?.pause()
-        currentPowerUpSound?.pause()
-    }
-
-    override fun stop() {
-        currentMusic?.stop()
-        currentPowerUpSound?.stop()
-        currentMusic = null
-        currentPowerUpSound = null
     }
 
     override fun enableMusic(enable: Boolean) {

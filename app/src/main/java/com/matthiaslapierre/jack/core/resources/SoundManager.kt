@@ -81,11 +81,6 @@ abstract class SoundManager(
     abstract fun stopFlightSound()
 
     /**
-     * Stops musics and sound effects.
-     */
-    abstract fun stop()
-
-    /**
      * Enables / Disables musics
      */
     abstract fun enableMusic(enable: Boolean)

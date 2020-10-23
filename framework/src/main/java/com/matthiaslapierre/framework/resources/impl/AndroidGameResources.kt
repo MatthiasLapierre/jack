@@ -5,7 +5,11 @@ import com.matthiaslapierre.framework.resources.GameResources
 class AndroidGameResources : GameResources {
 
     override fun load() {
-        TODO("Not yet implemented")
+
+    }
+
+    override fun dispose() {
+
     }
 
 }
