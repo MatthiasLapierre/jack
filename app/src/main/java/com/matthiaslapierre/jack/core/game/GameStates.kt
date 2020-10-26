@@ -58,7 +58,7 @@ interface GameStates  {
     var powerUp: Int
 
     /**
-     * When the framerate is not steady, compensate every moving element by a factor.
+     * When the frame rate is not steady, compensate every moving element by a factor.
      */
     var frameRateAdjustFactor: Float
 

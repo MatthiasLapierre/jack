@@ -1,17 +1,18 @@
 package com.matthiaslapierre.jack.core.game.impl.sprites.obstacles
 
-import android.graphics.*
-import com.matthiaslapierre.jack.Constants.UNDEFINED
-import com.matthiaslapierre.jack.core.resources.ResourceManager
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.Constants.BAT_BODY_INSET_X
 import com.matthiaslapierre.jack.Constants.BAT_BODY_INSET_Y
 import com.matthiaslapierre.jack.Constants.BAT_FRAME_RATE
-import com.matthiaslapierre.jack.Constants.BAT_SPEED
 import com.matthiaslapierre.jack.Constants.BAT_WIDTH
 import com.matthiaslapierre.jack.Constants.SPRITE_LIFE_LOWEST_Y
+import com.matthiaslapierre.jack.Constants.UNDEFINED
 import com.matthiaslapierre.jack.core.game.GameStates
 import com.matthiaslapierre.jack.core.game.impl.sprites.player.PlayerSprite
+import com.matthiaslapierre.jack.core.resources.ResourceManager
 
 /**
  * Bat obstacle.

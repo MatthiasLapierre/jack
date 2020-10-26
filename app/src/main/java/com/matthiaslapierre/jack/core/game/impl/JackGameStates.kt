@@ -39,7 +39,7 @@ internal class JackGameStates : GameStates {
     override var powerUp: Int = 0
 
     /**
-     * When the framerate is not steady, compensate every moving element by a factor.
+     * When the frame rate is not steady, compensate every moving element by a factor.
      */
     override var frameRateAdjustFactor: Float = 1f
 

@@ -35,7 +35,7 @@ interface Audio {
     fun createSound(file: String): Sound
 
     /**
-     * Releases musics and souds.
+     * Releases musics and sounds.
      */
     fun dispose()
 }

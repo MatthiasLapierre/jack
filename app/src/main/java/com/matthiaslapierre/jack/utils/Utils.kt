@@ -154,7 +154,7 @@ object Utils {
      * @param text     text to share
      * @param url      url to share
      * @param via      twitter username without '@' who shares
-     * @param hashTags hashtags for tweet without '#' and separated by ','
+     * @param hashTags hashTags for tweet without '#' and separated by ','
      */
     fun shareTwitter(activity: Activity, text: String?, url: String?, via: String?, hashTags: String?) {
         val tweetUrl =
