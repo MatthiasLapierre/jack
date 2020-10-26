@@ -48,7 +48,7 @@ object Constants {
     const val CANDY_WIDTH = .15f
 
     const val BAT_WIDTH = .27f
-    const val BAT_SPEED = .02f
+    const val BAT_SPEED = .004f
     const val BAT_FRAME_RATE = 120
     const val BAT_BODY_INSET_X = .1f
     const val BAT_BODY_INSET_Y = .2f

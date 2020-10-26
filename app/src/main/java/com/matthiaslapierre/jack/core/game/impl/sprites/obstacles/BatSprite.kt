@@ -28,7 +28,9 @@ class BatSprite(
     private var frame: Int = 0
     private var width: Float = UNDEFINED
     private var height: Float = UNDEFINED
-    private var speed: Float = UNDEFINED
+    private val speedX: Float
+        get() = gameStates.batSpeedX * speedXMultiplier
+    private var speedXMultiplier: Int = 1
     private var lastFrameTimestamp: Long = 0L
     private var isAlive: Boolean = true
     private var isDestroyed: Boolean = false
@@ -45,7 +47,6 @@ class BatSprite(
         if (width == UNDEFINED) {
             width = screenWidth * BAT_WIDTH
             height = width * batImage.height / batImage.width
-            speed = width * BAT_SPEED
         }
 
         isAlive = (y <= (screenHeight * SPRITE_LIFE_LOWEST_Y) && (!isDestroyed
@@ -54,9 +55,9 @@ class BatSprite(
         // Update the sprite position.
         if (status == Sprite.Status.STATUS_PLAY) {
             if(maxX - minX > width) {
-                x += speed
+                x += speedX
                 if (x < minX || x > maxX) {
-                    speed = -speed
+                    speedXMultiplier = -speedXMultiplier
                 }
             }
             y += gameStates.speedY

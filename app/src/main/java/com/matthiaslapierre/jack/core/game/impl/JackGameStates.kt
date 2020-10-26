@@ -1,7 +1,6 @@
 package com.matthiaslapierre.jack.core.game.impl
 
 import com.matthiaslapierre.jack.Constants
-import com.matthiaslapierre.jack.core.resources.ResourceManager
 import com.matthiaslapierre.framework.ui.Sprite
 import com.matthiaslapierre.jack.core.PlayerState
 import com.matthiaslapierre.jack.core.game.GameStates
@@ -13,7 +12,7 @@ import com.matthiaslapierre.jack.utils.hasFlag
 import com.matthiaslapierre.jack.utils.minusFlag
 import com.matthiaslapierre.jack.utils.withFlag
 
-internal class JackGameStates: GameStates {
+internal class JackGameStates : GameStates {
 
     /**
      * Current status of the game.
@@ -57,6 +56,8 @@ internal class JackGameStates: GameStates {
         get() = globalSpeedY
     override val backgroundSpeedY: Float
         get() = speedY * Constants.BACKGROUND_SPEED_DECELERATION
+    override val batSpeedX: Float
+        get() = screenWidth * Constants.BAT_SPEED * frameRateAdjustFactor
     override val cloudSpeedY: Float
         get() = speedY * Constants.CLOUD_SPEED_DECELERATION
 

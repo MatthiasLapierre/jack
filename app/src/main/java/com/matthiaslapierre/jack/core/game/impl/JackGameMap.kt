@@ -155,7 +155,7 @@ internal class JackGameMap(
     }
 
     /**
-     * Gets the x-coordinate of the next sprite. Be careful not to place it too far away.
+     * Gets the x-coordinates of the next sprite. Be careful not to place it too far away.
      */
     private fun getNextSpriteX(x: Float?): Float {
         return if (x != null) {

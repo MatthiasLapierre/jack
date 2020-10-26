@@ -223,9 +223,9 @@ class PlayerSprite(
     private fun getImage(frameIndex: Int, playerState: PlayerState): Image {
         val images = resourceManager.player!![playerState]!!
         return if (frameIndex >= images.size) {
-            images[0]!!
+            images[0]
         } else {
-            images[frameIndex]!!
+            images[frameIndex]
         }
     }
 

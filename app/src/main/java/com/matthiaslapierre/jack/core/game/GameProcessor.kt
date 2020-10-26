@@ -51,7 +51,7 @@ interface GameProcessor{
     fun gameOver()
 
     /**
-     * Moves the character on the x-coordinate.
+     * Moves the character on the x-coordinates.
      */
     fun moveX(xAcceleration: Float)
 

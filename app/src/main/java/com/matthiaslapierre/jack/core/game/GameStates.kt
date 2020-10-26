@@ -73,12 +73,12 @@ interface GameStates  {
         }
 
     /**
-     * Speed of the Jack sprite on the x-coordinate.
+     * Speed of the Jack sprite on the x-coordinates.
      */
     val playerSpeedX: Float
 
     /**
-     * Speed of the Jack sprite on the y-coordinate.
+     * Speed of the Jack sprite on the y-coordinates.
      */
     val playerSpeedY: Float
 
@@ -86,6 +86,11 @@ interface GameStates  {
      * Speed of the background.
      */
     val backgroundSpeedY: Float
+
+    /**
+     * Speed of the bat on the x-coordinates.
+     */
+    val batSpeedX: Float
 
     /**
      * Speed of clouds.
@@ -103,12 +108,12 @@ interface GameStates  {
     fun update(playerY: Float, playerLowestY: Float, playerHighestY: Float)
 
     /**
-     * Moves the Jack sprite on the x-coordinate.
+     * Moves the Jack sprite on the x-coordinates.
      */
     fun moveX(xAcceleration: Float)
 
     /**
-     * Jumps. Updates the speed on the y-coordinate and the camera movement.
+     * Jumps. Updates the speed on the y-coordinates and the camera movement.
      */
     fun jump()
 
