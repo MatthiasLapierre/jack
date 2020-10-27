@@ -15,6 +15,12 @@ android {
         versionName rootProject.versionName
     }
 
+    sourceSets {
+        main {
+            assets.srcDirs = ['../../jack-assets']
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
