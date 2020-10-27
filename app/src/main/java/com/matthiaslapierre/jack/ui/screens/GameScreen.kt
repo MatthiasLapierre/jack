@@ -22,6 +22,7 @@ import com.matthiaslapierre.jack.core.resources.ResourceManager
 import com.matthiaslapierre.jack.core.resources.SoundManager
 import com.matthiaslapierre.jack.core.scores.Scores
 import com.matthiaslapierre.jack.utils.Utils
+import kotlin.math.pow
 
 /**
  * Game screen.
@@ -150,8 +151,9 @@ class GameScreen(
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (Sensor.TYPE_ACCELEROMETER == event?.sensor?.type) {
-            val xAcceleration = event.values[0] * accelerometerSensitivity * (frameTime / 1000f)
-            gameLogic.gameProcessor.moveX(xAcceleration)
+            val xAcceleration = event.values[0].toDouble().pow(2.0).toFloat() * ACCELEROMETER_CALIBRATION
+            val direction = if(event.values[0] > 0) 1 else -1
+            gameLogic.gameProcessor.moveX(xAcceleration * direction)
         }
     }
 
