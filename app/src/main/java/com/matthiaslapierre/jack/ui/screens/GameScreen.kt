@@ -14,7 +14,7 @@ import com.matthiaslapierre.framework.resources.Image
 import com.matthiaslapierre.framework.ui.Game
 import com.matthiaslapierre.framework.ui.Screen
 import com.matthiaslapierre.framework.ui.Sprite
-import com.matthiaslapierre.jack.Constants.ACCELEROMETER_CALIBRATION
+import com.matthiaslapierre.jack.Constants.ACCELEROMETER_SENSITIVITY
 import com.matthiaslapierre.jack.JackApp
 import com.matthiaslapierre.jack.core.game.GameListener
 import com.matthiaslapierre.jack.core.game.GameLogic
@@ -73,13 +73,6 @@ class GameScreen(
 
     // Determines if the pause button has been pressed.
     private var pauseBtnIsPressed: Boolean = false
-
-    private val accelerometerSensitivity: Float
-
-    init {
-        val maxRange = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER).maximumRange
-        accelerometerSensitivity = ACCELEROMETER_CALIBRATION - maxRange
-    }
 
     override fun update() {
         val resourceManager = getResourceManager()
@@ -151,7 +144,7 @@ class GameScreen(
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (Sensor.TYPE_ACCELEROMETER == event?.sensor?.type) {
-            val xAcceleration = event.values[0].toDouble().pow(2.0).toFloat() * ACCELEROMETER_CALIBRATION
+            val xAcceleration = event.values[0].toDouble().pow(2.0).toFloat() * ACCELEROMETER_SENSITIVITY
             val direction = if(event.values[0] > 0) 1 else -1
             gameLogic.gameProcessor.moveX(xAcceleration * direction)
         }
