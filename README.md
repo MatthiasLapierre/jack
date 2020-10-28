@@ -4,7 +4,7 @@ Help Jack-o'-lantern collect as much candy as possible. Watch out for obstacles!
 
 ## How to play
 
-1. [Download](https://github.com/MatthiasLapierre/FlyingBird/releases/download/1.0/flyingbird.apk) and install the game.
+1. [Download](https://github.com/MatthiasLapierre/jack/releases/download/1.0.0/jack.apk) and install the game.
 2. Start the game. Tap the play button.
 3. Have fun !
 
